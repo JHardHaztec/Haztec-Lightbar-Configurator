@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function XL7544({ 
   lensColor,
-  topcoverColor,
+  topcoverColor = "#231f20",
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
