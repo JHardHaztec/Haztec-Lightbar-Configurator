@@ -1,7 +1,8 @@
 import React from 'react';
 
 export default function XL7544({ 
-  lensColor, 
+  lensColor,
+  topCoverColor,
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
