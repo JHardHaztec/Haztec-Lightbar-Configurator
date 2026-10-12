@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Minibar25({ 
   lensColor,
-  topCoverColor,
+  topcoverColor,
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
