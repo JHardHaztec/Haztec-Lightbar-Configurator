@@ -39,6 +39,13 @@ export default function XL7544({
         d={pathD}
         style={customStyle}
       />
+      <path 
+          stroke={topcoverColor || "#231f20"} 
+          fill="none" 
+          strokeWidth="1.5" 
+          pointerEvents="none" 
+          d={pathD} 
+        />
     );
   };
 
