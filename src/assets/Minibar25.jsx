@@ -33,22 +33,24 @@ export default function Minibar25({
     const strokeWidth = selected ? '3' : '1';
 
     return (
-      <path 
-        className="cls-3" 
-        fill={fill} 
-        stroke={stroke}
-        strokeWidth={strokeWidth}
-        onClick={() => onSelectSlot(slotKey)}
-        d={pathD}
-      />
-     <path 
-          stroke={topcoverColor || "#231f20"} 
-          fill="none" 
-          strokeWidth="1.5" 
-          pointerEvents="none" 
-          d={pathD} 
-        />
-    );
+  <>
+    <path 
+      className="cls-3" 
+      fill={fill} 
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      onClick={() => onSelectSlot(slotKey)}
+      d={pathD}
+    />
+    <path 
+      stroke={topcoverColor || "#231f20"} 
+      fill="none" 
+      strokeWidth="1.5" 
+      pointerEvents="none" 
+      d={pathD} 
+    />
+  </>
+);
   };
 
   return (
