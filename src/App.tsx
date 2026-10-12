@@ -258,11 +258,6 @@ export default function App() {
 
   return (
     <div className="configurator-wrapper">
-      <header className="config-header no-print">
-        <div className="header-brand">
-          <h1>Custom Lightbar Configurator</h1>
-        </div>
-      </header>
 
       <main className="config-main">
         {/* --- STEP 1: LIGHTBAR MODEL SELECTION --- */}
