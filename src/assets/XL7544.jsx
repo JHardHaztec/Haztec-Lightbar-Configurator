@@ -29,24 +29,24 @@ export default function XL7544({
     const strokeWidth = selected ? '4' : '1';
 
     return (
-      <path 
-        key={uniqueKey}
-        className="interactive-module" 
-        fill={fill} 
-        stroke={stroke} 
-        strokeWidth={strokeWidth} 
-        onClick={() => onSelectSlot(slotNum)} 
-        d={pathD}
-        style={customStyle}
-      />
-      <path 
-          stroke={topcoverColor || "#231f20"} 
-          fill="none" 
-          strokeWidth="1.5" 
-          pointerEvents="none" 
-          d={pathD} 
-        />
-    );
+  <>
+    <path 
+      className="cls-3" 
+      fill={fill} 
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      onClick={() => onSelectSlot(slotKey)}
+      d={pathD}
+    />
+    <path 
+      stroke={topcoverColor || "#231f20"} 
+      fill="none" 
+      strokeWidth="1.5" 
+      pointerEvents="none" 
+      d={pathD} 
+    />
+  </>
+);
   };
 
   const cornerPath = "M79.96,11.59l5.45,10.3h-1.51v2.66h-2.92l-2.64-6.05-1.47-.7.78-11.77-3.55-.17-33,15.83-2.4,2.69,9.65,6.74-1.86-.89,1.1,2.4-3.25,1.55-1.7-3.51-2.4-.91-.66,1.88-7.42-9.21-2.43,2.76-12.4,35.11.15,3.67,11.44-2.18-.68,1.92,5.81,2.16,9.03-.2c1.63-.04,3.2-.59,4.48-1.58l3.72-2.87c1.39-1.07,3.1-1.66,4.85-1.67l65.94-.37V23.5h-3.08v-1.61h-2.22l6.15-10.32-3.28-1.38h-36.41s-3.28,1.39-3.28,1.39Z";
