@@ -413,7 +413,7 @@ export default function App() {
                   {selectedLength === '25' && (
                     <Minibar25 
                       lensColor={getLensColorHex()} 
-                      topCoverColor={getTopCoverColorHex()}
+                      topcoverColor={getTopCoverColorHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
@@ -422,7 +422,7 @@ export default function App() {
                   {selectedLength === 'XL7528' && (
                     <XL7528 
                       lensColor={getLensColorHex()} 
-                      topCoverColor={getTopCoverColorHex()}
+                      topcoverColor={getTopCoverColorHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
@@ -431,7 +431,7 @@ export default function App() {
                   {selectedLength === 'XL7544' && (
                     <XL7544 
                       lensColor={getLensColorHex()} 
-                      topCoverColor={getTopCoverColorHex()}
+                      topcoverColor={getTopCoverColorHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
@@ -440,7 +440,7 @@ export default function App() {
                   {selectedLength === 'XL7574' && (
                     <XL7574 
                       lensColor={getLensColorHex()} 
-                      topCoverColor={getTopCoverColorHex()}
+                      topcoverColor={getTopCoverColorHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
@@ -449,7 +449,7 @@ export default function App() {
                   {selectedLength === 'XL7561' && (
                     <XL7561 
                       lensColor={getLensColorHex()} 
-                      topCoverColor={getTopCoverColorHex()}
+                      topcoverColor={getTopCoverColorHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
@@ -458,7 +458,7 @@ export default function App() {
                   {selectedLength === 'XL7568' && (
                     <XL7568 
                       lensColor={getLensColorHex()} 
-                      topCoverColor={getTopCoverColorHex()}
+                      topcoverColor={getTopCoverColorHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
