@@ -41,7 +41,13 @@ export default function Minibar25({
         onClick={() => onSelectSlot(slotKey)}
         d={pathD}
       />
-      <path stroke={topCoverColor || "#231f20"} fill="none" ... />
+     <path 
+          stroke={topCoverColor || "#231f20"} 
+          fill="none" 
+          strokeWidth="1.5" 
+          pointerEvents="none" 
+          d={pathD} 
+        />
     );
   };
 
