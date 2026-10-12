@@ -42,7 +42,7 @@ export default function Minibar25({
         d={pathD}
       />
      <path 
-          stroke={topCoverColor || "#231f20"} 
+          stroke={topcoverColor || "#231f20"} 
           fill="none" 
           strokeWidth="1.5" 
           pointerEvents="none" 
