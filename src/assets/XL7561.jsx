@@ -29,24 +29,24 @@ export default function XL7561({
     const strokeWidth = selected ? '4' : '1';
 
     return (
-      <path 
-        key={uniqueKey}
-        className="interactive-module" 
-        fill={fill} 
-        stroke={stroke} 
-        strokeWidth={strokeWidth} 
-        onClick={() => onSelectSlot(slotNum)} 
-        d={pathD}
-        style={customStyle}
-      />
-      <path 
-          stroke={topcoverColor || "#231f20"} 
-          fill="none" 
-          strokeWidth="1.5" 
-          pointerEvents="none" 
-          d={pathD} 
-        />
-    );
+  <>
+    <path 
+      className="cls-3" 
+      fill={fill} 
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      onClick={() => onSelectSlot(slotKey)}
+      d={pathD}
+    />
+    <path 
+      stroke={topcoverColor || "#231f20"} 
+      fill="none" 
+      strokeWidth="1.5" 
+      pointerEvents="none" 
+      d={pathD} 
+    />
+  </>
+);
   };
 
   // Base 68-inch Corner Geometry
