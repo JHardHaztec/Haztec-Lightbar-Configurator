@@ -10,7 +10,7 @@ import XL7561 from './assets/XL7561';
 export default function App() {
   const [currentStage, setCurrentStage] = useState<'model' | 'exterior' | 'modules' | 'form' | 'success'>('model');
 
-  const [selectedModel, setSelectedModel] = useState<string | null>('xl75');
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [selectedLength, setSelectedLength] = useState<string | null>(null);
   const [selectedLens, setSelectedLens] = useState<string | null>('clear');
   const [selectedTopCover, setSelectedTopCover] = useState<string | null>('black');
@@ -22,7 +22,7 @@ export default function App() {
     email: '',
     phone: ''
   });
-  
+
   // Currently active slot being configured in the control panel
   const [selectedSlotNumber, setSelectedSlotNumber] = useState<number>(1);
   
@@ -71,28 +71,28 @@ export default function App() {
   }, [selectedLength, selectedSlotNumber]);
 
   const lightbarModels = [
-    { id: 'xl75', name: 'XL75 Lightbar', description: 'Ultra-low-profile lightbar', available: true },
-    { id: 'xpertsl', name: 'Xpert SL Lightbar', description: 'Low-profile lightbar', available: true },
-    { id: 'xpertslx', name: 'Xpert SLX Lightbar', description: 'Low-profile lightbar', available: true },
-    { id: 'xpert', name: 'Xpert Lightbar', description: 'High-profile lightbar', available: true },
-    { id: 'xpertdx', name: 'Xpert DX Lightbar', description: 'High-profile lightbar', available: true },
-    { id: 'xpress', name: 'Xpress Lightbar', description: 'High-profile lightbar', available: true },
-    { id: 'xpertsle', name: 'Xpert SLE Minibar', description: 'Mini Lightbar lightbar', available: true }
+    { id: 'xl75', name: 'XL75', description: 'Ultra-Low-Profile Lightbar', available: true },
+    { id: 'xpertsl', name: 'Xpert SL', description: 'Low-Profile Lightbar', available: true },
+    { id: 'xpertslx', name: 'Xpert SLX', description: 'Low-Profile Lightbar', available: true },
+    { id: 'xpert', name: 'Xpert', description: 'High-Profile Lightbar', available: true },
+    { id: 'xpertdx', name: 'Xpert DX', description: 'High-Profile Lightbar', available: true },
+    { id: 'xpress', name: 'Xpress', description: 'High-Profile Lightbar', available: true },
+    { id: 'xpertsle', name: 'Xpert SLE', description: 'Low Profile Minibar', available: true }
   ];
 
   const xl75LengthOptions = [
-    { id: '25', name: 'XL75 Lightbar', dims: '25" / 628mm', chassisClass: 'chassis-25' },
-    { id: 'XL7528', name: 'XL75 Lightbar', dims: '28" / 716mm', chassisClass: 'chassis-28' },
-    { id: 'XL7531', name: 'XL75 Lightbar', dims: '31" / 790mm', chassisClass: 'chassis-31' },
-    { id: 'XL7537', name: 'XL75 Lightbar', dims: '37" / 935mm', chassisClass: 'chassis-37' },
-    { id: 'XL7544', name: 'XL75 Lightbar', dims: '44" / 1111mm', chassisClass: 'chassis-44' },
-    { id: 'XL7549', name: 'XL75 Lightbar', dims: '49" / 1242mm', chassisClass: 'chassis-49' },
-    { id: 'XL7550', name: 'XL75 Lightbar', dims: '50" / 1259mm', chassisClass: 'chassis-50' },
-    { id: 'XL7555', name: 'XL75 Lightbar', dims: '55" / 1404mm', chassisClass: 'chassis-55' },
-    { id: 'XL7556', name: 'XL75 Lightbar', dims: '56" / 1435mm', chassisClass: 'chassis-28' },
-    { id: 'XL7561', name: 'XL75 Lightbar', dims: '61" / 1549mm', chassisClass: 'chassis-61' },
-    { id: 'XL7568', name: 'XL75 Lightbar', dims: '68" / 1725mm', chassisClass: 'chassis-68' },
-    { id: 'XL7574', name: 'XL75 Lightbar', dims: '74" / 1862mm', chassisClass: 'chassis-74' },
+    { id: '25', name: 'XL75 Lightbar', dims: '25" (628mm)', chassisClass: 'chassis-25' },
+    { id: 'XL7528', name: 'XL75 Lightbar', dims: '28" (716mm)', chassisClass: 'chassis-28' },
+    { id: 'XL7531', name: 'XL75 Lightbar', dims: '31" (790mm)', chassisClass: 'chassis-31' },
+    { id: 'XL7537', name: 'XL75 Lightbar', dims: '37" (935mm)', chassisClass: 'chassis-37' },
+    { id: 'XL7544', name: 'XL75 Lightbar', dims: '44" (1111mm)', chassisClass: 'chassis-44' },
+    { id: 'XL7549', name: 'XL75 Lightbar', dims: '49" (1242mm)', chassisClass: 'chassis-49' },
+    { id: 'XL7550', name: 'XL75 Lightbar', dims: '50" (1259mm)', chassisClass: 'chassis-50' },
+    { id: 'XL7555', name: 'XL75 Lightbar', dims: '55" (1404mm)', chassisClass: 'chassis-55' },
+    { id: 'XL7556', name: 'XL75 Lightbar', dims: '56" (1435mm)', chassisClass: 'chassis-28' },
+    { id: 'XL7561', name: 'XL75 Lightbar', dims: '61" (1549mm)', chassisClass: 'chassis-61' },
+    { id: 'XL7568', name: 'XL75 Lightbar', dims: '68" (1725mm)', chassisClass: 'chassis-68' },
+    { id: 'XL7574', name: 'XL75 Lightbar', dims: '74" (1862mm)', chassisClass: 'chassis-74' },
   ];
 
   const slLengthOptions = [
@@ -225,6 +225,16 @@ export default function App() {
     const found = topcoverOptions.find(c => c.id === selectedTopCover);
     return found ? found.hex : '#1e293b';
   };
+
+const handleSelectModel = (modelId: string) => {
+  setSelectedModel(modelId);
+  setCurrentStage('exterior'); // Automatically advances to length selection
+};
+
+const handleSelectLength = (lengthId: string) => {
+  setSelectedLength(lengthId);
+  setCurrentStage('modules'); // Automatically advances to Lens/Top Cover options (or modules)
+};
 
   const handleResetAllModules = () => {
     setSlotData(prev => {
@@ -359,27 +369,15 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                     <div 
                       key={model.id} 
                       className={`length-card ${selectedModel === model.id ? 'selected' : ''}`}
-                      onClick={() => {
-                        setSelectedModel(model.id);
-                        setSelectedLength(null); // Reset length when switching models
-                      }}
+                      onClick={() => handleSelectModel(model.id)}
                       style={{ cursor: 'pointer' }}
                     >
-                      <div className="length-inches" style={{ fontSize: '1.1rem' }}>{model.name}</div>
+                      <div className="lightbar-name">{model.name}</div>
+                      <div className="lightbar-subtext">{model.description}</div>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
-
-            <div className="step-footer-action">
-              <button 
-                className={`btn-primary btn-large full-width ${!selectedModel ? 'disabled' : ''}`} 
-                onClick={() => selectedModel && setCurrentStage('exterior')}
-                disabled={!selectedModel}
-              >
-                Continue to Length Selection
-              </button>
             </div>
           </section>
         )}
@@ -388,6 +386,13 @@ const handleSendEmail = (type: 'quote' | 'share') => {
         {currentStage === 'exterior' && (
           <section className="step-card animate-fade">
             <div className="config-section-group">
+              {/* Top-Right Back Button returning to Model selection */}
+              <button className="btn-secondary"
+                onClick={() => setCurrentStage('model')} 
+                style={{ position: 'absolute', top: '50px', right: '40px' }}
+              >
+                Back to Lightbars
+              </button>
               <h2>2. Length Selection</h2>
               <p className="subtext">Select your lightbar length length.</p>
               
@@ -396,30 +401,15 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                   {currentLengthOptions.map((opt) => (
                     <div 
                       key={opt.id} 
-                      className={`length-card ${selectedLength === opt.id ? 'selected' : ''}`}
-                      onClick={() => setSelectedLength(opt.id)}
+                      className={`length-card ${selectedLength === opt.id ? 'active' : ''}`}
+                      onClick={() => handleSelectLength(opt.id)}
+                      style={{ cursor: 'pointer' }}
                     >
                       <div className="length-inches">{opt.dims}</div>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
-
-            <div className="step-footer-action button-group-row" style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <button 
-                className="btn-secondary" 
-                onClick={() => setCurrentStage('model')}
-              >
-                Back to Model Selection
-              </button>
-              <button 
-                className={`btn-primary btn-large ${!selectedLength ? 'disabled' : ''}`} 
-                onClick={() => selectedLength && setCurrentStage('modules')}
-                disabled={!selectedLength}
-              >
-                {selectedLength ? 'Configure Lightbar' : 'Select Length to Continue'}
-              </button>
             </div>
           </section>
         )}
