@@ -442,7 +442,7 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                       {topcoverOptions.map((cover) => (
                         <div 
                           key={cover.id} 
-                          className={`length-card ${selectedTopCover === cover.id ? 'selected' : ''}`}
+                          className={`colour-card ${selectedTopCover === cover.id ? 'selected' : ''}`}
                           onClick={() => setSelectedTopCover(cover.id)}
                           style={{ padding: '8px' }}
                         >
@@ -460,7 +460,7 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                     {lensOptions.map((lens) => (
                       <div 
                         key={lens.id} 
-                        className={`length-card ${selectedLens === lens.id ? 'selected' : ''}`}
+                        className={`colour-card ${selectedLens === lens.id ? 'selected' : ''}`}
                         onClick={() => setSelectedLens(lens.id)}
                         style={{ padding: '8px' }}
                       >
