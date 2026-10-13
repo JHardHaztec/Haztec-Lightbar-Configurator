@@ -532,17 +532,42 @@ body {
 }
 
 @media print {
-  .no-print {
-    display: none !important;
+  @page {
+    margin: 10mm;
   }
-  .print-only {
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-spec-sheet, .print-spec-sheet * {
+    visibility: visible;
+  }
+
+  .print-spec-sheet {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 0;
+  }
+
+  /* Force the print header to show up as a flex container */
+  .print-header {
     display: block !important;
   }
-  
-  /* Reset background styles for printing so it saves the user's ink */
-  body, .configurator-wrapper, .step-card {
+  .print-header > div {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  body {
     background: white !important;
-    box-shadow: none !important;
-    border: none !important;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .overhead-preview-container {
+    background: #ffffff !important;
   }
 }
