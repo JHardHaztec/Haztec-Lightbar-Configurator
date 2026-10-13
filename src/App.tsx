@@ -275,7 +275,8 @@ export default function App() {
       // Fallback if cross-origin policy prevents accessing window.parent
     }
   
-    // 2. Extract configuration & customer values safely
+     // 2. Extract configuration & customer values safely
+    const rawModelName = lightbarModels.find(m => m.id === selectedModel)?.name || 'Lightbar';
     const rawLengthName = currentLengthOptions.find(l => l.id === selectedLength)?.name || selectedLength || 'Length';
     const rawCompany = formData.company || formData.name || 'Customer';
   
@@ -283,12 +284,13 @@ export default function App() {
     const dateStr = new Date().toISOString().split('T')[0];
   
     // 4. Clean strings to replace spaces and special characters with underscores/hyphens
+    const lightbarName = rawModelName.replace(/[^a-zA-Z0-9]/g, '_');
     const lengthName = rawLengthName.replace(/[^a-zA-Z0-9]/g, '');
     const companyName = rawCompany.replace(/[^a-zA-Z0-9]/g, '_');
   
     // 5. Build dynamic filename: Haztec_{lightbarname}-{length}_{companyname}_date
-    const customPdfName = `Haztec_${lengthName}_${companyName}_${dateStr}`;
-  
+    const customPdfName = `Haztec_${lightbarName}-${lengthName}_${companyName}_${dateStr}`;
+    
     // 6. Set titles on both the iframe and the parent window (for StackBlitz support)
     document.title = customPdfName;
     try {
