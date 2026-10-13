@@ -939,12 +939,12 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                   </span>
                 </div>
                 <div className="lightbar-schematic-stage" style={{ display: 'flex', justifyContent: 'center' }}>
-                  {selectedLength === '25' && <Minibar25 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7528' && <XL7528 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7544' && <XL7544 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7574' && <XL7574 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7568' && <XL7568 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7561' && <XL7561 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === '25' && <Minibar25 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7528' && <XL7528 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7544' && <XL7544 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7574' && <XL7574 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7568' && <XL7568 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7561' && <XL7561 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
                 </div>
               </div>
 
