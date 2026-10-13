@@ -114,6 +114,26 @@ body {
   color: #ffffff;
 }
 
+.colour-card {
+  background: #f7f7f7;
+  border: 2px solid #f7f7f7;
+  border-radius: 18px;
+  padding: 34px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.colour-card:hover {
+  background: #d9d9d9;
+  border-color: #d9d9d9;
+}
+
+.colour-card.selected {
+  background: #f7f7f7;
+  border-color: #353fad;
+}
+
 .length-slots {
   font-size: 0.7rem;
   color: #94a3b8;
