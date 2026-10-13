@@ -29,24 +29,17 @@ export default function XL7561({
     const strokeWidth = selected ? '4' : '1';
 
     return (
-  <>
-    <path 
-      className="cls-3" 
-      fill={fill} 
-      stroke={stroke}
-      strokeWidth={strokeWidth}
-      onClick={() => onSelectSlot(slotKey)}
-      d={pathD}
-    />
-    <path 
-      stroke={topcoverColor || "#231f20"} 
-      fill="none" 
-      strokeWidth="1.5" 
-      pointerEvents="none" 
-      d={pathD} 
-    />
-  </>
-);
+      <path 
+        key={uniqueKey}
+        className="interactive-module" 
+        fill={fill} 
+        stroke={stroke} 
+        strokeWidth={strokeWidth} 
+        onClick={() => onSelectSlot(slotNum)} 
+        d={pathD}
+        style={customStyle}
+      />
+    );
   };
 
   // Base 68-inch Corner Geometry
@@ -164,7 +157,7 @@ const shortmodule5 = "M126.82,151.78v-11.32h4.84v-15.37c2.55-.78,4.41-3.16,4.41-
         {Object.entries(slotData).map(([key, val]) => {
           if (val && val.mode === 'dual' && val.secondary) {
             return (
-              <linearGradient key={key} id={`grad-68-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient key={key} id={`grad-61-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="50%" stopColor={val.primary} />
                 <stop offset="50%" stopColor={val.secondary} />
               </linearGradient>
