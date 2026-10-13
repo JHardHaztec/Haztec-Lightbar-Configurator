@@ -1,8 +1,8 @@
 import React from 'react';
 
 export default function XL7568({ 
-  lensColor = '#a1a1a1', 
-  topcoverColor = '#1e293b', 
+  lensColor = '#a1a1a1',
+  topcoverColor = "#231f20",
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
@@ -29,23 +29,16 @@ export default function XL7568({
     const strokeWidth = selected ? '4' : '1';
 
     return (
-      <>
-        <path 
-          className="cls-3" 
-          fill={fill} 
-          stroke={stroke}
-          strokeWidth={strokeWidth}
-          onClick={() => onSelectSlot(slotKey)}
-          d={pathD}
-        />
-        <path 
-          stroke={topcoverColor || "#231f20"} 
-          fill="none" 
-          strokeWidth="1.5" 
-          pointerEvents="none" 
-          d={pathD} 
-        />
-      </>
+      <path 
+        key={uniqueKey}
+        className="interactive-module" 
+        fill={fill} 
+        stroke={stroke} 
+        strokeWidth={strokeWidth} 
+        onClick={() => onSelectSlot(slotNum)} 
+        d={pathD}
+        style={customStyle}
+      />
     );
   };
 
@@ -152,13 +145,14 @@ export default function XL7568({
       id="Layer_2" 
       data-name="Layer 2" 
       xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 961.87 500"
-      style={{ width: '100%', maxWidth: '900px', height: '500px', display: 'block', margin: '0 auto' }}
+      viewBox="0 0 961.87 164.67"
+      style={{ width: '100%', maxWidth: '900px', height: '280px', display: 'block', margin: '0 auto' }}
     >
       <defs>
         <style>{`
-          .cls-label { font-family: FuturaPT-Heavy, 'Futura PT', sans-serif; font-size: 12px; font-weight: 800; fill: #989898; letter-spacing: 0.1em; }
-          .cls-num { font-family: FuturaPT-Bold, 'Futura PT', sans-serif; font-size: 14px; font-weight: 700; fill: #282828; cursor: pointer; }
+          .cls-1 { fill: none; stroke-miterlimit: 10; stroke-width: 3px; }
+          .cls-label { font-family: FuturaPT-Heavy, 'Futura PT'; font-size: 12px; font-weight: 800; fill: #989898; letter-spacing: 0.1em; }
+          .cls-num { font-family: FuturaPT-Bold, 'Futura PT'; font-size: 14px; font-weight: 700; fill: #282828; cursor: pointer; }
           .interactive-module { transition: filter 0.2s, stroke 0.2s; cursor: pointer; }
           .interactive-module:hover { filter: brightness(1.2); }
         `}</style>
@@ -255,48 +249,6 @@ export default function XL7568({
         {/* OUTSIDE TEXT LABELS */}
         <text className="cls-label" x="50%" y="9" textAnchor="middle"><tspan x="480" y="-20">REAR</tspan></text>
         <text className="cls-label" x="50%" y="192" textAnchor="middle"><tspan x="480" y="200">FRONT</tspan></text>
-      </g>
-
-      {/* ========================================================= */}
-      {/* 2. FRONT & REAR ELEVATION VIEW                            */}
-      {/* ========================================================= */}
-      <g transform="translate(62, 300)">
-        {/* REAR ELEVATION PROFILE */}
-        <text className="cls-label" x="420" y="55" textAnchor="middle">REAR ELEVATION</text>
-        
-        {/* Top Cover Paths (Rear) */}
-        <path fill={topCoverColor} stroke="#282828" strokeWidth="0.5" strokeMiterlimit="10" d="M420.93.25s366.31.25,372.89.25,37.44,1.82,37.93,1.82,2.37,1.52,2.81,1.87,1.94,2.42,2.48,2.63.81,1.87.38,2.37-1.83,3.79-1.89,5.66.05,5.66-.16,6.21-1.67,3.08-2.48,3.18-.76-5.71-.65-6.92,2.27-3.89,2.37-9.54c.02-.87-413.67-.63-413.67-.63"/>
-        <path fill={topCoverColor} stroke="#282828" strokeWidth="0.5" strokeMiterlimit="10" d="M420.93.25S54.62.5,48.04.5,10.6,2.32,10.11,2.32s-2.37,1.52-2.81,1.87-1.94,2.42-2.48,2.63-.81,1.87-.38,2.37,1.83,3.79,1.89,5.66-.05,5.66.16,6.21,1.67,3.08,2.48,3.18.76-5.71.65-6.92-2.27-3.89-2.37-9.54c-.02-.87,413.67-.63,413.67-.63"/>
-        
-        {/* Frame Outline (Rear) */}
-        <path fill="none" stroke="#282828" strokeWidth="0.5" strokeMiterlimit="10" d="M420.93,7.14s413.69-.24,413.67.63c-.11,5.66-2.27,8.33-2.37,9.54l-.1,1.02,2.47.67-2.42,4.12"/>
-        <path fill="none" stroke="#282828" strokeWidth="0.5" strokeMiterlimit="10" d="M420.93,7.14S7.24,6.9,7.25,7.77c.11,5.66,2.27,8.33,2.37,9.54l.04.86"/>
-        <path fill="none" stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" d="M420.93,25.83H21.39c-8.31,0-9.87-1.04-11.89-2.85l-1.72-1.71-.53-1.03,2.42-2.06"/>
-        <path fill="none" stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" d="M18.85,25.83c-6.8,0-9.18-7.66-9.18-7.66"/>
-        <path fill="none" stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" d="M832.35,22.98c-2.01,1.81-3.58,2.85-11.89,2.85h-399.54"/>
-        <path fill="none" stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" d="M823,25.83c6.8,0,9.18-7.66,9.18-7.66"/>
-
-        {/* Outer Lens Fill (Rear) */}
-        <polygon fill={lensColor} stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" points="826.72 24.4 533.56 25.14 448.4 25.53 15.75 24.41 10.79 18.18 8.46 8.69 410.72 7.37 427.75 7.37 825.49 8.69 826.72 24.4"/>
-
-
-        {/* FRONT ELEVATION PROFILE */}
-        <text className="cls-label" x="418" y="195" textAnchor="middle">FRONT ELEVATION</text>
-
-        {/* Top Cover Paths (Front) */}
-        <path fill={topCoverColor} stroke="#282828" strokeWidth="0.5" strokeMiterlimit="10" d="M418.97,143.12s366.31.25,372.89.25,37.44,1.82,37.93,1.82,2.37,1.52,2.81,1.87,1.94,2.42,2.48,2.63.81,1.87.38,2.37-1.83,3.79-1.89,5.66.05,5.66-.16,6.21-1.67,3.08-2.48,3.18-.76-5.71-.65-6.92,2.27-3.89,2.37-9.54c.02-.87-413.67-.63-413.67-.63"/>
-        <path fill={topCoverColor} stroke="#282828" strokeWidth="0.5" strokeMiterlimit="10" d="M418.97,143.12s-366.31.25-372.89.25-37.44,1.82-37.93,1.82-2.37,1.52-2.81,1.87-1.94,2.42-2.48,2.63-.81,1.87-.38,2.37,1.83,3.79-1.89,5.66-.05,5.66.16,6.21,1.67,3.08,2.48,3.18.76-5.71.65-6.92-2.27-3.89-2.37-9.54c-.02-.87,413.67-.63,413.67-.63"/>
-
-        {/* Frame Outline (Front) */}
-        <path fill="none" stroke="#282828" strokeWidth="0.5" strokeMiterlimit="10" d="M418.97,150.02s413.69-.24,413.67.63c-.11,5.66-2.27,8.33-2.37,9.54l-.1,1.02,2.47.67-2.42,4.12"/>
-        <path fill="none" stroke="#282828" strokeWidth="0.5" strokeMiterlimit="10" d="M418.97,150.02s-413.69-.24-413.67.63c.11,5.66,2.27,8.33,2.37,9.54l.04.86"/>
-        <path fill="none" stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" d="M418.97,168.71H19.43c-8.31,0-9.87-1.04-11.89-2.85l-1.72-1.71-.53-1.03,2.42-2.06"/>
-        <path fill="none" stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" d="M16.9,168.71c-6.8,0-9.18-7.66-9.18-7.66"/>
-        <path fill="none" stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" d="M830.4,165.85c-2.01,1.81-3.58,2.85-11.89,2.85h-399.54"/>
-        <path fill="none" stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" d="M821.05,168.71c6.8,0,9.18-7.66,9.18-7.66"/>
-
-        {/* Outer Lens Fill (Front) */}
-        <polygon fill={lensColor} stroke="#231f20" strokeWidth="0.5" strokeMiterlimit="10" points="824.76 167.27 531.6 168.02 446.44 168.4 13.8 167.28 8.83 161.05 6.51 151.56 408.76 150.24 425.8 150.24 823.54 151.56 824.76 167.27"/>
       </g>
     </svg>
   );
