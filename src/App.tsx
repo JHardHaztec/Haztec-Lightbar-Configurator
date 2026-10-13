@@ -191,6 +191,20 @@ export default function App() {
     }
   };
 
+  const isFormValid = formData.name.trim() !== '' && formData.email.trim() !== '';
+
+  const getMaxSlots = (length: string | null): number => {
+    switch (length) {
+      case '25': return 4;
+      case 'XL7528': return 6;
+      case 'XL7544': return 16;
+      case 'XL7561': return 20;
+      case 'XL7568':
+      case 'XL7574': return 24;
+      default: return 24; // Default fallback for other lengths
+    }
+  };
+
   const getAllowedSecondaryColors = (primaryHex: string): string[] => {
     const c1 = getColorLetter(primaryHex);
     switch (c1) {
@@ -247,9 +261,73 @@ export default function App() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handlePrint = () => {
+  const [showNextStepsModal, setShowNextStepsModal] = useState(false);
+
+  const handleTriggerPrint = () => {
+    setShowNextStepsModal(false);
+  
+    // 1. Store original inner and parent document titles
+    const originalTitle = document.title;
+    let originalParentTitle = '';
+    try {
+      originalParentTitle = window.parent.document.title;
+    } catch (e) {
+      // Fallback if cross-origin policy prevents accessing window.parent
+    }
+  
+    // 2. Extract configuration & customer values safely
+    const rawLengthName = currentLengthOptions.find(l => l.id === selectedLength)?.name || selectedLength || 'Length';
+    const rawCompany = formData.company || formData.name || 'Customer';
+  
+    // 3. Format today's date (YYYY-MM-DD)
+    const dateStr = new Date().toISOString().split('T')[0];
+  
+    // 4. Clean strings to replace spaces and special characters with underscores/hyphens
+    const lengthName = rawLengthName.replace(/[^a-zA-Z0-9]/g, '');
+    const companyName = rawCompany.replace(/[^a-zA-Z0-9]/g, '_');
+  
+    // 5. Build dynamic filename: Haztec_{lightbarname}-{length}_{companyname}_date
+    const customPdfName = `Haztec_${lengthName}_${companyName}_${dateStr}`;
+  
+    // 6. Set titles on both the iframe and the parent window (for StackBlitz support)
+    document.title = customPdfName;
+    try {
+      if (window.parent && window.parent.document) {
+        window.parent.document.title = customPdfName;
+      }
+    } catch (e) {
+      // Ignore cross-origin error if published outside an iframe
+    }
+  
+    // 7. Trigger print preview
     window.print();
+  
+    // 8. Revert both titles back to their original state
+    document.title = originalTitle;
+    try {
+      if (window.parent && window.parent.document && originalParentTitle) {
+        window.parent.document.title = originalParentTitle;
+      }
+    } catch (e) {
+      // Ignore cross-origin error
+    }
   };
+
+const handleSendEmail = (type: 'quote' | 'share') => {
+  if (!isFormValid) return;
+
+  const recipient = "sales@haztec.uk"; // Official Haztec sales address
+  
+  // Format clean subject line incorporating customer name/company
+  const subjectPrefix = type === 'quote' ? 'Quote Request' : 'Lightbar Configuration';
+  const customerInfo = formData.company ? `${formData.name} (${formData.company})` : formData.name;
+  const subject = encodeURIComponent(`${subjectPrefix} - ${customerInfo}`);
+
+  // Open native mail client with recipient and subject only
+  window.location.href = `mailto:${recipient}?subject=${subject}`;
+
+  setShowNextStepsModal(false);
+};
 
   const areCornersConfigured = [1, 2, 3, 4].every(num => {
     const slot = slotData[num];
@@ -345,7 +423,7 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
                   <h2>3. Section-by-Section Customization</h2>
-                  <p className="subtext">Configure chassis appearance and customize your lightbar sections below[cite: 2].</p>
+                  <p className="subtext">Configure chassis appearance and customize your lightbar sections below.</p>
                 </div>
                 
                 <button 
@@ -814,94 +892,236 @@ export default function App() {
         {currentStage === 'form' && (
           <section className="step-card animate-fade">
             <h2 className="no-print">4. Customer Details & Summary</h2>
-            <p className="subtext no-print">Review your configuration and enter your details below[cite: 2].</p>
+            <p className="subtext no-print">Review your configuration and enter your details below.</p>
             
-            <div className="overhead-preview-container" style={{ margin: '24px 0', pointerEvents: 'none' }}>
-              <div className="overhead-header">
-                <span className="spec-badge">
-                  {currentLengthOptions.find(l => l.id === selectedLength)?.name} - Configuration
-                </span>
+            {/* PRINT-FRIENDLY SPEC SHEET CONTAINER */}
+            <div className="print-spec-sheet">
+              <div className="print-header" style={{ display: 'none' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #231f20', paddingBottom: '8px', marginBottom: '16px', marginTop: '26px' }}>
+              <img src="/Haztec-logo.svg" alt="Haztec Logo" style={{ height: '35px', objectFit: 'contain' }} />
+                  <h1 style={{ fontSize: '22px', margin: 0 }}>Lightbar Configuration Summary</h1>
+                </div>
               </div>
-              <div className="lightbar-schematic-stage">
-                {selectedLength === '25' && <Minibar25 lensColor={getLensColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                {selectedLength === 'XL7528' && <XL7528 lensColor={getLensColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                {selectedLength === 'XL7544' && <XL7544 lensColor={getLensColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                {selectedLength === 'XL7574' && <XL7574 lensColor={getLensColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                {selectedLength === 'XL7568' && <XL7568 lensColor={getLensColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                {selectedLength === 'XL7561' && <XL7561 lensColor={getLensColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                {selectedLength === 'SL48' && <div style={{ padding: '20px', color: '#64748b' }}>Xpert SL Preview</div>}
-              </div>
-            </div>
 
-            <div className="manifest-box" style={{ textAlign: 'left', marginBottom: '24px' }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>Build Specifications</h3>
+              <div className="summary-box" style={{ background: '#ffffff', border: '1px solid #ddd', padding: '16px', borderRadius: '6px', marginBottom: '20px', textAlign: 'left' }}>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
-                <p><strong>Model:</strong> {lightbarModels.find(m => m.id === selectedModel)?.name}</p>
-                <p><strong>Length:</strong> {currentLengthOptions.find(l => l.id === selectedLength)?.dims}</p>
-                <p><strong>Top Cover Colour:</strong> {topcoverOptions.find(c => c.id === selectedTopCover)?.name}</p>
-                <p><strong>Outer Lens Colour:</strong> {lensOptions.find(l => l.id === selectedLens)?.name}</p>
-              </div>
-
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
-                <strong style={{ fontSize: '0.85rem', display: 'block', marginBottom: '8px' }}>LED Modules:</strong>
-                <div style={{ marginLeft: '12px', marginBottom: '10px' }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e293b' }}>Front</span>
-                  <div style={{ marginLeft: '12px', marginTop: '4px' }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.8rem', color: '#64748b' }}>Corners:</span>
-                    <ul style={{ margin: '4px 0 0 16px', padding: 0, fontSize: '0.85rem' }}>
-                      <li>Corner 1 (Left): <code>{getCornerOrderCode(slotData[1])}</code></li>
-                      <li>Corner 2 (Right): <code>{getCornerOrderCode(slotData[2])}</code></li>
-                    </ul>
-                  </div>
+              {/* CONDITIONAL DIVIDER & CUSTOMER DETAILS */}
+              {(formData.name || formData.company || formData.email || formData.phone) && (
+                  <>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                      {formData.name && <div style={{ margin: '4px 0', fontSize: '14px' }}><strong>Name:</strong> {formData.name}</div>}
+                      {formData.company && <div style={{ margin: '4px 0', fontSize: '14px' }}><strong>Company:</strong> {formData.company}</div>}
+                      {formData.email && <div style={{ margin: '4px 0', fontSize: '14px' }}><strong>Email:</strong> {formData.email}</div>}
+                      {formData.phone && <div style={{ margin: '4px 0', fontSize: '14px' }}><strong>Phone:</strong> {formData.phone}</div>}
+                    </div>
+                    <hr style={{ border: '0', borderTop: '1px solid #cbd5e1', margin: '12px 0' }} />
+                  </>
+                )}
+                
+                <div style={{ margin: '6px 0', fontSize: '14px' }}><strong>Model:</strong> {lightbarModels.find(m => m.id === selectedModel)?.name} ({currentLengthOptions.find(l => l.id === selectedLength)?.dims})</div>
+                <div style={{ margin: '6px 0', fontSize: '14px' }}>
+                  <strong>Outer Lens Colour:</strong> 
+                  <span style={{ display: 'inline-block', width: '12px', height: '12px', background: getLensColorHex(), verticalAlign: 'middle', borderRadius: '50%', margin: '0 6px', border: '1px solid #ccc' }}></span> 
+                  {lensOptions.find(l => l.id === selectedLens)?.name}
                 </div>
-
-                <div style={{ marginLeft: '12px' }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e293b' }}>Rear</span>
-                  <div style={{ marginLeft: '12px', marginTop: '4px' }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.8rem', color: '#64748b' }}>Corners:</span>
-                    <ul style={{ margin: '4px 0 0 16px', padding: 0, fontSize: '0.85rem' }}>
-                      <li>Corner 3 (Left): <code>{getCornerOrderCode(slotData[3])}</code></li>
-                      <li>Corner 4 (Right): <code>{getCornerOrderCode(slotData[4])}</code></li>
-                    </ul>
-                  </div>
+                <div style={{ margin: '6px 0', fontSize: '14px' }}>
+                  <strong>Top Cover Colour:</strong> 
+                  <span style={{ display: 'inline-block', width: '12px', height: '12px', background: getTopCoverColorHex(), verticalAlign: 'middle', borderRadius: '50%', margin: '0 6px', border: '1px solid #ccc' }}></span> 
+                  {topcoverOptions.find(c => c.id === selectedTopCover)?.name}
                 </div>
               </div>
+
+              {/* Schematic Preview */}
+              <div className="overhead-preview-container" style={{ margin: '20px 0', background: '#ffffff', border: '1px solid #ddd', padding: '15px', borderRadius: '6px' }}>
+                <div className="overhead-header" style={{ marginBottom: '10px', textAlign: 'center' }}>
+                  <span className="spec-badge" style={{ color: '#fff', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    {currentLengthOptions.find(l => l.id === selectedLength)?.name} Schematic
+                  </span>
+                </div>
+                <div className="lightbar-schematic-stage" style={{ display: 'flex', justifyContent: 'center' }}>
+                  {selectedLength === '25' && <Minibar25 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7528' && <XL7528 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7544' && <XL7544 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7574' && <XL7574 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7568' && <XL7568 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7561' && <XL7561 lensColor={getLensColorHex()} topCoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                </div>
+              </div>
+
+              {/* Full Slots & Modules Table */}
+              <h3 style={{ fontSize: '16px', margin: '20px 0 10px 0', textAlign: 'left' }}>Configured Slots & Modules</h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px', fontSize: '13px', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ background: '#f1f1f1' }}>
+                    <th style={{ border: '1px solid #ddd', padding: '8px 10px' }}>Module Position</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px 10px' }}>Order Code / Details</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px 10px' }}>Colour Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(slotData)
+                    .filter(([key]) => Number(key) <= getMaxSlots(selectedLength))
+                    .map(([key, slot]) => (
+                      <tr key={key}>
+                        <td style={{ border: '1px solid #ddd', padding: '8px 10px' }}><strong>{key}</strong></td>
+                        <td style={{ border: '1px solid #ddd', padding: '8px 10px' }}>
+                          {Number(key) >= 1 && Number(key) <= 4 
+                            ? getCornerOrderCode(slot) 
+                            : (slot.active !== false ? `Primary: ${slot.primary} ${slot.mode === 'dual' ? `/ Secondary: ${slot.secondary}` : ''}` : 'N/A')}
+                        </td>
+                        <td style={{ border: '1px solid #ddd', padding: '8px 10px' }}>{slot.mode ? slot.mode.toUpperCase() : 'SINGLE'}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
             </div>
 
-            <div className="form-group no-print" style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '24px' }}>
+            {/* Customer Form (Hidden on Print) */}
+            <div className="form-group no-print" style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '24px', textAlign: 'left' }}>
               <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem' }}>Your Information</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Name</label>
-                  <input type="text" name="name" value={formData.name} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }} placeholder="John Doe" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Row 1: Name and Company side by side */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Name *</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }} placeholder="John Doe" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Company</label>
+                    <input type="text" name="company" value={formData.company} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }} placeholder="Acme Corp" />
+                  </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Company</label>
-                  <input type="text" name="company" value={formData.company} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }} placeholder="Acme Corp" />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Email</label>
-                  <input type="email" name="email" value={formData.email} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }} placeholder="john@example.com" />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Phone Number</label>
-                  <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }} placeholder="07123 456789" />
+                {/* Row 2: Email and Phone side by side */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Email *</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }} placeholder="john@example.com" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Phone Number</label>
+                    <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }} placeholder="07123 456789" />
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="step-footer-action button-group-row no-print">
+           {/* Action Buttons (Hidden on Print) */}
+           <div className="step-footer-action button-group-row no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button className="btn-secondary" onClick={() => setCurrentStage('modules')}>
                 Back to Modules
               </button>
-              <button className="btn-primary" onClick={handlePrint} style={{ background: '#10b981', borderColor: '#10b981' }}>
-                🖨 Print Configuration
-              </button>
-              <button className="btn-primary btn-large" onClick={() => setCurrentStage('success')}>
-                Submit Build
+
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
+                {!isFormValid && (
+                  <span style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 600 }}>
+                    * Please fill in your Name and Email to proceed
+                  </span>
+                )}
+                <button 
+                  className={`btn-primary btn-large ${!isFormValid ? 'disabled' : ''}`} 
+                  onClick={() => isFormValid && setShowNextStepsModal(true)} 
+                  disabled={!isFormValid}
+                  style={{ 
+                    background: '#10b981', 
+                    borderColor: '#10b981', 
+                    opacity: isFormValid ? 1 : 0.5, 
+                    cursor: isFormValid ? 'pointer' : 'not-allowed' 
+                  }}
+                >
+                  Complete Configuration
+                </button>
+              </div>
+            </div>
+
+            {/* NEXT STEPS MODAL */}
+      {showNextStepsModal && (
+        <div className="modal-overlay no-print" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.75)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '24px' }}>
+          <div className="modal-card animate-fade" style={{ background: '#ffffff', width: '100%', maxWidth: '620px', borderRadius: '12px', padding: '28px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)', position: 'relative' }}>
+            
+            {/* Close Button */}
+            <button onClick={() => setShowNextStepsModal(false)} style={{ position: 'absolute', top: '18px', right: '18px', background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#64748b' }}>×</button>
+
+            {/* Header */}
+            <h2 style={{ margin: '0 0 6px 0', fontSize: '1.35rem', color: '#0f172a' }}>Configuration Ready</h2>
+            <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#64748b' }}>Your specification summary has been compiled successfully.</p>
+
+            {/* SECTION 1: DOWNLOAD / PRINT INSTRUCTIONS */}
+            <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '16px', textAlign: 'left', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <span style={{ fontSize: '24px', lineHeight: 1 }}>📄</span>
+                <div>
+                  <strong style={{ fontSize: '0.95rem', color: '#0f172a', display: 'block', marginBottom: '4px' }}>Save as PDF or Print Spec Sheet</strong>
+                  <p style={{ margin: 0, fontSize: '0.825rem', color: '#475569', lineHeight: 1.4 }}>
+                    Click below to open your print preview. To save a digital copy, select <strong>"Save as PDF"</strong> under the Destination printer settings in your browser print window.
+                  </p>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleTriggerPrint} 
+                style={{ 
+                  width: '100%', 
+                  marginTop: '14px', 
+                  padding: '10px 16px', 
+                  background: '#10b981', 
+                  color: '#ffffff', 
+                  border: 'none', 
+                  borderRadius: '6px', 
+                  fontSize: '0.9rem', 
+                  fontWeight: 600, 
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
+                }}
+              >
+                🖨 Download / Print
               </button>
             </div>
+
+            {/* DIVIDER LINE */}
+            <hr style={{ border: '0', borderTop: '1px solid #e2e8f0', margin: '20px 0' }} />
+
+            {/* SECTION 2: UNIQUE CONFIGURATIONS & CONTACT OPTIONS */}
+            <div style={{ textAlign: 'left' }}>
+              <strong style={{ fontSize: '0.95rem', color: '#0f172a', display: 'block', marginBottom: '4px' }}>Need a Unique or Custom Configuration?</strong>
+              <p style={{ margin: '0 0 16px 0', fontSize: '0.825rem', color: '#64748b', lineHeight: 1.4 }}>
+                For bespoke lightbar customisation options, please get in touch with our expert team:
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                
+                {/* Submit / Email Quote Request */}
+                <button 
+                  onClick={() => handleSendEmail('quote')} 
+                  style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', padding: '12px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', cursor: 'pointer' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '16px' }}>✉️</span>
+                    <strong style={{ fontSize: '0.85rem', color: '#0f172a' }}>Email Sales</strong>
+                  </div>
+                  <small style={{ fontSize: '0.75rem', color: '#64748b' }}>Email build details to our sales department for pricing.</small>
+                </button>
+
+                {/* Direct Phone Line */}
+                <a 
+                  href="tel:+441132029115" 
+                  style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', padding: '12px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', textDecoration: 'none', cursor: 'pointer' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '16px' }}>📞</span>
+                    <strong style={{ fontSize: '0.85rem', color: '#0f172a' }}>Call Technical Sales</strong>
+                  </div>
+                  <small style={{ fontSize: '0.75rem', color: '#64748b' }}>+44 (0)113 202 9115</small>
+                </a>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
           </section>
         )}
 
@@ -910,7 +1130,7 @@ export default function App() {
           <section className="step-card success-card animate-fade no-print">
             <div className="success-icon">✓</div>
             <h2>Lightbar Configuration Complete!</h2>
-            <p className="subtext">Thank you, {formData.name || 'Customer'}. Your custom build specification has been submitted successfully[cite: 2].</p>
+            <p className="subtext">Thank you, {formData.name || 'Customer'}. Your custom build specification has been submitted successfully.</p>
             
             <button 
               className="btn-primary" 
