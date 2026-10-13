@@ -264,56 +264,62 @@ export default function App() {
   const [showNextStepsModal, setShowNextStepsModal] = useState(false);
 
   const handleTriggerPrint = () => {
-    setShowNextStepsModal(false);
-  
-    // 1. Store original inner and parent document titles
-    const originalTitle = document.title;
-    let originalParentTitle = '';
-    try {
-      originalParentTitle = window.parent.document.title;
-    } catch (e) {
-      // Fallback if cross-origin policy prevents accessing window.parent
+  setShowNextStepsModal(false);
+
+  // 1. Store original inner and parent document titles
+  const originalTitle = document.title;
+  let originalParentTitle = '';
+  try {
+    originalParentTitle = window.parent.document.title;
+  } catch (e) {
+    // Cross-origin fallback
+  }
+
+  // 2. Extract Model Name
+  const rawModelName = lightbarModels.find(m => m.id === selectedModel)?.name || 'Lightbar';
+
+  // 3. Extract Length Option (Checking name, dims, or fallback string)
+  const lengthObj = currentLengthOptions.find(l => l.id === selectedLength);
+  // Prefers length dimensions (e.g. "1100mm"), then length name, then raw length ID
+  const rawLengthName = lengthObj?.dims || lengthObj?.name || selectedLength || 'Length';
+
+  // 4. Extract Company or Customer Name
+  const rawCompany = formData.company || formData.name || 'Customer';
+
+  // 5. Format today's date (YYYY-MM-DD)
+  const dateStr = new Date().toISOString().split('T')[0];
+
+  // 6. Clean strings (replace spaces/special characters with clean separators)
+  const lightbarName = rawModelName.replace(/[^a-zA-Z0-9]/g, '_');
+  const lengthName = rawLengthName.replace(/[^a-zA-Z0-9]/g, '');
+  const companyName = rawCompany.replace(/[^a-zA-Z0-9]/g, '_');
+
+  // 7. Build filename: Haztec_{lightbarname}-{length}_{companyname}_date
+  const customPdfName = `Haztec_${lightbarName}-${lengthName}_${companyName}_${dateStr}`;
+
+  // 8. Apply title updates for both iframe and root document contexts
+  document.title = customPdfName;
+  try {
+    if (window.parent && window.parent.document) {
+      window.parent.document.title = customPdfName;
     }
-  
-     // 2. Extract configuration & customer values safely
-    const rawModelName = lightbarModels.find(m => m.id === selectedModel)?.name || 'Lightbar';
-    const rawLengthName = currentLengthOptions.find(l => l.id === selectedLength)?.name || selectedLength || 'Length';
-    const rawCompany = formData.company || formData.name || 'Customer';
-  
-    // 3. Format today's date (YYYY-MM-DD)
-    const dateStr = new Date().toISOString().split('T')[0];
-  
-    // 4. Clean strings to replace spaces and special characters with underscores/hyphens
-    const lightbarName = rawModelName.replace(/[^a-zA-Z0-9]/g, '_');
-    const lengthName = rawLengthName.replace(/[^a-zA-Z0-9]/g, '');
-    const companyName = rawCompany.replace(/[^a-zA-Z0-9]/g, '_');
-  
-    // 5. Build dynamic filename: Haztec_{lightbarname}-{length}_{companyname}_date
-    const customPdfName = `Haztec_${lightbarName}-${lengthName}_${companyName}_${dateStr}`;
-    
-    // 6. Set titles on both the iframe and the parent window (for StackBlitz support)
-    document.title = customPdfName;
-    try {
-      if (window.parent && window.parent.document) {
-        window.parent.document.title = customPdfName;
-      }
-    } catch (e) {
-      // Ignore cross-origin error if published outside an iframe
+  } catch (e) {
+    // Ignore cross-origin error
+  }
+
+  // 9. Trigger browser print
+  window.print();
+
+  // 10. Restore original document titles
+  document.title = originalTitle;
+  try {
+    if (window.parent && window.parent.document && originalParentTitle) {
+      window.parent.document.title = originalParentTitle;
     }
-  
-    // 7. Trigger print preview
-    window.print();
-  
-    // 8. Revert both titles back to their original state
-    document.title = originalTitle;
-    try {
-      if (window.parent && window.parent.document && originalParentTitle) {
-        window.parent.document.title = originalParentTitle;
-      }
-    } catch (e) {
-      // Ignore cross-origin error
-    }
-  };
+  } catch (e) {
+    // Ignore cross-origin error
+  }
+};
 
 const handleSendEmail = (type: 'quote' | 'share') => {
   if (!isFormValid) return;
