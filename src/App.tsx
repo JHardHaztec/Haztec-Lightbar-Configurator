@@ -566,7 +566,7 @@ export default function App() {
                       transition: 'all 0.2s'
                     }}
                   >
-                    {splitLensEnabled ? '- Remove Split Lens' : '+ Split Lens Colours'}
+                    {splitLensEnabled ? 'Remove Split Lens' : 'Add Split Lens Colours'}
                   </button>
                 </div>
 
