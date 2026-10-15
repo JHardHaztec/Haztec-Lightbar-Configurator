@@ -1,18 +1,21 @@
 import React from 'react';
 
 export default function XL7544({ 
-  lensColor,
-  topcoverColor = "#231f20",
+  lensColour, 
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
 }) {
+  
   const getFill = (slotNum) => {
     const slot = slotData[slotNum];
     if (!slot || slot.active === false) return 'transparent';
     
     if (slot.mode === 'dual' && slot.secondary) {
-      return `url(#grad-44-${slotNum})`;
+      return `url(#grad-dual-${slotNum})`;
+    }
+    if (slot.mode === 'tri' && slot.secondary && slot.tertiary) {
+      return `url(#grad-tri-${slotNum})`;
     }
     return slot.primary || '#808285';
   };
@@ -29,24 +32,17 @@ export default function XL7544({
     const strokeWidth = selected ? '4' : '1';
 
     return (
-  <>
-    <path 
-      className="cls-3" 
-      fill={fill} 
-      stroke={stroke}
-      strokeWidth={strokeWidth}
-      onClick={() => onSelectSlot(slotKey)}
-      d={pathD}
-    />
-    <path 
-      stroke={topcoverColor || "#231f20"} 
-      fill="none" 
-      strokeWidth="1.5" 
-      pointerEvents="none" 
-      d={pathD} 
-    />
-  </>
-);
+      <path 
+        key={uniqueKey}
+        className="interactive-module" 
+        fill={fill} 
+        stroke={stroke} 
+        strokeWidth={strokeWidth} 
+        onClick={() => onSelectSlot(slotNum)} 
+        d={pathD}
+        style={customStyle}
+      />
+    );
   };
 
   const cornerPath = "M79.96,11.59l5.45,10.3h-1.51v2.66h-2.92l-2.64-6.05-1.47-.7.78-11.77-3.55-.17-33,15.83-2.4,2.69,9.65,6.74-1.86-.89,1.1,2.4-3.25,1.55-1.7-3.51-2.4-.91-.66,1.88-7.42-9.21-2.43,2.76-12.4,35.11.15,3.67,11.44-2.18-.68,1.92,5.81,2.16,9.03-.2c1.63-.04,3.2-.59,4.48-1.58l3.72-2.87c1.39-1.07,3.1-1.66,4.85-1.67l65.94-.37V23.5h-3.08v-1.61h-2.22l6.15-10.32-3.28-1.38h-36.41s-3.28,1.39-3.28,1.39Z";
@@ -114,18 +110,32 @@ export default function XL7544({
       <defs>
         <style>{`
           .cls-1 { fill: none; stroke-miterlimit: 10; stroke-width: 3px; }
-          .cls-label { font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 800; fill: #969696; letter-spacing: 0.1em; }
+          .cls-label { font-family: FuturaPT-Heavy, 'Futura PT'; font-size: 12px; font-weight: 800; fill: #989898; letter-spacing: 0.1em; }
           .cls-num { font-family: FuturaPT-Bold, 'Futura PT'; font-size: 14px; font-weight: 700; fill: #282828; cursor: pointer; }
           .interactive-module { transition: filter 0.2s, stroke 0.2s; cursor: pointer; }
           .interactive-module:hover { filter: brightness(1.2); }
         `}</style>
 
         {Object.entries(slotData).map(([key, val]) => {
-          if (val && val.mode === 'dual' && val.secondary) {
+          if (!val || val.active === false) return null;
+          
+          if (val.mode === 'dual' && val.secondary) {
             return (
-              <linearGradient key={key} id={`grad-44-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="50%" stopColor={val.primary} />
-                <stop offset="50%" stopColor={val.secondary} />
+              <linearGradient key={key} id={`grad-dual-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="50%" stopColour={val.primary} />
+                <stop offset="50%" stopColour={val.secondary} />
+              </linearGradient>
+            );
+          }
+          if (val.mode === 'tri' && val.secondary && val.tertiary) {
+            return (
+              <linearGradient key={key} id={`grad-tri-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.tertiary} />
+                <stop offset="100%" stopColour={val.tertiary} />
               </linearGradient>
             );
           }
@@ -135,26 +145,26 @@ export default function XL7544({
 
       <g transform="translate(0, 16)">
         {/* Chassis Outlines */}
-        <path className="cls-1" stroke={lensColor} d="M276.34,1.5h271.72c44.64,0,80.83,36.19,80.83,80.83h0c0,44.64-36.19,80.84-80.83,80.84h-271.72"/>
-        <path className="cls-1" stroke={lensColor} d="M335.31,163.17H82.33C37.69,163.17,1.5,126.98,1.5,82.34h0C1.5,37.69,37.69,1.5,82.33,1.5h252.98"/>
+        <path className="cls-1" stroke={lensColour} d="M276.34,1.5h271.72c44.64,0,80.83,36.19,80.83,80.83h0c0,44.64-36.19,80.84-80.83,80.84h-271.72"/>
+        <path className="cls-1" stroke={lensColour} d="M335.31,163.17H82.33C37.69,163.17,1.5,126.98,1.5,82.34h0C1.5,37.69,37.69,1.5,82.33,1.5h252.98"/>
 
         {/* --- CORNERS (1 - 4) --- */}
-        {renderModule(1, cornerPath, {}, 'corner-1')}
+        {renderModule(3, cornerPath, {}, 'corner-1')}
         <g transform="translate(0, 164.67) scale(1, -1)">
-          {renderModule(2, cornerPath, {}, 'corner-2')}
+          {renderModule(1, cornerPath, {}, 'corner-2')}
         </g>
         <g transform="translate(630.4, 0) scale(-1, 1)">
           <g transform="translate(0, 164.67) scale(1, -1)">
-            {renderModule(3, cornerPath, {}, 'corner-3')}
+            {renderModule(2, cornerPath, {}, 'corner-3')}
           </g>
           {renderModule(4, cornerPath, {}, 'corner-4')}
         </g>
 
         {/* --- CHASSIS DIVIDERS --- */}
-        <line className="cls-1" stroke={lensColor} x1="167.99" y1="163.17" x2="167.99" y2="1.5"/>
-        <line className="cls-1" stroke={lensColor} x1="462.41" y1="1.5" x2="462.41" y2="163.17"/>
-        <line className="cls-1" stroke={lensColor} x1="231.54" y1="163.17" x2="231.54" y2="1.5"/>
-        <line className="cls-1" stroke={lensColor} x1="398.63" y1="1.5" x2="398.63" y2="163.17"/>
+        <line className="cls-1" stroke={lensColour} x1="167.99" y1="163.17" x2="167.99" y2="1.5"/>
+        <line className="cls-1" stroke={lensColour} x1="462.41" y1="1.5" x2="462.41" y2="163.17"/>
+        <line className="cls-1" stroke={lensColour} x1="231.54" y1="163.17" x2="231.54" y2="1.5"/>
+        <line className="cls-1" stroke={lensColour} x1="398.63" y1="1.5" x2="398.63" y2="163.17"/>
 
         {/* --- TOP ROW MODULES --- */}
         {renderModule(5, optOuterTop, {}, 'top-5')}
@@ -177,8 +187,8 @@ export default function XL7544({
 
         {/* --- NUMBERS --- */}
         <text className="cls-num" onClick={() => onSelectSlot(1)} transform="translate(73.5 126)"><tspan x="0" y="0">1</tspan></text>
-        <text className="cls-num" onClick={() => onSelectSlot(2)} transform="translate(73.5 48)"><tspan x="0" y="0">2</tspan></text>
-        <text className="cls-num" onClick={() => onSelectSlot(3)} transform="translate(551 126)"><tspan x="0" y="0">3</tspan></text>
+        <text className="cls-num" onClick={() => onSelectSlot(2)} transform="translate(551 126)"><tspan x="0" y="0">2</tspan></text>
+        <text className="cls-num" onClick={() => onSelectSlot(3)} transform="translate(73.5 48)"><tspan x="0" y="0">3</tspan></text>
         <text className="cls-num" onClick={() => onSelectSlot(4)} transform="translate(551 48)"><tspan x="0" y="0">4</tspan></text>
         <text className="cls-num" onClick={() => onSelectSlot(5)} transform="translate(192 48)"><tspan x="0" y="0">5</tspan></text>
         <text className="cls-num" onClick={() => onSelectSlot(6)} transform="translate(427 48)"><tspan x="0" y="0">6</tspan></text>
