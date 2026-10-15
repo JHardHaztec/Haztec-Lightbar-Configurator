@@ -1,18 +1,21 @@
 import React from 'react';
 
 export default function XL7561({ 
-  lensColor,
-  topcoverColor = "#231f20",
+  lensColour, 
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
 }) {
+  
   const getFill = (slotNum) => {
     const slot = slotData[slotNum];
     if (!slot || slot.active === false) return 'transparent';
     
     if (slot.mode === 'dual' && slot.secondary) {
-      return `url(#grad-61-${slotNum})`;
+      return `url(#grad-dual-${slotNum})`;
+    }
+    if (slot.mode === 'tri' && slot.secondary && slot.tertiary) {
+      return `url(#grad-tri-${slotNum})`;
     }
     return slot.primary || '#808285';
   };
@@ -146,7 +149,7 @@ const shortmodule5 = "M126.82,151.78v-11.32h4.84v-15.37c2.55-.78,4.41-3.16,4.41-
       style={{ width: '100%', maxWidth: '900px', height: '280px', display: 'block', margin: '0 auto' }}
     >
       <defs>
-      <style>{`
+        <style>{`
           .cls-1 { fill: none; stroke-miterlimit: 10; stroke-width: 3px; }
           .cls-label { font-family: FuturaPT-Heavy, 'Futura PT'; font-size: 12px; font-weight: 800; fill: #989898; letter-spacing: 0.1em; }
           .cls-num { font-family: FuturaPT-Bold, 'Futura PT'; font-size: 14px; font-weight: 700; fill: #282828; cursor: pointer; }
@@ -155,11 +158,25 @@ const shortmodule5 = "M126.82,151.78v-11.32h4.84v-15.37c2.55-.78,4.41-3.16,4.41-
         `}</style>
 
         {Object.entries(slotData).map(([key, val]) => {
-          if (val && val.mode === 'dual' && val.secondary) {
+          if (!val || val.active === false) return null;
+          
+          if (val.mode === 'dual' && val.secondary) {
             return (
-              <linearGradient key={key} id={`grad-61-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="50%" stopColor={val.primary} />
-                <stop offset="50%" stopColor={val.secondary} />
+              <linearGradient key={key} id={`grad-dual-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="50%" stopColour={val.primary} />
+                <stop offset="50%" stopColour={val.secondary} />
+              </linearGradient>
+            );
+          }
+          if (val.mode === 'tri' && val.secondary && val.tertiary) {
+            return (
+              <linearGradient key={key} id={`grad-tri-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.tertiary} />
+                <stop offset="100%" stopColour={val.tertiary} />
               </linearGradient>
             );
           }
@@ -169,7 +186,7 @@ const shortmodule5 = "M126.82,151.78v-11.32h4.84v-15.37c2.55-.78,4.41-3.16,4.41-
 
       <g transform="translate(0, 16)">
       {/* --- Chassis Outlines --- */}
-      <g stroke={lensColor || "#231f20"} fill="none" strokeWidth="3" strokeMiterlimit="10">
+      <g stroke={lensColour || "#231f20"} fill="none" strokeWidth="3" strokeMiterlimit="10">
         <path d="M502.63,1.5h252.98c44.64,0,80.83,36.19,80.83,80.83h0c0,44.64-36.19,80.84-80.83,80.84h-252.98"/>
   	<path d="M335.31,163.17H82.33C37.69,163.17,1.5,126.98,1.5,82.34h0c0-44.64,36.19-80.84,80.83-80.84h252.98"/>
       <line x1="167.99" y1="163.17" x2="167.99" y2="1.5"/>
