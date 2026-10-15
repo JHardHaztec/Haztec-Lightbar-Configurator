@@ -6,6 +6,8 @@ import XL7544 from './assets/XL7544';
 import XL7574 from './assets/XL7574';
 import XL7568 from './assets/XL7568';
 import XL7561 from './assets/XL7561';
+import SL43 from './assets/SL43';
+import { getModuleOrderCode } from './OrderCodes';
 
 export default function App() {
   const [currentStage, setCurrentStage] = useState<'model' | 'exterior' | 'modules' | 'form' | 'success'>('model');
@@ -25,39 +27,54 @@ export default function App() {
 
   // Currently active slot being configured in the control panel
   const [selectedSlotNumber, setSelectedSlotNumber] = useState<number>(1);
+
+  // --- XPERT SL 43" CUSTOM OPTIONS STATE ---
+  const [sl43Speaker, setSl43Speaker] = useState(false);
+  const [sl43Sign, setSl43Sign] = useState(false);
+  const [sl43SignSize, setSl43SignSize] = useState<'300mm' | '160mm'>('300mm');
+  const [sl43SignColour, setSl43SignColour] = useState<'white' | 'yellow'>('white');
+  const [sl43SignText, setSl43SignText] = useState('');
+  const [sl43Siren, setSl43Siren] = useState(false);
+  const [sl43SirenModel, setSl43SirenModel] = useState<'8-82613' | '8-82415'>('8-82613');
+  const [sl43ControlModule, setSl43ControlModule] = useState(false);
+  const [sl43DividerColour, setSl43DividerColour] = useState('black');
+  const [sl43CentreType, setSl43CentreType] = useState('300mm');
+  const [rightLensColour, setRightLensColour] = useState('#dbd9d9');
+  const [splitLensEnabled, setSplitLensEnabled] = useState(false);
   
   // Master slot configuration state for sections 1 through 24
   const [slotData, setSlotData] = useState<Record<number, {
     active: boolean;
-    mode: 'single' | 'dual';
+    mode: 'single' | 'dual' | 'tri';
     primary: string;
     secondary: string;
+    tertiary: string;
     optionType?: string;
   }>>({
-    1: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6' },
-    2: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6' },
-    3: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6' },
-    4: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6' },
-    5: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6' },
-    6: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6' },
-    7: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6' },
-    8: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6' },
-    9: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    10: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    11: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    12: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    13: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    14: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    15: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    16: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    17: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    18: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    19: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    20: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    21: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    22: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    23: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
-    24: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', optionType: 'standard' },
+    1: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    2: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    3: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    4: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    5: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    6: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    7: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    8: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    9: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    10: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    11: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    12: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    13: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    14: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    15: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    16: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    17: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    18: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    19: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    20: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    21: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    22: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    23: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    24: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
   });
 
   useEffect(() => {
@@ -97,6 +114,7 @@ export default function App() {
 
   const slLengthOptions = [
     { id: 'SL17', name: 'Xpert SL Lightbar', dims: '17" / 429mm', chassisClass: 'chassis-sl17' },
+    { id: 'SL43', name: 'Xpert SL Lightbar', dims: '43" / 1089mm', chassisClass: 'chassis-sl' },
   ];
 
   const slxLengthOptions = [
@@ -135,8 +153,8 @@ export default function App() {
   const currentLengthOptions = lengthOptionsMap[selectedModel || 'xl75'] || xl75LengthOptions;
 
   const lensOptions = [
-    { id: 'clear', name: 'Clear', hex: '#dbd9d9' },
-    { id: 'amber', name: 'Amber', hex: '#fac943' },
+    { id: 'clear', name: 'Clear', hex: '#ebebeb' },
+    { id: 'amber', name: 'Amber', hex: '#f0a926' },
     { id: 'blue', name: 'Blue', hex: '#3b82f6' },
     { id: 'red', name: 'Red', hex: '#ef4444' },
   ];
@@ -148,47 +166,53 @@ export default function App() {
   ];
 
   const ledOptions = [
-    { id: 'amber', name: 'Amber', hex: '#fac943' },
+    { id: 'amber', name: 'Amber', hex: '#f0a926' },
     { id: 'blue', name: 'Blue', hex: '#3b82f6' },
     { id: 'red', name: 'Red', hex: '#ef4444' },
     { id: 'green', name: 'Green', hex: '#10b981' },
     { id: 'white', name: 'White', hex: '#ffffff' },
   ];
 
-  const getColorLetter = (hex: string): string => {
-    switch (hex) {
-      case '#fac943': return 'A';
-      case '#3b82f6': return 'B';
-      case '#10b981': return 'G';
-      case '#ef4444': return 'R';
-      case '#ffffff': return 'W';
-      default: return 'A';
+
+  // --- GLOBAL TRI-COLOUR SUPPORT HELPER ---
+  const isTriColourSupported = (optionType?: string): boolean => {
+    if (!optionType) return true; 
+    const lower = optionType.toLowerCase();
+    
+    // If the tag contains short, twinned, linear, or alley, hide tri-colour globally
+    if (lower.includes('short') || lower.includes('twinned') || lower.includes('linear') || lower.includes('alley')) {
+      return false;
     }
+    return true;
   };
 
-  const DUAL_ORDER_CODES: Record<string, string> = {
-    'AB': '98-10902-AB', 'BA': '98-10902-AB',
-    'AG': '98-10902-AG', 'GA': '98-10902-AG',
-    'AR': '98-10902-AR', 'RA': '98-10902-AR',
-    'AW': '98-10902-AW', 'WA': '98-10902-AW',
-    'BG': '98-10902-BG', 'GB': '98-10902-BG',
-    'BR': '98-10902-BR', 'RB': '98-10902-BR',
-    'BW': '98-10902-BW', 'WB': '98-10902-BW',
-    'GW': '98-10902-GW', 'WG': '98-10902-GW',
-    'RG': '98-10902-RG', 'GR': '98-10902-RG',
-    'RW': '98-10902-RW', 'WR': '98-10902-RW',
-  };
-
-  const getCornerOrderCode = (slot: { active: boolean; mode: string; primary: string; secondary: string }): string => {
-    if (!slot || slot.active === false) return 'N/A (Empty)';
-    const c1 = getColorLetter(slot.primary);
-    if (slot.mode === 'single') {
-      return `98-10901-${c1}`;
-    } else {
-      const c2 = getColorLetter(slot.secondary);
-      const combo = `${c1}${c2}`;
-      return DUAL_ORDER_CODES[combo] || `98-10902-${combo}`;
-    }
+  const handleSelectSlot = (slotKey: number | string) => {
+    const slotNum = Number(slotKey);
+    setSelectedSlotNumber(slotNum);
+  
+    setSlotData(prev => {
+      const existing = prev[slotNum] || {
+        active: false,
+        mode: 'single',
+        primary: '#808285',
+        secondary: '#3b82f6',
+        tertiary: '',
+        optionType: 'longmodule'
+      };
+      
+      const isFixedShort = selectedLength === 'XL7528' && (slotNum === 5 || slotNum === 6);
+  
+      return {
+        ...prev,
+        [slotNum]: {
+          ...existing,
+          active: true,
+          optionType: isFixedShort ? 'shortmodule' : (existing.optionType || 'longmodule'),
+          mode: (isFixedShort && existing.mode === 'tri') ? 'dual' : (existing.mode || 'single'),
+          primary: existing.primary || '#808285',
+        }
+      };
+    });
   };
 
   const isFormValid = formData.name.trim() !== '' && formData.email.trim() !== '';
@@ -201,40 +225,108 @@ export default function App() {
       case 'XL7561': return 20;
       case 'XL7568':
       case 'XL7574': return 24;
-      default: return 24; // Default fallback for other lengths
+      case 'SL43': return 0;
+      default: return 24;
     }
   };
 
-  const getAllowedSecondaryColors = (primaryHex: string): string[] => {
-    const c1 = getColorLetter(primaryHex);
-    switch (c1) {
-      case 'A': return ['#3b82f6', '#10b981', '#ef4444', '#ffffff'];
-      case 'B': return ['#10b981', '#ef4444', '#ffffff'];
-      case 'R': return ['#10b981', '#ffffff'];
-      case 'G': return ['#ffffff'];
-      case 'W': default: return [];
-    }
+  const getAllowedSecondaryColours = (primaryHex: string): string[] => {
+    if (!primaryHex) return ledOptions.map(l => l.hex);
+    return ledOptions
+      .map(l => l.hex)
+      .filter(hex => hex.toLowerCase() !== primaryHex.toLowerCase());
   };
 
-  const getLensColorHex = () => {
+  const getAllowedTertiaryColours = (primaryHex: string, secondaryHex?: string): string[] => {
+    return ledOptions
+      .map(l => l.hex)
+      .filter(hex => 
+        hex.toLowerCase() !== primaryHex?.toLowerCase() && 
+        (!secondaryHex || hex.toLowerCase() !== secondaryHex.toLowerCase())
+      );
+  };
+
+  const getLensColourHex = () => {
     const found = lensOptions.find(l => l.id === selectedLens);
     return found ? found.hex : '#e2e8f0';
   };
 
-  const getTopCoverColorHex = () => {
+  const getTopCoverColourHex = () => {
     const found = topcoverOptions.find(c => c.id === selectedTopCover);
     return found ? found.hex : '#1e293b';
   };
 
-const handleSelectModel = (modelId: string) => {
-  setSelectedModel(modelId);
-  setCurrentStage('exterior'); // Automatically advances to length selection
-};
+  const handleSelectModel = (modelId: string) => {
+    setSelectedModel(modelId);
+    setCurrentStage('exterior');
+  };
 
-const handleSelectLength = (lengthId: string) => {
-  setSelectedLength(lengthId);
-  setCurrentStage('modules'); // Automatically advances to Lens/Top Cover options (or modules)
-};
+  const handleSelectLength = (lengthId: string) => {
+    setSelectedLength(lengthId);
+    setCurrentStage('modules');
+  
+    setSlotData(prev => {
+      const updated = { ...prev };
+      
+      if (lengthId === 'XL7528') {
+        [5, 6].forEach(num => {
+          if (updated[num]) {
+            updated[num] = { 
+              ...updated[num], 
+              optionType: 'shortmodule',
+              mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode 
+            };
+          }
+        });
+      }
+      else if (lengthId === 'XL7544') {
+        [5, 6, 7, 8, 9, 10, 11, 12].forEach(num => {
+          if (updated[num]) {
+            updated[num] = { 
+              ...updated[num], 
+              optionType: 'shortmodule',
+              mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode 
+            };
+          }
+        });
+      }
+      else if (lengthId === 'XL7561') {
+        [5, 6, 7, 8].forEach(num => {
+          if (updated[num]) {
+            updated[num] = { 
+              ...updated[num], 
+              optionType: 'shortmodule',
+              mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode 
+            };
+          }
+        });
+      }
+      else if (lengthId === 'XL7568') {
+        [5, 6, 7, 8, 9, 10, 11, 12].forEach(num => {
+          if (updated[num]) {
+            updated[num] = { 
+              ...updated[num], 
+              optionType: 'shortmodule',
+              mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode 
+            };
+          }
+        });
+      }
+      else if (lengthId === 'XL7574') {
+        [5, 6, 7, 8].forEach(num => {
+          if (updated[num]) {
+            updated[num] = { 
+              ...updated[num], 
+              optionType: 'shortmodule',
+              mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode 
+            };
+          }
+        });
+      }
+  
+      return updated;
+    });
+  };
 
   const handleResetAllModules = () => {
     setSlotData(prev => {
@@ -247,14 +339,23 @@ const handleSelectLength = (lengthId: string) => {
           mode: 'single',
           primary: '#808285',
           secondary: '#3b82f6',
-          optionType: 'standard'
+          tertiary: '',
+          optionType: 'longmodule'
         };
       });
       return resetState;
     });
   };
 
-  const currentSlotState = slotData[selectedSlotNumber] || { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6' };
+  // Clean and pure — relies entirely on what optionType tag is stored in state
+  const currentSlotState = slotData[selectedSlotNumber] || { 
+    active: true, 
+    mode: 'single', 
+    primary: '#808285', 
+    secondary: '#3b82f6', 
+    tertiary: '', 
+    optionType: 'longmodule' 
+  };
 
   const updateCurrentSlot = (updates: Partial<typeof currentSlotState>) => {
     setSlotData(prev => ({
@@ -274,78 +375,54 @@ const handleSelectLength = (lengthId: string) => {
   const [showNextStepsModal, setShowNextStepsModal] = useState(false);
 
   const handleTriggerPrint = () => {
-  setShowNextStepsModal(false);
+    setShowNextStepsModal(false);
 
-  // 1. Store original inner and parent document titles
-  const originalTitle = document.title;
-  let originalParentTitle = '';
-  try {
-    originalParentTitle = window.parent.document.title;
-  } catch (e) {
-    // Cross-origin fallback
-  }
+    const originalTitle = document.title;
+    let originalParentTitle = '';
+    try {
+      originalParentTitle = window.parent.document.title;
+    } catch (e) {}
 
-  // 2. Extract Model Name
-  const rawModelName = lightbarModels.find(m => m.id === selectedModel)?.name || 'Lightbar';
+    const rawModelName = lightbarModels.find(m => m.id === selectedModel)?.name || 'Lightbar';
+    const lengthObj = currentLengthOptions.find(l => l.id === selectedLength);
+    const rawLengthName = lengthObj?.dims || lengthObj?.name || selectedLength || 'Length';
+    const rawCompany = formData.company || formData.name || 'Customer';
+    const dateStr = new Date().toISOString().split('T')[0];
 
-  // 3. Extract Length Option (Checking name, dims, or fallback string)
-  const lengthObj = currentLengthOptions.find(l => l.id === selectedLength);
-  // Prefers length dimensions (e.g. "1100mm"), then length name, then raw length ID
-  const rawLengthName = lengthObj?.dims || lengthObj?.name || selectedLength || 'Length';
+    const lightbarName = rawModelName.replace(/[^a-zA-Z0-9]/g, '_');
+    const lengthName = rawLengthName.replace(/[^a-zA-Z0-9]/g, '');
+    const companyName = rawCompany.replace(/[^a-zA-Z0-9]/g, '_');
 
-  // 4. Extract Company or Customer Name
-  const rawCompany = formData.company || formData.name || 'Customer';
+    const customPdfName = `Haztec_${lightbarName}-${lengthName}_${companyName}_${dateStr}`;
 
-  // 5. Format today's date (YYYY-MM-DD)
-  const dateStr = new Date().toISOString().split('T')[0];
+    document.title = customPdfName;
+    try {
+      if (window.parent && window.parent.document) {
+        window.parent.document.title = customPdfName;
+      }
+    } catch (e) {}
 
-  // 6. Clean strings (replace spaces/special characters with clean separators)
-  const lightbarName = rawModelName.replace(/[^a-zA-Z0-9]/g, '_');
-  const lengthName = rawLengthName.replace(/[^a-zA-Z0-9]/g, '');
-  const companyName = rawCompany.replace(/[^a-zA-Z0-9]/g, '_');
+    window.print();
 
-  // 7. Build filename: Haztec_{lightbarname}-{length}_{companyname}_date
-  const customPdfName = `Haztec_${lightbarName}-${lengthName}_${companyName}_${dateStr}`;
+    document.title = originalTitle;
+    try {
+      if (window.parent && window.parent.document && originalParentTitle) {
+        window.parent.document.title = originalParentTitle;
+      }
+    } catch (e) {}
+  };
 
-  // 8. Apply title updates for both iframe and root document contexts
-  document.title = customPdfName;
-  try {
-    if (window.parent && window.parent.document) {
-      window.parent.document.title = customPdfName;
-    }
-  } catch (e) {
-    // Ignore cross-origin error
-  }
+  const handleSendEmail = (type: 'quote' | 'share') => {
+    if (!isFormValid) return;
 
-  // 9. Trigger browser print
-  window.print();
+    const recipient = "sales@haztec.uk";
+    const subjectPrefix = type === 'quote' ? 'Quote Request' : 'Lightbar Configuration';
+    const customerInfo = formData.company ? `${formData.name} (${formData.company})` : formData.name;
+    const subject = encodeURIComponent(`${subjectPrefix} - ${customerInfo}`);
 
-  // 10. Restore original document titles
-  document.title = originalTitle;
-  try {
-    if (window.parent && window.parent.document && originalParentTitle) {
-      window.parent.document.title = originalParentTitle;
-    }
-  } catch (e) {
-    // Ignore cross-origin error
-  }
-};
-
-const handleSendEmail = (type: 'quote' | 'share') => {
-  if (!isFormValid) return;
-
-  const recipient = "sales@haztec.uk"; // Official Haztec sales address
-  
-  // Format clean subject line incorporating customer name/company
-  const subjectPrefix = type === 'quote' ? 'Quote Request' : 'Lightbar Configuration';
-  const customerInfo = formData.company ? `${formData.name} (${formData.company})` : formData.name;
-  const subject = encodeURIComponent(`${subjectPrefix} - ${customerInfo}`);
-
-  // Open native mail client with recipient and subject only
-  window.location.href = `mailto:${recipient}?subject=${subject}`;
-
-  setShowNextStepsModal(false);
-};
+    window.location.href = `mailto:${recipient}?subject=${subject}`;
+    setShowNextStepsModal(false);
+  };
 
   const areCornersConfigured = [1, 2, 3, 4].every(num => {
     const slot = slotData[num];
@@ -354,7 +431,6 @@ const handleSendEmail = (type: 'quote' | 'share') => {
 
   return (
     <div className="configurator-wrapper">
-
       <main className="config-main">
         {/* --- STEP 1: LIGHTBAR MODEL SELECTION --- */}
         {currentStage === 'model' && (
@@ -386,7 +462,6 @@ const handleSendEmail = (type: 'quote' | 'share') => {
         {currentStage === 'exterior' && (
           <section className="step-card animate-fade">
             <div className="config-section-group">
-              {/* Top-Right Back Button returning to Model selection */}
               <button className="btn-secondary"
                 onClick={() => setCurrentStage('model')} 
                 style={{ position: 'absolute', top: '50px', right: '40px' }}
@@ -394,7 +469,7 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                 Back to Lightbars
               </button>
               <h2>2. Length Selection</h2>
-              <p className="subtext">Select your lightbar length length.</p>
+              <p className="subtext">Select your lightbar length.</p>
               
               <div className="sub-category-block">
                 <div className="length-grid">
@@ -424,13 +499,15 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                   <p className="subtext">Configure chassis appearance and customize your lightbar sections below.</p>
                 </div>
                 
-                <button 
-                  className="btn-secondary animate-fade" 
-                  style={{ padding: '6px 14px', fontSize: '0.8rem', background: '#ef4444', color: '#ffffff', borderColor: '#ef444444' }}
-                  onClick={handleResetAllModules}
-                >
-                  ↺ Reset Modules
-                </button>
+                {selectedLength !== 'SL43' && (
+                  <button 
+                    className="btn-secondary animate-fade" 
+                    style={{ padding: '6px 14px', fontSize: '0.8rem', background: '#ef4444', color: '#ffffff', borderColor: '#ef444444' }}
+                    onClick={handleResetAllModules}
+                  >
+                    ↺ Reset Modules
+                  </button>
+                )}
               </div>
 
               {/* Chassis Swatches */}
@@ -470,6 +547,48 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                     ))}
                   </div>
                 </div>
+
+                {/* Split Lens Button */}
+                <div style={{ margin: '15px 0' }}>
+                  <button 
+                    type="button"
+                    onClick={() => setSplitLensEnabled(!splitLensEnabled)}
+                    style={{
+                      padding: '4px',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      borderRadius: '6px',
+                      border: 'none',
+                      textDecoration: 'underline',
+                      background: splitLensEnabled ? '#ffffff' : '#ffffff',
+                      color: splitLensEnabled ? '#353fad' : '#353fad',
+                      fontWeight: '700',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {splitLensEnabled ? '- Remove Split Lens' : '+ Split Lens Colours'}
+                  </button>
+                </div>
+
+                {/* Conditional Right Side Lens Selection Block */}
+                {splitLensEnabled && (
+                  <div className="sub-category-block" style={{ marginTop: '10px', paddingLeft: '8px', borderLeft: '3px solid #353fad' }}>
+                    <label className="sub-label">Right Side Lens Colour</label>
+                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+                    {lensOptions.map((lens) => (
+                      <div 
+                        key={lens.id} 
+                        className={`colour-card ${rightLensColour === lens.hex ? 'selected' : ''}`}
+                        onClick={() => setRightLensColour(lens.hex)} // <-- Make sure this is lens.hex, not lens.id
+                        style={{ padding: '8px' }}
+                      >
+                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
+                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
+                      </div>
+                    ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Blueprint Schematic Preview */}
@@ -483,381 +602,555 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                 <div className="lightbar-schematic-stage">
                   {selectedLength === '25' && (
                     <Minibar25 
-                      lensColor={getLensColorHex()} 
-                      topcoverColor={getTopCoverColorHex()}
+                      lensColour={getLensColourHex()} 
+                      topcoverColour={getTopCoverColourHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
-                      onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
+                      onSelectSlot={handleSelectSlot} 
                     />
                   )}
                   {selectedLength === 'XL7528' && (
                     <XL7528 
-                      lensColor={getLensColorHex()} 
-                      topcoverColor={getTopCoverColorHex()}
+                      lensColour={getLensColourHex()} 
+                      topcoverColour={getTopCoverColourHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
-                      onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
+                      onSelectSlot={handleSelectSlot} 
                     />
                   )}
                   {selectedLength === 'XL7544' && (
                     <XL7544 
-                      lensColor={getLensColorHex()} 
-                      topcoverColor={getTopCoverColorHex()}
+                      lensColour={getLensColourHex()} 
+                      topcoverColour={getTopCoverColourHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
-                      onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
+                      onSelectSlot={handleSelectSlot} 
                     />
                   )}
                   {selectedLength === 'XL7574' && (
                     <XL7574 
-                      lensColor={getLensColorHex()} 
-                      topcoverColor={getTopCoverColorHex()}
+                      lensColour={getLensColourHex()} 
+                      topcoverColour={getTopCoverColourHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
-                      onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
+                      onSelectSlot={handleSelectSlot} 
                     />
                   )}
                   {selectedLength === 'XL7561' && (
                     <XL7561 
-                      lensColor={getLensColorHex()} 
-                      topcoverColor={getTopCoverColorHex()}
+                      lensColour={getLensColourHex()} 
+                      topcoverColour={getTopCoverColourHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
-                      onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
+                      onSelectSlot={handleSelectSlot} 
                     />
                   )}
                   {selectedLength === 'XL7568' && (
                     <XL7568 
-                      lensColor={getLensColorHex()} 
-                      topcoverColor={getTopCoverColorHex()}
+                      lensColour={getLensColourHex()} 
+                      topcoverColour={getTopCoverColourHex()}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
-                      onSelectSlot={(num) => setSelectedSlotNumber(Number(num))} 
+                      onSelectSlot={handleSelectSlot} 
                     />
                   )}
-                  {selectedLength === 'SL48' && (
-                    <div style={{ padding: '40px', textAlign: 'center', color: '#64748b', fontStyle: 'italic' }}>
-                      Xpert SL (48") Schematic Preview Coming Soon
-                    </div>
+                  {selectedLength === 'SL43' && (
+                    <SL43 
+                      lensColour={getLensColourHex()}
+                      rightLensColour={rightLensColour}
+                      splitLensEnabled={splitLensEnabled}
+                      speakerSelected={sl43Speaker}
+                      signSelected={sl43Sign}
+                      signSize={sl43SignSize}
+                      signColour={sl43SignColour}
+                      signText={sl43SignText}
+                      sirenSelected={sl43Siren}
+                      sirenModel={sl43SirenModel}
+                      controlModuleSelected={sl43ControlModule}
+                      dividerColour={sl43DividerColour}
+                      centreSectionType={sl43CentreType}
+                    />
                   )}
                 </div>
               </div>
             </div>
               
             {/* SECTION SELECTOR & CONFIGURATION TOOLBAR */}
-            <div className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', borderBottom: '1px solid #1e293b', paddingBottom: '12px' }}>
+            {selectedLength === 'SL43' ? (
+              <div className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', padding: '16px', display: 'block', marginTop: '20px', borderRadius: '8px', textAlign: 'left' }}>
+                <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', marginBottom: '20px' }}>Xpert SL 43" Options</h3>
+                
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43Speaker} 
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setSl43Speaker(checked);
+                        if (checked) setSl43Sign(false);
+                      }}
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }} 
+                    />
+                    <strong>Speaker</strong>
+                  </label>
+                </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {/* Section 1: Corners (1-4) */}
-                  <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px', border: '1px solid #f5f5f5' }}>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Corner Modules</div>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      {[1, 2, 3, 4].map(num => (
-                        <button
-                          key={num}
-                          onClick={() => setSelectedSlotNumber(num)}
-                          style={{
-                            width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
-                            background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
-                            color: selectedSlotNumber === num ? '#166bdb' : '#282828',
-                            border: '1px solid #166bdb' , borderRadius: '6px', cursor: 'pointer'
-                          }}
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43Sign} 
+                      disabled={sl43Speaker} 
+                      onChange={(e) => {
+                        setSl43Sign(e.target.checked);
+                      }} 
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }} 
+                    />
+                    <strong>Illuminated Centre Sign</strong>
+                  </label>
+                </div>
+
+                {sl43Sign && (
+                  <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #ddd' }}>
+                    <div style={{ marginBottom: '15px' }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Size:</span>
+                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
+                        <button 
+                          className={`mode-tab ${sl43SignSize === '300mm' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignSize('300mm')}
+                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
                         >
-                          {num}
+                          300mm
+                        </button>
+                        <button 
+                          className={`mode-tab ${sl43SignSize === '160mm' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignSize('160mm')}
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          160mm
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '15px' }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Colour:</span>
+                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
+                        <button 
+                          className={`mode-tab ${sl43SignColour === 'white' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignColour('white')}
+                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                        >
+                          White
+                        </button>
+                        <button 
+                          className={`mode-tab ${sl43SignColour === 'yellow' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignColour('yellow')}
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          Yellow
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Custom Text:</span>
+                      <input 
+                        type="text" 
+                        value={sl43SignText} 
+                        onChange={(e) => setSl43SignText(e.target.value)} 
+                        placeholder="Enter sign text..." 
+                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }} 
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '8px' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43Siren} 
+                      onChange={(e) => setSl43Siren(e.target.checked)} 
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }} 
+                    />
+                    <strong>Siren Option</strong>
+                  </label>
+                  {sl43Siren && (
+                    <div style={{ display: 'flex', gap: '8px', marginLeft: '28px'}}>
+                      {['8-82613', '8-82415'].map((model) => (
+                        <button
+                          key={model}
+                          onClick={() => setSl43SirenModel(model as any)}
+                          className={`mode-tab ${sl43SirenModel === model ? 'active-tab' : ''}`}
+                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                        >
+                          {model}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ marginBottom: '22px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43ControlModule} 
+                      onChange={(e) => setSl43ControlModule(e.target.checked)}
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }}  
+                    />
+                    <strong>Control Module Option</strong>
+                  </label>
+                </div>
+
+                {!sl43Speaker && !sl43Sign && (
+                  <div style={{ marginBottom: '12px' }}>
+                    <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Centre Section Size:</span>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {['300mm', '290mm', '230mm'].map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setSl43CentreType(size)}
+                          className={`mode-tab ${sl43CentreType === size ? 'active-tab' : ''}`}
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          {size}
                         </button>
                       ))}
                     </div>
                   </div>
+                )}
 
-                  {/* Inner Modules */}
-                  {selectedLength === 'XL7528' && (
-                    <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px', border: '1px solid #f5f5f5' }}>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                        {Array.from({length: 2}, (_, i) => i + 5).map(num => (
-                          <button
-                            key={num}
-                            onClick={() => setSelectedSlotNumber(num)}
-                            style={{
-                              width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
-                              background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
-                              color: selectedSlotNumber === num ? '#166bdb' : '#282828',
-                              border: '1px solid #166bdb' , borderRadius: '6px', cursor: 'pointer'
-                            }}
-                          >
-                            {num}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedLength === 'XL7544' && (
-                    <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px', border: '1px solid #f5f5f5' }}>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                        {Array.from({length: 12}, (_, i) => i + 5).map(num => (
-                          <button
-                            key={num}
-                            onClick={() => setSelectedSlotNumber(num)}
-                            style={{
-                              width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
-                              background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
-                              color: selectedSlotNumber === num ? '#166bdb' : '#282828',
-                              border: '1px solid #166bdb' , borderRadius: '6px', cursor: 'pointer'
-                            }}
-                          >
-                            {num}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {(selectedLength === 'XL7574' || selectedLength === 'XL7568') && (
-                    <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px', border: '1px solid #f5f5f5' }}>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                        {Array.from({length: 20}, (_, i) => i + 5).map(num => (
-                          <button
-                            key={num}
-                            onClick={() => setSelectedSlotNumber(num)}
-                            style={{
-                              width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
-                              background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
-                              color: selectedSlotNumber === num ? '#166bdb' : '#282828',
-                              border: '1px solid #166bdb' , borderRadius: '6px', cursor: 'pointer'
-                            }}
-                          >
-                            {num}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedLength === 'XL7561' && (
-                    <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px', border: '1px solid #f5f5f5' }}>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                        {Array.from({length: 16}, (_, i) => i + 5).map(num => (
-                          <button
-                            key={num}
-                            onClick={() => setSelectedSlotNumber(num)}
-                            style={{
-                              width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
-                              background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
-                              color: selectedSlotNumber === num ? '#166bdb' : '#282828',
-                              border: '1px solid #166bdb' , borderRadius: '6px', cursor: 'pointer'
-                            }}
-                          >
-                            {num}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                <div>
+                  <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Bridge Colour:</span>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {['black','clear', 'amber', 'blue', 'red'].map((col) => (
+                      <button
+                        key={col}
+                        onClick={() => setSl43DividerColour(col)}
+                        className={`mode-tab ${sl43DividerColour === col ? 'active-tab' : ''}`}
+                        style={{ padding: '4px 10px', fontSize: '0.75rem', textTransform: 'capitalize' }}
+                      >
+                        {col}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-
-              {/* SHOW / LEAVE EMPTY TOGGLE */}
-              {selectedSlotNumber >= 5 && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#282828' }}>Inner module:</span>
-                  <button 
-                    className={`mode-tab ${currentSlotState.active ? 'active-tab' : ''}`}
-                    onClick={() => updateCurrentSlot({ active: true })}
-                    style={{ padding: '4px 12px', fontSize: '0.75rem' }}
-                  >
-                    Add Module
-                  </button>
-                  <button 
-                    className={`mode-tab ${!currentSlotState.active ? 'disabled-tab' : ''}`}
-                    onClick={() => updateCurrentSlot({ active: false })}
-                    style={{ padding: '4px 12px', fontSize: '0.75rem' }}
-                  >
-                    Leave Section Empty
-                  </button>
-                </div>
-              )}
-
-              {/* MODULE VARIANT SELECTOR (For Central Sections 13-16 on XL7544) */}
-              {currentSlotState.active && selectedLength === 'XL7544' && selectedSlotNumber >= 13 && selectedSlotNumber <= 16 && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#282828' }}>Type of Module:</span>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'standard' || !currentSlotState.optionType ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'standard' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    XT module long
-                  </button>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'linear' ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'linear' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    XT module short
-                  </button>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'alley' ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'alley' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    2x XT module short
-                  </button>
-                </div>
-              )}
-
-              {/* MODULE VARIANT SELECTOR (For Central Sections 9-24 on XL7574) */}
-              {currentSlotState.active && (selectedLength === 'XL7574') && selectedSlotNumber >= 9 && selectedSlotNumber <= 24 && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#282828' }}>Type of Module:</span>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'longmodule' || !currentSlotState.optionType ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'longmodule' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    XT module long
-                  </button>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'shortmodule' ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'shortmodule' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    XT module short
-                  </button>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'twinnedshortmodule' ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'twinnedshortmodule' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    2x XT module short
-                  </button>
-                </div>
-              )}
-
-               {/* MODULE VARIANT SELECTOR (For Central Sections 13-24 on XL7568) */}
-               {currentSlotState.active && (selectedLength === 'XL7568') && selectedSlotNumber >= 13 && selectedSlotNumber <= 24 && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#282828' }}>Type of Module:</span>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'longmodule' || !currentSlotState.optionType ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'longmodule' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    XT module long
-                  </button>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'shortmodule' ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'shortmodule' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    XT module short
-                  </button>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'twinnedshortmodule' ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'twinnedshortmodule' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    2x XT module short
-                  </button>
-                </div>
-              )}
-
-              {/* MODULE VARIANT SELECTOR (For Central Sections 9-20 on XL7561) */}
-              {currentSlotState.active && (selectedLength === 'XL7561') && selectedSlotNumber >= 9 && selectedSlotNumber <= 20 && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#282828' }}>Type of Module:</span>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'longmodule' || !currentSlotState.optionType ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'longmodule' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    XT module long
-                  </button>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'shortmodule' ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'shortmodule' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    XT module short
-                  </button>
-                  <button 
-                    className={`mode-tab ${currentSlotState.optionType === 'twinnedshortmodule' ? 'active-module' : ''}`}
-                    onClick={() => updateCurrentSlot({ optionType: 'twinnedshortmodule' })}
-                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                  >
-                    2x XT module short
-                  </button>
-                </div>
-              )}
-
-              {/* COLOR CONFIGURATION */}
-              {currentSlotState.active ? (
-                <>
-                  <div className="mode-selector-group" style={{ display: 'inline-flex', marginBottom: '12px' }}>
-                    <button 
-                      className={`mode-tab ${currentSlotState.mode === 'single' ? 'colour-tab' : ''}`}
-                      onClick={() => updateCurrentSlot({ mode: 'single' })}
-                    >
-                      Single Colour
-                    </button>
-                    <button 
-                      className={`mode-tab ${currentSlotState.mode === 'dual' ? 'colour-tab' : ''}`}
-                      onClick={() => updateCurrentSlot({ mode: 'dual' })}
-                    >
-                      Dual Colour
-                    </button>
-                  </div>
-
-                  <div className="palette-section" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', width: '100%' }}>
-                    <span className="palette-label" style={{ minWidth: '70px' }}>{currentSlotState.mode === 'dual' ? 'Colour 1:' : 'Colour:'}</span>
-                    <div className="palette-swatches" style={{ display: 'flex', gap: '6px' }}>
-                      {ledOptions.map(l => (
-                        <button
-                          key={l.id}
-                          className={`palette-btn ${currentSlotState.primary === l.hex ? 'active-palette' : ''}`}
-                          style={{ background: l.hex }}
-                          onClick={() => updateCurrentSlot({ primary: l.hex })}
-                          title={l.name}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  {currentSlotState.mode === 'dual' && (
-                    <div className="palette-section animate-fade" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
-                      <span className="palette-label" style={{ minWidth: '70px' }}>Colour 2:</span>
-                      <div className="palette-swatches" style={{ display: 'flex', gap: '6px' }}>
-                        {ledOptions.map(l => {
-                          const isAllowed = getAllowedSecondaryColors(currentSlotState.primary).includes(l.hex);
-                          return (
-                            <button
-                              key={l.id}
-                              disabled={!isAllowed}
-                              className={`palette-btn ${currentSlotState.secondary === l.hex ? 'active-palette' : ''} ${!isAllowed ? 'disabled-swatch' : ''}`}
-                              style={{ 
-                                background: l.hex, 
-                                opacity: isAllowed ? 1 : 0.2, 
-                                cursor: isAllowed ? 'pointer' : 'not-allowed' 
-                              }}
-                              onClick={() => isAllowed && updateCurrentSlot({ secondary: l.hex })}
-                              title={isAllowed ? l.name : `${l.name} (Not allowed for selected Colour 1)`}
-                            />
-                          );
-                        })}
+            ) : (
+              <div className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', borderBottom: '1px solid #1e293b', paddingBottom: '12px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {/* Corner Modules */}
+                    <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Corner Modules</div>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        {[1, 2, 3, 4].map(num => (
+                          <button
+                            key={num}
+                            onClick={() => handleSelectSlot(num)}
+                            style={{
+                              width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                              background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
+                              color: selectedSlotNumber === num ? '#166bdb' : '#282828',
+                              border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
+                            }}
+                          >
+                            {num}
+                          </button>
+                        ))}
                       </div>
                     </div>
-                  )}
-                </>
-              ) : (
-                <div style={{ color: '#64748b', fontSize: '0.85rem', fontStyle: 'italic', padding: '10px 0' }}>
-                  This inner module section is currently empty.
+
+                    {/* Inner Modules */}
+                    {selectedLength === 'XL7528' && (
+                      <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                          {Array.from({length: 2}, (_, i) => i + 5).map(num => (
+                            <button
+                              key={num}
+                              onClick={() => handleSelectSlot(num)}
+                              style={{
+                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
+                                color: selectedSlotNumber === num ? '#166bdb' : '#282828',
+                                border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
+                              }}
+                            >
+                              {num}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedLength === 'XL7544' && (
+                      <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                          {Array.from({length: 12}, (_, i) => i + 5).map(num => (
+                            <button
+                              key={num}
+                              onClick={() => handleSelectSlot(num)}
+                              style={{
+                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
+                                color: selectedSlotNumber === num ? '#166bdb' : '#282828',
+                                border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
+                              }}
+                            >
+                              {num}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {(selectedLength === 'XL7574' || selectedLength === 'XL7568') && (
+                      <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                          {Array.from({length: 20}, (_, i) => i + 5).map(num => (
+                            <button
+                              key={num}
+                              onClick={() => handleSelectSlot(num)}
+                              style={{
+                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
+                                color: selectedSlotNumber === num ? '#166bdb' : '#282828',
+                                border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
+                              }}
+                            >
+                              {num}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedLength === 'XL7561' && (
+                      <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                          {Array.from({length: 16}, (_, i) => i + 5).map(num => (
+                            <button
+                              key={num}
+                              onClick={() => handleSelectSlot(num)}
+                              style={{
+                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
+                                color: selectedSlotNumber === num ? '#166bdb' : '#282828',
+                                border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
+                              }}
+                            >
+                              {num}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
+
+                {selectedSlotNumber >= 5 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px' }}>
+                    <span style={{ fontSize: '0.8rem', color: '#282828' }}>Inner module:</span>
+                    <button 
+                      className={`mode-tab ${currentSlotState.active ? 'active-tab' : ''}`}
+                      onClick={() => updateCurrentSlot({ active: true })}
+                      style={{ padding: '4px 12px', fontSize: '0.75rem' }}
+                    >
+                      Add Module
+                    </button>
+                    <button 
+                      className={`mode-tab ${!currentSlotState.active ? 'disabled-tab' : ''}`}
+                      onClick={() => updateCurrentSlot({ active: false })}
+                      style={{ padding: '4px 12px', fontSize: '0.75rem' }}
+                    >
+                      Leave Section Empty
+                    </button>
+                  </div>
+                )}
+
+                {currentSlotState.active && selectedLength === 'XL7544' && selectedSlotNumber >= 13 && selectedSlotNumber <= 16 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.8rem', color: '#282828' }}>Type of Module:</span>
+                    <button 
+                      className={`mode-tab ${currentSlotState.optionType === 'longmodule' || currentSlotState.optionType === 'standard' || !currentSlotState.optionType ? 'active-module' : ''}`}
+                      onClick={() => updateCurrentSlot({ optionType: 'longmodule' })}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      XT module long
+                    </button>
+                    <button 
+                      className={`mode-tab ${currentSlotState.optionType === 'shortmodule' || currentSlotState.optionType === 'linear' ? 'active-module' : ''}`}
+                      onClick={() => updateCurrentSlot({ optionType: 'shortmodule' })}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      XT module short
+                    </button>
+                    <button 
+                      className={`mode-tab ${currentSlotState.optionType === 'twinnedshortmodule' || currentSlotState.optionType === 'alley' ? 'active-module' : ''}`}
+                      onClick={() => updateCurrentSlot({ optionType: 'twinnedshortmodule' })}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      2x XT module short
+                    </button>
+                  </div>
+                )}
+
+                {currentSlotState.active && (selectedLength === 'XL7574' || selectedLength === 'XL7568' || selectedLength === 'XL7561') && selectedSlotNumber >= 9 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.8rem', color: '#282828' }}>Type of Module:</span>
+                    <button 
+                      className={`mode-tab ${currentSlotState.optionType === 'longmodule' || currentSlotState.optionType === 'standard' || !currentSlotState.optionType ? 'active-module' : ''}`}
+                      onClick={() => updateCurrentSlot({ optionType: 'longmodule' })}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      XT module long
+                    </button>
+                    <button 
+                      className={`mode-tab ${currentSlotState.optionType === 'shortmodule' || currentSlotState.optionType === 'linear' ? 'active-module' : ''}`}
+                      onClick={() => updateCurrentSlot({ optionType: 'shortmodule' })}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      XT module short
+                    </button>
+                    <button 
+                      className={`mode-tab ${currentSlotState.optionType === 'twinnedshortmodule' || currentSlotState.optionType === 'alley' ? 'active-module' : ''}`}
+                      onClick={() => updateCurrentSlot({ optionType: 'twinnedshortmodule' })}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      2x XT module short
+                    </button>
+                  </div>
+                )}
+
+                {currentSlotState.active ? (
+                  <>
+                    <div className="mode-selector-group" style={{ display: 'inline-flex', marginBottom: '12px' }}>
+                      <button 
+                        className={`mode-tab ${currentSlotState.mode === 'single' ? 'colour-tab' : ''}`}
+                        onClick={() => updateCurrentSlot({ mode: 'single' })}>
+                        Single-Colour
+                      </button>
+                      
+                      <button 
+                        className={`mode-tab ${currentSlotState.mode === 'dual' ? 'colour-tab' : ''}`}
+                        onClick={() => updateCurrentSlot({ mode: 'dual' })}>
+                        Dual-Colour
+                      </button>
+
+                      {isTriColourSupported(currentSlotState.optionType) && (
+                        <button 
+                          className={`mode-tab ${currentSlotState.mode === 'tri' ? 'colour-tab' : ''}`}
+                          onClick={() => updateCurrentSlot({ 
+                            mode: 'tri', 
+                            tertiary: currentSlotState.tertiary || getAllowedTertiaryColours(currentSlotState.primary, currentSlotState.secondary)[0] || '' 
+                          })}
+                        >
+                          Tri-Colour
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="palette-section" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', width: '100%' }}>
+                      <span className="palette-label" style={{ minWidth: '70px' }}>
+                        {currentSlotState.mode === 'single' ? 'Colour:' : 'Colour 1:'}
+                      </span>
+                      <div className="palette-swatches" style={{ display: 'flex', gap: '6px' }}>
+                        {ledOptions.map(l => (
+                          <button
+                            key={l.id}
+                            className={`palette-btn ${currentSlotState.primary === l.hex ? 'active-palette' : ''}`}
+                            style={{ background: l.hex }}
+                            onClick={() => updateCurrentSlot({ primary: l.hex })}
+                            title={l.name}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {(currentSlotState.mode === 'dual' || currentSlotState.mode === 'tri') && (
+                      <div className="palette-section animate-fade" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
+                        <span className="palette-label" style={{ minWidth: '70px' }}>Colour 2:</span>
+                        <div className="palette-swatches" style={{ display: 'flex', gap: '6px' }}>
+                          {ledOptions.map(l => {
+                            const isAllowed = getAllowedSecondaryColours(currentSlotState.primary).includes(l.hex);
+                            return (
+                              <button
+                                key={l.id}
+                                disabled={!isAllowed}
+                                className={`palette-btn ${currentSlotState.secondary === l.hex ? 'active-palette' : ''} ${!isAllowed ? 'disabled-swatch' : ''}`}
+                                style={{ 
+                                  background: l.hex, 
+                                  opacity: isAllowed ? 1 : 0.2, 
+                                  cursor: isAllowed ? 'pointer' : 'not-allowed' 
+                                }}
+                                onClick={() => isAllowed && updateCurrentSlot({ secondary: l.hex })}
+                                title={isAllowed ? l.name : `${l.name} (Already selected in Colour 1 or Colour 2)`}
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {currentSlotState.mode === 'tri' && (
+                      <div className="palette-section animate-fade" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
+                        <span className="palette-label" style={{ minWidth: '70px' }}>Colour 3:</span>
+                        <div className="palette-swatches" style={{ display: 'flex', gap: '6px' }}>
+                          {ledOptions.map(l => {
+                            const isAllowed = getAllowedTertiaryColours(currentSlotState.primary, currentSlotState.secondary).includes(l.hex);
+
+                            return (
+                              <button
+                                key={l.id}
+                                disabled={!isAllowed}
+                                className={`palette-btn ${currentSlotState.tertiary === l.hex ? 'active-palette' : ''} ${!isAllowed ? 'disabled-swatch' : ''}`}
+                                style={{ 
+                                  background: l.hex, 
+                                  opacity: isAllowed ? 1 : 0.2, 
+                                  cursor: isAllowed ? 'pointer' : 'not-allowed' 
+                                }}
+                                onClick={() => isAllowed && updateCurrentSlot({ tertiary: l.hex })}
+                                title={isAllowed ? l.name : `${l.name} (Already selected in Colour 1 or Colour 2)`}
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div style={{ color: '#64748b', fontSize: '0.85rem', fontStyle: 'italic', padding: '10px 0' }}>
+                    This inner module section is currently empty.
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="step-footer-action button-group-row" style={{ marginTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button 
@@ -868,18 +1161,18 @@ const handleSendEmail = (type: 'quote' | 'share') => {
               </button>
 
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
-                {!areCornersConfigured && (
+                {selectedLength !== 'SL43' && !areCornersConfigured && (
                   <span style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 600 }}>
                     * Please select LED colours for all 4 Corner Modules (1–4) to continue
                   </span>
                 )}
                 <button 
-                  className={`btn-primary btn-large ${!areCornersConfigured ? 'disabled' : ''}`} 
-                  onClick={() => areCornersConfigured && setCurrentStage('form')}
-                  disabled={!areCornersConfigured}
-                  style={{ opacity: areCornersConfigured ? 1 : 0.5, cursor: areCornersConfigured ? 'pointer' : 'not-allowed' }}
+                  className={`btn-primary btn-large ${selectedLength !== 'SL43' && !areCornersConfigured ? 'disabled' : ''}`} 
+                  onClick={() => (selectedLength === 'SL43' || areCornersConfigured) && setCurrentStage('form')}
+                  disabled={selectedLength !== 'SL43' && !areCornersConfigured}
+                  style={{ opacity: selectedLength === 'SL43' || areCornersConfigured ? 1 : 0.5, cursor: selectedLength === 'SL43' || areCornersConfigured ? 'pointer' : 'not-allowed' }}
                 >
-                  {areCornersConfigured ? 'Continue to Details' : 'Configure Corners 1–4 to Continue'}
+                  {selectedLength === 'SL43' || areCornersConfigured ? 'Continue to Details' : 'Configure Corners 1–4 to Continue'}
                 </button>
               </div>
             </div>
@@ -892,19 +1185,16 @@ const handleSendEmail = (type: 'quote' | 'share') => {
             <h2 className="no-print">4. Customer Details & Summary</h2>
             <p className="subtext no-print">Review your configuration and enter your details below.</p>
             
-            {/* PRINT-FRIENDLY SPEC SHEET CONTAINER */}
             <div className="print-spec-sheet">
               <div className="print-header" style={{ display: 'none' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #231f20', paddingBottom: '8px', marginBottom: '16px', marginTop: '26px' }}>
-              <img src="/Haztec-logo.svg" alt="Haztec Logo" style={{ height: '35px', objectFit: 'contain' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #231f20', paddingBottom: '8px', marginBottom: '16px', marginTop: '26px' }}>
+                  <img src="/Haztec-logo.svg" alt="Haztec Logo" style={{ height: '35px', objectFit: 'contain' }} />
                   <h1 style={{ fontSize: '22px', margin: 0 }}>Lightbar Configuration Summary</h1>
                 </div>
               </div>
 
               <div className="summary-box" style={{ background: '#ffffff', border: '1px solid #ddd', padding: '16px', borderRadius: '6px', marginBottom: '20px', textAlign: 'left' }}>
-              
-              {/* CONDITIONAL DIVIDER & CUSTOMER DETAILS */}
-              {(formData.name || formData.company || formData.email || formData.phone) && (
+                {(formData.name || formData.company || formData.email || formData.phone) && (
                   <>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                       {formData.name && <div style={{ margin: '4px 0', fontSize: '14px' }}><strong>Name:</strong> {formData.name}</div>}
@@ -919,14 +1209,17 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                 <div style={{ margin: '6px 0', fontSize: '14px' }}><strong>Model:</strong> {lightbarModels.find(m => m.id === selectedModel)?.name} ({currentLengthOptions.find(l => l.id === selectedLength)?.dims})</div>
                 <div style={{ margin: '6px 0', fontSize: '14px' }}>
                   <strong>Outer Lens Colour:</strong> 
-                  <span style={{ display: 'inline-block', width: '12px', height: '12px', background: getLensColorHex(), verticalAlign: 'middle', borderRadius: '50%', margin: '0 6px', border: '1px solid #ccc' }}></span> 
+                  <span style={{ display: 'inline-block', width: '12px', height: '12px', background: getLensColourHex(), verticalAlign: 'middle', borderRadius: '50%', margin: '0 6px', border: '1px solid #ccc' }}></span> 
                   {lensOptions.find(l => l.id === selectedLens)?.name}
+                  
                 </div>
-                <div style={{ margin: '6px 0', fontSize: '14px' }}>
-                  <strong>Top Cover Colour:</strong> 
-                  <span style={{ display: 'inline-block', width: '12px', height: '12px', background: getTopCoverColorHex(), verticalAlign: 'middle', borderRadius: '50%', margin: '0 6px', border: '1px solid #ccc' }}></span> 
-                  {topcoverOptions.find(c => c.id === selectedTopCover)?.name}
-                </div>
+                {selectedModel === 'xl75' && (
+                  <div style={{ margin: '6px 0', fontSize: '14px' }}>
+                    <strong>Top Cover Colour:</strong> 
+                    <span style={{ display: 'inline-block', width: '12px', height: '12px', background: getTopCoverColourHex(), verticalAlign: 'middle', borderRadius: '50%', margin: '0 6px', border: '1px solid #ccc' }}></span> 
+                    {topcoverOptions.find(c => c.id === selectedTopCover)?.name}
+                  </div>
+                )}
               </div>
 
               {/* Schematic Preview */}
@@ -937,48 +1230,71 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                   </span>
                 </div>
                 <div className="lightbar-schematic-stage" style={{ display: 'flex', justifyContent: 'center' }}>
-                  {selectedLength === '25' && <Minibar25 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7528' && <XL7528 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7544' && <XL7544 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7574' && <XL7574 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7568' && <XL7568 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'XL7561' && <XL7561 lensColor={getLensColorHex()} topcoverColor={getTopCoverColorHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === '25' && <Minibar25 lensColour={getLensColourHex()} topcoverColour={getTopCoverColourHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7528' && <XL7528 lensColour={getLensColourHex()} topcoverColour={getTopCoverColourHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7544' && <XL7544 lensColour={getLensColourHex()} topcoverColour={getTopCoverColourHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7574' && <XL7574 lensColour={getLensColourHex()} topcoverColour={getTopCoverColourHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7568' && <XL7568 lensColour={getLensColourHex()} topcoverColour={getTopCoverColourHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'XL7561' && <XL7561 lensColour={getLensColourHex()} topcoverColour={getTopCoverColourHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
+                  {selectedLength === 'SL43' && (
+                    <SL43 
+                      lensColour={getLensColourHex()}
+                      speakerSelected={sl43Speaker}
+                      signSelected={sl43Sign}
+                      signSize={sl43SignSize}
+                      signColour={sl43SignColour}
+                      signText={sl43SignText}
+                      sirenSelected={sl43Siren}
+                      sirenModel={sl43SirenModel}
+                      controlModuleSelected={sl43ControlModule}
+                      dividerColour={sl43DividerColour}
+                      centreSectionType={sl43CentreType}
+                      rightLensColour={rightLensColour}
+                      splitLensEnabled={splitLensEnabled}
+                    />
+                  )}
                 </div>
               </div>
 
-              {/* Full Slots & Modules Table */}
-              <h3 style={{ fontSize: '16px', margin: '20px 0 10px 0', textAlign: 'left' }}>Configured Slots & Modules</h3>
-              <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px', fontSize: '13px', textAlign: 'left' }}>
-                <thead>
-                  <tr style={{ background: '#f1f1f1' }}>
-                    <th style={{ border: '1px solid #ddd', padding: '8px 10px' }}>Module Position</th>
-                    <th style={{ border: '1px solid #ddd', padding: '8px 10px' }}>Order Code / Details</th>
-                    <th style={{ border: '1px solid #ddd', padding: '8px 10px' }}>Colour Type</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(slotData)
-                    .filter(([key]) => Number(key) <= getMaxSlots(selectedLength))
-                    .map(([key, slot]) => (
-                      <tr key={key}>
-                        <td style={{ border: '1px solid #ddd', padding: '8px 10px' }}><strong>{key}</strong></td>
-                        <td style={{ border: '1px solid #ddd', padding: '8px 10px' }}>
-                          {Number(key) >= 1 && Number(key) <= 4 
-                            ? getCornerOrderCode(slot) 
-                            : (slot.active !== false ? `Primary: ${slot.primary} ${slot.mode === 'dual' ? `/ Secondary: ${slot.secondary}` : ''}` : 'N/A')}
-                        </td>
-                        <td style={{ border: '1px solid #ddd', padding: '8px 10px' }}>{slot.mode ? slot.mode.toUpperCase() : 'SINGLE'}</td>
+              {/* Full Slots & Modules Table (Only shown if slots exist) */}
+              {selectedLength !== 'SL43' && (
+                <>
+                  <h3 style={{ fontSize: '16px', margin: '20px 0 10px 0', textAlign: 'left' }}>Configured Slots & Modules</h3>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px', fontSize: '13px', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ background: '#f1f1f1' }}>
+                        <th style={{ border: '1px solid #ddd', padding: '8px 10px' }}>Module Position</th>
+                        <th style={{ border: '1px solid #ddd', padding: '8px 10px' }}>Order Code / Details</th>
+                        <th style={{ border: '1px solid #ddd', padding: '8px 10px' }}>Colour Type</th>
                       </tr>
-                    ))}
-                </tbody>
-              </table>
+                    </thead>
+                    <tbody>
+                      {Object.entries(slotData)
+                        .filter(([key]) => Number(key) <= getMaxSlots(selectedLength))
+                        .map(([key, slot]) => {
+                          const slotNum = Number(key);
+                          return (
+                            <tr key={key}>
+                              <td style={{ border: '1px solid #ddd', padding: '8px 10px' }}><strong>{key}</strong></td>
+                              <td style={{ border: '1px solid #ddd', padding: '8px 10px' }}>
+                                {getModuleOrderCode(slotNum, slot, selectedModel)}
+                              </td>
+                              <td style={{ border: '1px solid #ddd', padding: '8px 10px' }}>
+                                {slot.mode ? slot.mode.toUpperCase() : 'SINGLE'}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </>
+              )}
             </div>
 
-            {/* Customer Form (Hidden on Print) */}
+            {/* Customer Form */}
             <div className="form-group no-print" style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '24px', textAlign: 'left' }}>
               <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem' }}>Your Information</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {/* Row 1: Name and Company side by side */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Name *</label>
@@ -989,7 +1305,6 @@ const handleSendEmail = (type: 'quote' | 'share') => {
                     <input type="text" name="company" value={formData.company} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }} placeholder="Acme Corp" />
                   </div>
                 </div>
-                {/* Row 2: Email and Phone side by side */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Email *</label>
@@ -1003,8 +1318,8 @@ const handleSendEmail = (type: 'quote' | 'share') => {
               </div>
             </div>
 
-           {/* Action Buttons (Hidden on Print) */}
-           <div className="step-footer-action button-group-row no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {/* Action Buttons */}
+            <div className="step-footer-action button-group-row no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button className="btn-secondary" onClick={() => setCurrentStage('modules')}>
                 Back to Modules
               </button>
@@ -1032,94 +1347,95 @@ const handleSendEmail = (type: 'quote' | 'share') => {
             </div>
 
             {/* NEXT STEPS MODAL */}
-      {showNextStepsModal && (
-        <div className="modal-overlay no-print" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.75)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '24px' }}>
-          <div className="modal-card animate-fade" style={{ background: '#ffffff', width: '100%', maxWidth: '620px', borderRadius: '12px', padding: '28px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)', position: 'relative' }}>
-            
-            {/* Close Button */}
-            <button onClick={() => setShowNextStepsModal(false)} style={{ position: 'absolute', top: '18px', right: '18px', background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#64748b' }}>×</button>
+            {showNextStepsModal && (
+              <div className="modal-overlay no-print" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.75)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '24px' }}>
+                <div className="modal-card animate-fade" style={{ background: '#ffffff', width: '100%', maxWidth: '640px', borderRadius: '12px', padding: '28px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)', position: 'relative' }}>
+                  
+                  <button onClick={() => setShowNextStepsModal(false)} style={{ position: 'absolute', top: '18px', right: '18px', background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#64748b' }}>×</button>
 
-            {/* Header */}
-            <h2 style={{ margin: '0 0 6px 0', fontSize: '1.35rem', color: '#0f172a' }}>Configuration Ready</h2>
-            <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#64748b' }}>Your specification summary has been compiled successfully.</p>
+                  <h2 style={{ margin: '0 0 6px 0', fontSize: '1.35rem', color: '#0f172a' }}>Configuration Ready</h2>
+                  <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#64748b' }}>Your specification summary has been compiled successfully.</p>
 
-            {/* SECTION 1: DOWNLOAD / PRINT INSTRUCTIONS */}
-            <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '16px', textAlign: 'left', marginBottom: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <span style={{ fontSize: '24px', lineHeight: 1 }}>📄</span>
-                <div>
-                  <strong style={{ fontSize: '0.95rem', color: '#0f172a', display: 'block', marginBottom: '4px' }}>Save as PDF or Print Spec Sheet</strong>
-                  <p style={{ margin: 0, fontSize: '0.825rem', color: '#475569', lineHeight: 1.4 }}>
-                    Click below to open your print preview. To save a digital copy, select <strong>"Save as PDF"</strong> under the Destination printer settings in your browser print window.
-                  </p>
+                  <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '16px', textAlign: 'left', marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '14px' }}>
+                      <span style={{ fontSize: '24px', lineHeight: 1 }}>📄</span>
+                      <div>
+                        <strong style={{ fontSize: '0.95rem', color: '#0f172a', display: 'block', marginBottom: '4px' }}>Save as PDF or Send via Email</strong>
+                        <p style={{ margin: 0, fontSize: '0.825rem', color: '#475569', lineHeight: 1.4 }}>
+                          Click below to open print preview and save as a PDF, then use the <strong>Email Config</strong> button to attach your downloaded file to an email draft.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <button 
+                        onClick={handleTriggerPrint} 
+                        style={{ 
+                          flex: 1, 
+                          padding: '10px 14px', 
+                          background: '#10b981', 
+                          color: '#ffffff', 
+                          border: 'none', 
+                          borderRadius: '6px', 
+                          fontSize: '0.875rem', 
+                          fontWeight: 600, 
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        🖨 Open Download / Print Dialog
+                      </button>
+
+                      <span style={{ fontSize: '1.1rem', color: '#64748b', fontWeight: 'bold' }}>➔</span>
+
+                      <button 
+                        onClick={() => handleSendEmail('quote')} 
+                        style={{ 
+                          flex: 1, 
+                          padding: '10px 14px', 
+                          background: '#2563eb', 
+                          color: '#ffffff', 
+                          border: 'none', 
+                          borderRadius: '6px', 
+                          fontSize: '0.875rem', 
+                          fontWeight: 600, 
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        ✉️ Email Config
+                      </button>
+                    </div>
+                  </div>
+
+                  <hr style={{ border: '0', borderTop: '1px solid #e2e8f0', margin: '20px 0' }} />
+
+                  <div style={{ textAlign: 'left' }}>
+                    <strong style={{ fontSize: '0.95rem', color: '#0f172a', display: 'block', marginBottom: '4px' }}>Bespoke or Custom Lightbar Requirements?</strong>
+                    <p style={{ margin: '0 0 12px 0', fontSize: '0.825rem', color: '#64748b', lineHeight: 1.4 }}>
+                      For special mounting brackets, custom wiring, or unique configurations, please contact our team:
+                    </p>
+
+                    <div style={{ display: 'flex', gap: '24px', alignItems: 'center', fontSize: '0.875rem', color: '#334155' }}>
+                      <a href="mailto:sales@haztec.uk" style={{ textDecoration: 'none', color: '#2563eb', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        ✉️ sales@haztec.uk
+                      </a>
+                      <span style={{ color: '#cbd5e1' }}>|</span>
+                      <a href="tel:+441132029115" style={{ textDecoration: 'none', color: '#0f172a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        📞 +44 (0)113 202 9115
+                      </a>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-
-              <button 
-                onClick={handleTriggerPrint} 
-                style={{ 
-                  width: '100%', 
-                  marginTop: '14px', 
-                  padding: '10px 16px', 
-                  background: '#10b981', 
-                  color: '#ffffff', 
-                  border: 'none', 
-                  borderRadius: '6px', 
-                  fontSize: '0.9rem', 
-                  fontWeight: 600, 
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}
-              >
-                🖨 Download / Print
-              </button>
-            </div>
-
-            {/* DIVIDER LINE */}
-            <hr style={{ border: '0', borderTop: '1px solid #e2e8f0', margin: '20px 0' }} />
-
-            {/* SECTION 2: UNIQUE CONFIGURATIONS & CONTACT OPTIONS */}
-            <div style={{ textAlign: 'left' }}>
-              <strong style={{ fontSize: '0.95rem', color: '#0f172a', display: 'block', marginBottom: '4px' }}>Need a Unique or Custom Configuration?</strong>
-              <p style={{ margin: '0 0 16px 0', fontSize: '0.825rem', color: '#64748b', lineHeight: 1.4 }}>
-                For bespoke lightbar customisation options, please get in touch with our expert team:
-              </p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                
-                {/* Submit / Email Quote Request */}
-                <button 
-                  onClick={() => handleSendEmail('quote')} 
-                  style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', padding: '12px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', cursor: 'pointer' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '16px' }}>✉️</span>
-                    <strong style={{ fontSize: '0.85rem', color: '#0f172a' }}>Email Sales</strong>
-                  </div>
-                  <small style={{ fontSize: '0.75rem', color: '#64748b' }}>Email build details to our sales department for pricing.</small>
-                </button>
-
-                {/* Direct Phone Line */}
-                <a 
-                  href="tel:+441132029115" 
-                  style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', padding: '12px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', textDecoration: 'none', cursor: 'pointer' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '16px' }}>📞</span>
-                    <strong style={{ fontSize: '0.85rem', color: '#0f172a' }}>Call Technical Sales</strong>
-                  </div>
-                  <small style={{ fontSize: '0.75rem', color: '#64748b' }}>+44 (0)113 202 9115</small>
-                </a>
-
-              </div>
-            </div>
-
-          </div>
-        </div>
-      )}
+            )}
           </section>
         )}
 
