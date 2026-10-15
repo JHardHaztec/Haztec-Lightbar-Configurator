@@ -1,56 +1,48 @@
 import React from 'react';
 
 export default function Minibar25({ 
-  lensColor,
-  topcoverColor = "#231f20",
+  lensColour, 
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
 }) {
-  // Helper to handle single hex colours OR dual-colour gradients
-  const getFill = (slotKey) => {
-    const slot = slotData[slotKey];
-    if (!slot || slot.active === false) return 'transparent'; // Hidden if N/A
+  
+  const getFill = (slotNum) => {
+    const slot = slotData[slotNum];
+    if (!slot || slot.active === false) return 'transparent';
     
-    if (typeof slot === 'object' && slot !== null) {
-      if (slot.mode === 'dual' && slot.secondary) {
-        return `url(#grad-${slotKey})`;
-      }
-      return slot.primary || slot.left || '#808285';
+    if (slot.mode === 'dual' && slot.secondary) {
+      return `url(#grad-dual-${slotNum})`;
     }
-    return slot || '#808285'; // Fallback grey if unconfigured
+    if (slot.mode === 'tri' && slot.secondary && slot.tertiary) {
+      return `url(#grad-tri-${slotNum})`;
+    }
+    return slot.primary || '#808285';
   };
 
-  const isSelected = (slotKey) => selectedSlotKey === slotKey;
+  const isSelected = (slotNum) => selectedSlotKey === slotNum;
 
-  const renderModule = (slotKey, pathD) => {
-    const slot = slotData[slotKey];
-    if (slot && slot.active === false) return null;
+  const renderModule = (slotNum, pathD, customStyle = {}, uniqueKey) => {
+    const slot = slotData[slotNum];
+    if (!slot || slot.active === false) return null;
 
-    const fill = getFill(slotKey);
-    const selected = isSelected(slotKey);
+    const fill = getFill(slotNum);
+    const selected = isSelected(slotNum);
     const stroke = selected ? '#38bdf8' : '#231f20';
     const strokeWidth = selected ? '3' : '1';
 
     return (
-  <>
-    <path 
-      className="cls-3" 
-      fill={fill} 
-      stroke={stroke}
-      strokeWidth={strokeWidth}
-      onClick={() => onSelectSlot(slotKey)}
-      d={pathD}
-    />
-    <path 
-      stroke={topcoverColor || "#231f20"} 
-      fill="none" 
-      strokeWidth="1.5" 
-      pointerEvents="none" 
-      d={pathD} 
-    />
-  </>
-);
+      <path 
+        key={uniqueKey}
+        className="interactive-module" 
+        fill={fill} 
+        stroke={stroke} 
+        strokeWidth={strokeWidth} 
+        onClick={() => onSelectSlot(slotNum)} 
+        d={pathD}
+        style={customStyle}
+      />
+    );
   };
 
   return (
@@ -61,26 +53,36 @@ export default function Minibar25({
       viewBox="0 0 332.55 196.67"
       style={{ width: '100%', maxWidth: '450px', height: 'auto', display: 'block', margin: '0 auto' }}
     >
-      <defs>
+     
+     <defs>
         <style>{`
-          .cls-chassis { fill: #808285; }
-          .cls-chassis, .cls-line { stroke-miterlimit: 10; stroke-width: 3px; }
-          .cls-line { fill: none; }
-          .cls-label { font-family: FuturaPT-Heavy, 'Futura PT'; font-size: 11px; font-weight: 800; fill: #282828; letter-spacing: 0.1em; }
-          .cls-num { font-family: FuturaPT-Bold, 'Futura PT'; font-size: 11px; font-weight: 700; fill: #282828; cursor: pointer; }
-          .cls-3 { transition: filter 0.2s, stroke 0.2s; cursor: pointer; }
-          .cls-3:hover { filter: brightness(1.2); }
+          .cls-1 { fill: none; stroke-miterlimit: 10; stroke-width: 3px; }
+          .cls-label { font-family: FuturaPT-Heavy, 'Futura PT'; font-size: 12px; font-weight: 800; fill: #989898; letter-spacing: 0.1em; }
+          .cls-num { font-family: FuturaPT-Bold, 'Futura PT'; font-size: 14px; font-weight: 700; fill: #282828; cursor: pointer; }
+          .interactive-module { transition: filter 0.2s, stroke 0.2s; cursor: pointer; }
+          .interactive-module:hover { filter: brightness(1.2); }
         `}</style>
 
-        {/* Dynamic Gradients for Dual-Colour Modules */}
         {Object.entries(slotData).map(([key, val]) => {
-          if (typeof val === 'object' && val !== null) {
-            const leftColor = val.primary || val.left || '#808285';
-            const rightColor = val.secondary || val.right || '#3b82f6';
+          if (!val || val.active === false) return null;
+          
+          if (val.mode === 'dual' && val.secondary) {
             return (
-              <linearGradient key={key} id={`grad-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="50%" stopColor={leftColor} />
-                <stop offset="50%" stopColor={rightColor} />
+              <linearGradient key={key} id={`grad-dual-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="50%" stopColour={val.primary} />
+                <stop offset="50%" stopColour={val.secondary} />
+              </linearGradient>
+            );
+          }
+          if (val.mode === 'tri' && val.secondary && val.tertiary) {
+            return (
+              <linearGradient key={key} id={`grad-tri-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.tertiary} />
+                <stop offset="100%" stopColour={val.tertiary} />
               </linearGradient>
             );
           }
@@ -90,8 +92,8 @@ export default function Minibar25({
 
       <g transform="translate(0, 16)">
         {/* Outer Chassis Outlines */}
-        <path className="cls-line" stroke={lensColor} d="M164.26,1.5h85.96c44.64,0,80.83,36.19,80.83,80.83h0c0,44.64-36.19,80.84-80.83,80.84h-85.96"/>
-        <path className="cls-line" stroke={lensColor} d="M168.41,163.17h-86.07C37.69,163.17,1.5,126.98,1.5,82.34h0C1.5,37.69,37.69,1.5,82.33,1.5h86.07"/>
+        <path className="cls-line" stroke={lensColour || "#231f20"} fill="none" strokeWidth="3" strokeMiterlimit="10" d="M164.26,1.5h85.96c44.64,0,80.83,36.19,80.83,80.83h0c0,44.64-36.19,80.84-80.83,80.84h-85.96"/>
+        <path className="cls-line" stroke={lensColour || "#231f20"} fill="none" strokeWidth="3" strokeMiterlimit="10" d="M168.41,163.17h-86.07C37.69,163.17,1.5,126.98,1.5,82.34h0C1.5,37.69,37.69,1.5,82.33,1.5h86.07"/>
 
         {/* Interactive Modules (Using original paths) */}
         {renderModule(3, "M79.96,11.59l5.45,10.3h-1.51v2.66h-2.92l-2.64-6.05-1.47-.7.78-11.77-3.55-.17-33,15.83-2.4,2.69,9.65,6.74-1.86-.89,1.1,2.4-3.25,1.55-1.7-3.51-2.4-.91-.66,1.88-7.42-9.21-2.43,2.76-12.4,35.11.15,3.67,11.44-2.18-.68,1.92,5.81,2.16,9.03-.2c1.63-.04,3.2-.59,4.48-1.58l3.72-2.87c1.39-1.07,3.1-1.66,4.85-1.67l65.94-.37V23.5h-3.08v-1.61h-2.22l6.15-10.32-3.28-1.38h-36.41s-3.28,1.39-3.28,1.39Z")}
@@ -103,8 +105,8 @@ export default function Minibar25({
         {renderModule(4, "M251.8,11.59l-5.45,10.3h1.51v2.66h2.92l2.64-6.05,1.47-.7-.78-11.77,3.55.17,33,15.83,2.4,2.69-9.65,6.74,1.86-.89-1.1,2.4,3.25,1.55,1.7-3.51,2.4-.91.66,1.88,7.42-9.21,2.43,2.76,12.4,35.11-.15,3.67-11.44-2.18.68,1.92-5.81,2.16-9.03-.2c-1.63-.04-3.2-.59-4.48-1.58l-3.72-2.87c-1.39,1.07-3.1,1.66-4.85-1.67l-65.94-.37V23.5h3.08v-1.61h2.22l-6.15-10.32,3.28-1.38h36.41s3.28,1.39,3.28,1.39Z")}
 
         {/* Divider lines */}
-        <line className="cls-line" stroke={lensColor} x1="166.41" y1="163.17" x2="166.41" y2="1.5"/>
-        <line className="cls-line" stroke={lensColor} x1="166.56" y1="1.5" x2="166.56" y2="163.17"/>
+        <line className="cls-line" stroke={lensColour || "#231f20"} strokeWidth="3" strokeMiterlimit="10" x1="166.41" y1="163.17" x2="166.41" y2="1.5"/>
+        <line className="cls-line" stroke={lensColour || "#231f20"} strokeWidth="3" strokeMiterlimit="10" x1="166.56" y1="1.5" x2="166.56" y2="163.17"/>
 
         {/* --- NUMBERS (1 to 4 placed inside corners) --- */}
         <text className="cls-num" onClick={() => onSelectSlot(1)} transform="translate(73.5 126)"><tspan x="0" y="0">1</tspan></text>
