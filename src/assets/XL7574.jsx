@@ -1,18 +1,21 @@
 import React from 'react';
 
 export default function XL7574 ({ 
-  lensColor,
-  topcoverColor = '#1e293b',
+  lensColour, 
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
 }) {
+  
   const getFill = (slotNum) => {
     const slot = slotData[slotNum];
     if (!slot || slot.active === false) return 'transparent';
     
     if (slot.mode === 'dual' && slot.secondary) {
-      return `url(#grad-74-${slotNum})`;
+      return `url(#grad-dual-${slotNum})`;
+    }
+    if (slot.mode === 'tri' && slot.secondary && slot.tertiary) {
+      return `url(#grad-tri-${slotNum})`;
     }
     return slot.primary || '#808285';
   };
@@ -29,24 +32,17 @@ export default function XL7574 ({
     const strokeWidth = selected ? '4' : '1';
 
     return (
-  <>
-    <path 
-      className="cls-3" 
-      fill={fill} 
-      stroke={stroke}
-      strokeWidth={strokeWidth}
-      onClick={() => onSelectSlot(slotKey)}
-      d={pathD}
-    />
-    <path 
-      stroke={topcoverColor || "#231f20"} 
-      fill="none" 
-      strokeWidth="1.5" 
-      pointerEvents="none" 
-      d={pathD} 
-    />
-  </>
-);
+      <path 
+        key={uniqueKey}
+        className="interactive-module" 
+        fill={fill} 
+        stroke={stroke} 
+        strokeWidth={strokeWidth} 
+        onClick={() => onSelectSlot(slotNum)} 
+        d={pathD}
+        style={customStyle}
+      />
+    );
   };
 
   // Base 74-inch Corner Geometry
@@ -167,33 +163,46 @@ export default function XL7574 ({
       data-name="Layer 2" 
       xmlns="http://www.w3.org/2000/svg" 
       viewBox="0 0 1025.11 164.67"
-      style={{ width: '100%', maxWidth: '900px', height: '200px', display: 'block', margin: '0 auto' }}
+      style={{ width: '100%', maxWidth: '900px', height: '280px', display: 'block', margin: '0 auto' }}
     >
       <defs>
-      <style>{`
+        <style>{`
           .cls-1 { fill: none; stroke-miterlimit: 10; stroke-width: 3px; }
-          .cls-label { font-family: FuturaPT-Heavy, 'Futura PT'; font-size: 12px; font-weight: 800; fill: #282828; letter-spacing: 0.1em; }
+          .cls-label { font-family: FuturaPT-Heavy, 'Futura PT'; font-size: 12px; font-weight: 800; fill: #989898; letter-spacing: 0.1em; }
           .cls-num { font-family: FuturaPT-Bold, 'Futura PT'; font-size: 14px; font-weight: 700; fill: #282828; cursor: pointer; }
           .interactive-module { transition: filter 0.2s, stroke 0.2s; cursor: pointer; }
           .interactive-module:hover { filter: brightness(1.2); }
         `}</style>
 
         {Object.entries(slotData).map(([key, val]) => {
-          if (val && val.mode === 'dual' && val.secondary) {
+          if (!val || val.active === false) return null;
+          
+          if (val.mode === 'dual' && val.secondary) {
             return (
-              <linearGradient key={key} id={`grad-74-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="50%" stopColor={val.primary} />
-                <stop offset="50%" stopColor={val.secondary} />
+              <linearGradient key={key} id={`grad-dual-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="50%" stopColour={val.primary} />
+                <stop offset="50%" stopColour={val.secondary} />
+              </linearGradient>
+            );
+          }
+          if (val.mode === 'tri' && val.secondary && val.tertiary) {
+            return (
+              <linearGradient key={key} id={`grad-tri-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.tertiary} />
+                <stop offset="100%" stopColour={val.tertiary} />
               </linearGradient>
             );
           }
           return null;
         })}
       </defs>
-
       <g transform="translate(0, 16)">
       {/* --- Chassis Outlines --- */}
-      <g stroke={lensColor || "#231f20"} fill="none" strokeWidth="3" strokeMiterlimit="10">
+      <g stroke={lensColour || "#231f20"} fill="none" strokeWidth="3" strokeMiterlimit="10">
       <path d="M428.77,163.17H82.33C37.69,163.17,1.5,126.98,1.5,82.34h0C1.5,37.69,37.69,1.5,82.33,1.5h346.44"/>
       <path d="M596.34,1.5h346.44c44.64,0,80.83,36.19,80.83,80.83h0c0,44.64-36.19,80.84-80.83,80.84h-346.44"/>
       <line x1="596.09" y1=".5" x2="596.09" y2="162.17"/>
