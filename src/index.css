@@ -258,8 +258,8 @@ body {
 
 .mode-tab {
   background: transparent;
-  border: 1px solid #282828;
-  color: #282828;
+  border: 1px solid #353fad;
+  color: #353fad;
   font-size: 0.75rem;
   font-weight: 600;
   padding: 6px 10px;
@@ -279,8 +279,8 @@ body {
 }
 
 .mode-tab.active-tab {
-  background: green;
-  border-color: green;
+  background: #353fad;
+  border-color: #353fad;
   color: #fff;
 }
 
