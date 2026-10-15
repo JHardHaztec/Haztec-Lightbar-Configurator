@@ -1,8 +1,7 @@
 import React from 'react';
 
 export default function XL7568({ 
-  lensColor = '#a1a1a1',
-  topcoverColor = "#231f20",
+  lensColour = '#a1a1a1',
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
@@ -12,7 +11,10 @@ export default function XL7568({
     if (!slot || slot.active === false) return 'transparent';
     
     if (slot.mode === 'dual' && slot.secondary) {
-      return `url(#grad-68-${slotNum})`;
+      return `url(#grad-dual-${slotNum})`;
+    }
+    if (slot.mode === 'tri' && slot.secondary && slot.tertiary) {
+      return `url(#grad-tri-${slotNum})`;
     }
     return slot.primary || '#808285';
   };
@@ -158,11 +160,25 @@ export default function XL7568({
         `}</style>
 
         {Object.entries(slotData).map(([key, val]) => {
-          if (val && val.mode === 'dual' && val.secondary) {
+          if (!val || val.active === false) return null;
+          
+          if (val.mode === 'dual' && val.secondary) {
             return (
-              <linearGradient key={key} id={`grad-68-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="50%" stopColor={val.primary} />
-                <stop offset="50%" stopColor={val.secondary} />
+              <linearGradient key={key} id={`grad-dual-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="50%" stopColour={val.primary} />
+                <stop offset="50%" stopColour={val.secondary} />
+              </linearGradient>
+            );
+          }
+          if (val.mode === 'tri' && val.secondary && val.tertiary) {
+            return (
+              <linearGradient key={key} id={`grad-tri-${key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.primary} />
+                <stop offset="33.33%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.secondary} />
+                <stop offset="66.66%" stopColour={val.tertiary} />
+                <stop offset="100%" stopColour={val.tertiary} />
               </linearGradient>
             );
           }
@@ -175,7 +191,7 @@ export default function XL7568({
       {/* ========================================================= */}
       <g transform="translate(0, 16)">
         {/* Chassis Outlines */}
-        <g stroke={lensColor || "#231f20"} fill="none" strokeWidth="3" strokeMiterlimit="10">
+        <g stroke={lensColour || "#231f20"} fill="none" strokeWidth="3" strokeMiterlimit="10">
           <path d="M564.06,1.5h315.48c44.64,0,80.83,36.19,80.83,80.83h0c0,44.64-36.19,80.84-80.83,80.84h-315.48"/>
           <path d="M396.74,163.17H82.33C37.69,163.17,1.5,126.98,1.5,82.34h0C1.5,37.69,37.69,1.5,82.33,1.5h314.4"/>
           <line x1="564.06" y1="1.5" x2="564.06" y2="163.17"/>
