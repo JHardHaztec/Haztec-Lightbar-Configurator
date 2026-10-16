@@ -1341,6 +1341,9 @@ export default function App() {
                       centreSectionType={sl43CentreType}
                       rightLensColour={rightLensColour}
                       splitLensEnabled={splitLensEnabled}
+                      slotData={{}}
+                      selectedSlotKey={0}
+                      onSelectSlot={() => {}}
                     />
                   )}
                 </div>
