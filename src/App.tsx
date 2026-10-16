@@ -12,7 +12,7 @@ import { getModuleOrderCode } from './OrderCodes';
 export default function App() {
   const [currentStage, setCurrentStage] = useState<'model' | 'exterior' | 'modules' | 'form' | 'success'>('model');
   // Keep the Featured Options and Modules accordions mutually exclusive.
-  const [openConfigSection, setOpenConfigSection] = useState<'featured' | 'modules' | null>(null);
+  const [openConfigSection, setOpenConfigSection] = useState<'featured' | 'modules' | 'colours' | null>(null);
 
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [selectedLength, setSelectedLength] = useState<string | null>(null);
@@ -627,296 +627,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-
-            {/* Chassis Swatches */}
-            <div style={{ display: 'grid', gridTemplateColumns: selectedModel === 'xl75' ? '1fr 1fr' : '1fr', gap: '16px', marginTop: '16px' }}>
-                {selectedModel === 'xl75' && (
-                  <div className="sub-category-block">
-                    <label className="sub-label">Top Cover Colour</label>
-                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-                      {topcoverOptions.map((cover) => (
-                        <div 
-                          key={cover.id} 
-                          className={`colour-card ${selectedTopCover === cover.id ? 'selected' : ''}`}
-                          onClick={() => setSelectedTopCover(cover.id)}
-                          style={{ padding: '8px' }}
-                        >
-                          <div className="lens-swatch" style={{ background: cover.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
-                          <div className="length-title" style={{ fontSize: '0.75rem' }}>{cover.name}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="sub-category-block">
-                  <label className="sub-label">Outer Lens Colour</label>
-                  <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
-                    {lensOptions.map((lens) => (
-                      <div 
-                        key={lens.id} 
-                        className={`colour-card ${selectedLens === lens.id ? 'selected' : ''}`}
-                        onClick={() => setSelectedLens(lens.id)}
-                        style={{ padding: '8px' }}
-                      >
-                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
-                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Split Lens Button */}
-                <div style={{ margin: '15px 0' }}>
-                  <button 
-                    type="button"
-                    onClick={() => setSplitLensEnabled(!splitLensEnabled)}
-                    style={{
-                      padding: '0px 4px',
-                      width: '100%',
-                      fontSize: '13px',
-                      cursor: 'pointer',
-                      borderRadius: '6px',
-                      border: 'none',
-                      textDecoration: 'underline',
-                      background: splitLensEnabled ? '#ffffff' : '#ffffff',
-                      color: splitLensEnabled ? '#353fad' : '#353fad',
-                      fontWeight: '700',
-                      transition: 'all 0.2s',
-                    }}
-                  >
-                    {splitLensEnabled ? '- Remove Split Lens' : '+ Split Lens Colours'}
-                  </button>
-                </div>
-
-                {/* Conditional Right Side Lens Selection Block */}
-                {splitLensEnabled && (
-                  <div className="sub-category-block" style={{ marginTop: '10px', paddingLeft: '8px', borderLeft: '3px solid #353fad' }}>
-                    <label className="sub-label">Right Side Lens Colour</label>
-                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
-                    {lensOptions.map((lens) => (
-                      <div 
-                        key={lens.id} 
-                        className={`colour-card ${rightLensColour === lens.hex ? 'selected' : ''}`}
-                        onClick={() => setRightLensColour(lens.hex)} // <-- Make sure this is lens.hex, not lens.id
-                        style={{ padding: '8px' }}
-                      >
-                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
-                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
-                      </div>
-                    ))}
-                    </div>
-                  </div>
-                )}
-              </div>
               
-            {/* SECTION SELECTOR & CONFIGURATION TOOLBAR */}
-            {selectedLength === 'SL43' && (
-              <details open={openConfigSection === 'featured'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', padding: '16px', display: 'block', marginTop: '20px', borderRadius: '8px', textAlign: 'left' }}>
-                <summary
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenConfigSection((current) => current === 'featured' ? null : 'featured');
-                  }}
-                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
-                >Featured Options</summary>
-                <div style={{ marginTop: '16px' }}>
-                
-                <div style={{ marginBottom: '18px' }}>
-                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={sl43Speaker} 
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setSl43Speaker(checked);
-                        if (checked) setSl43Sign(false);
-                      }}
-                      style={{ 
-                        accentColor: 'green',
-                        width: '15px', 
-                        height: '15px', 
-                        cursor: 'pointer'
-                      }} 
-                    />
-                    <strong>Speaker</strong>
-                  </label>
-                </div>
-
-                <div style={{ marginBottom: '18px' }}>
-                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={sl43Sign} 
-                      disabled={sl43Speaker} 
-                      onChange={(e) => {
-                        setSl43Sign(e.target.checked);
-                      }} 
-                      style={{ 
-                        accentColor: 'green',
-                        width: '15px', 
-                        height: '15px', 
-                        cursor: 'pointer'
-                      }} 
-                    />
-                    <strong>Illuminated Centre Sign</strong>
-                  </label>
-                </div>
-
-                {sl43Sign && (
-                  <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #ddd' }}>
-                    <div style={{ marginBottom: '15px' }}>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Size:</span>
-                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
-                        <button 
-                          className={`mode-tab ${sl43SignSize === '300mm' ? 'active-tab' : ''}`}
-                          onClick={() => setSl43SignSize('300mm')}
-                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
-                        >
-                          300mm
-                        </button>
-                        <button 
-                          className={`mode-tab ${sl43SignSize === '160mm' ? 'active-tab' : ''}`}
-                          onClick={() => setSl43SignSize('160mm')}
-                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                        >
-                          160mm
-                        </button>
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '15px' }}>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Colour:</span>
-                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
-                        <button 
-                          className={`mode-tab ${sl43SignColour === 'white' ? 'active-tab' : ''}`}
-                          onClick={() => setSl43SignColour('white')}
-                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
-                        >
-                          White
-                        </button>
-                        <button 
-                          className={`mode-tab ${sl43SignColour === 'yellow' ? 'active-tab' : ''}`}
-                          onClick={() => setSl43SignColour('yellow')}
-                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                        >
-                          Yellow
-                        </button>
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '15px' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Custom Text:</span>
-                      <input 
-                        type="text" 
-                        value={sl43SignText} 
-                        onChange={(e) => setSl43SignText(e.target.value)} 
-                        placeholder="Enter sign text..." 
-                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }} 
-                      />
-                    </div>
-
-                    {/* Sign Text Colour Dropdown */}
-                    <div>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Text Colour:</span>
-                      <select 
-                        value={sl43SignTextColour} 
-                        onChange={(e) => setSl43SignTextColour(e.target.value)} 
-                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
-                      >
-                        <option value="#231f20">Black</option>
-                        <option value="#ef4444">Red</option>
-                        <option value="#140f64">Blue</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
-
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '8px' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={sl43Siren} 
-                      onChange={(e) => setSl43Siren(e.target.checked)} 
-                      style={{ 
-                        accentColor: 'green',
-                        width: '15px', 
-                        height: '15px', 
-                        cursor: 'pointer'
-                      }} 
-                    />
-                    <strong>Siren</strong>
-                  </label>
-                  {sl43Siren && (
-                    <div style={{ display: 'flex', gap: '8px', marginLeft: '28px'}}>
-                      {['8-82613', '8-82415'].map((model) => (
-                        <button
-                          key={model}
-                          onClick={() => setSl43SirenModel(model as any)}
-                          className={`mode-tab ${sl43SirenModel === model ? 'active-tab' : ''}`}
-                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
-                        >
-                          {model}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div style={{ marginBottom: '22px' }}>
-                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={sl43ControlModule} 
-                      onChange={(e) => setSl43ControlModule(e.target.checked)}
-                      style={{ 
-                        accentColor: 'green',
-                        width: '15px', 
-                        height: '15px', 
-                        cursor: 'pointer'
-                      }}  
-                    />
-                    <strong>Control Module</strong>
-                  </label>
-                </div>
-
-                {!sl43Speaker && !sl43Sign && (
-                  <div style={{ marginBottom: '12px' }}>
-                    <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Centre Section Size:</span>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      {['300mm', '290mm', '230mm', '160mm'].map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => setSl43CentreType(size)}
-                          className={`mode-tab ${sl43CentreType === size ? 'active-tab' : ''}`}
-                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Bridge Colour:</span>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    {['black','clear', 'amber', 'blue', 'red'].map((col) => (
-                      <button
-                        key={col}
-                        onClick={() => setSl43DividerColour(col)}
-                        className={`mode-tab ${sl43DividerColour === col ? 'active-tab' : ''}`}
-                        style={{ padding: '4px 10px', fontSize: '0.75rem', textTransform: 'capitalize' }}
-                      >
-                        {col}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                </div>
-              </details>
-            )}
-
             <details open={openConfigSection === 'modules'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px', padding: '16px', borderRadius: '8px', textAlign: 'left' }}>
                 <summary
                   onClick={(e) => {
@@ -1238,7 +949,310 @@ export default function App() {
                   </div>
                 )}
                 </div>
+              </details>           
+
+            <details open={openConfigSection === 'colours'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px', padding: '16px', borderRadius: '8px', textAlign: 'left' }}>
+                <summary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenConfigSection((current) => current === 'colours' ? null : 'colours');
+                  }}
+                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
+                >Lenses & Bridges</summary>
+                <div style={{ marginTop: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', paddingBottom: '12px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {/* Chassis Swatches */}
+            <div style={{ display: 'grid', gridTemplateColumns: selectedModel === 'xl75' ? '1fr 1fr' : '1fr', gap: '16px', marginTop: '16px' }}>
+                {selectedModel === 'xl75' && (
+                  <div className="sub-category-block">
+                    <label className="sub-label">Top Cover Colour</label>
+                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+                      {topcoverOptions.map((cover) => (
+                        <div 
+                          key={cover.id} 
+                          className={`colour-card ${selectedTopCover === cover.id ? 'selected' : ''}`}
+                          onClick={() => setSelectedTopCover(cover.id)}
+                          style={{ padding: '8px' }}
+                        >
+                          <div className="lens-swatch" style={{ background: cover.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
+                          <div className="length-title" style={{ fontSize: '0.75rem' }}>{cover.name}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="sub-category-block">
+                  <label className="sub-label">Outer Lens Colour</label>
+                  <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+                    {lensOptions.map((lens) => (
+                      <div 
+                        key={lens.id} 
+                        className={`colour-card ${selectedLens === lens.id ? 'selected' : ''}`}
+                        onClick={() => setSelectedLens(lens.id)}
+                        style={{ padding: '8px' }}
+                      >
+                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
+                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Split Lens Button */}
+                <div style={{ margin: '15px 0' }}>
+                  <button 
+                    type="button"
+                    onClick={() => setSplitLensEnabled(!splitLensEnabled)}
+                    style={{
+                      padding: '0px 4px',
+                      width: '100%',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      borderRadius: '6px',
+                      border: 'none',
+                      textDecoration: 'underline',
+                      background: splitLensEnabled ? 'none' : 'none',
+                      color: splitLensEnabled ? '#353fad' : '#353fad',
+                      fontWeight: '700',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {splitLensEnabled ? '- Remove Split Lens' : '+ Split Lens Colours'}
+                  </button>
+                </div>
+
+                {/* Conditional Right Side Lens Selection Block */}
+                {splitLensEnabled && (
+                  <div className="sub-category-block" style={{ marginTop: '0px', paddingLeft: '8px', borderLeft: '3px solid #353fad' }}>
+                    <label className="sub-label">Right Side Lens Colour</label>
+                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+                    {lensOptions.map((lens) => (
+                      <div 
+                        key={lens.id} 
+                        className={`colour-card ${rightLensColour === lens.hex ? 'selected' : ''}`}
+                        onClick={() => setRightLensColour(lens.hex)} // <-- Make sure this is lens.hex, not lens.id
+                        style={{ padding: '8px' }}
+                      >
+                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
+                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
+                      </div>
+                    ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div>
+                  <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px', marginTop: '40px' }}>Bridge Colour:</span>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {['black','clear', 'amber', 'blue', 'red'].map((col) => (
+                      <button
+                        key={col}
+                        onClick={() => setSl43DividerColour(col)}
+                        className={`mode-tab ${sl43DividerColour === col ? 'active-tab' : ''}`}
+                        style={{ padding: '4px 10px', fontSize: '0.75rem', textTransform: 'capitalize' }}
+                      >
+                        {col}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              </div>
+              </div>
               </details>
+
+               {/* SECTION SELECTOR & CONFIGURATION TOOLBAR */}
+            {selectedLength === 'SL43' && (
+              <details open={openConfigSection === 'featured'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', padding: '16px', display: 'block', marginTop: '20px', borderRadius: '8px', textAlign: 'left' }}>
+                <summary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenConfigSection((current) => current === 'featured' ? null : 'featured');
+                  }}
+                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
+                >Featured Options</summary>
+                <div style={{ marginTop: '16px' }}>
+                
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43Speaker} 
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setSl43Speaker(checked);
+                        if (checked) setSl43Sign(false);
+                      }}
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }} 
+                    />
+                    <strong>Speaker</strong>
+                  </label>
+                </div>
+
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43Sign} 
+                      disabled={sl43Speaker} 
+                      onChange={(e) => {
+                        setSl43Sign(e.target.checked);
+                      }} 
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }} 
+                    />
+                    <strong>Illuminated Centre Sign</strong>
+                  </label>
+                </div>
+
+                {sl43Sign && (
+                  <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #ddd' }}>
+                    <div style={{ marginBottom: '15px' }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Size:</span>
+                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
+                        <button 
+                          className={`mode-tab ${sl43SignSize === '300mm' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignSize('300mm')}
+                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                        >
+                          300mm
+                        </button>
+                        <button 
+                          className={`mode-tab ${sl43SignSize === '160mm' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignSize('160mm')}
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          160mm
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '15px' }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Colour:</span>
+                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
+                        <button 
+                          className={`mode-tab ${sl43SignColour === 'white' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignColour('white')}
+                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                        >
+                          White
+                        </button>
+                        <button 
+                          className={`mode-tab ${sl43SignColour === 'yellow' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignColour('yellow')}
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          Yellow
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '15px' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Custom Text:</span>
+                      <input 
+                        type="text" 
+                        value={sl43SignText} 
+                        onChange={(e) => setSl43SignText(e.target.value)} 
+                        placeholder="Enter sign text..." 
+                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }} 
+                      />
+                    </div>
+
+                    {/* Sign Text Colour Dropdown */}
+                    <div>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Text Colour:</span>
+                      <select 
+                        value={sl43SignTextColour} 
+                        onChange={(e) => setSl43SignTextColour(e.target.value)} 
+                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                      >
+                        <option value="#231f20">Black</option>
+                        <option value="#ef4444">Red</option>
+                        <option value="#140f64">Blue</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '8px' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43Siren} 
+                      onChange={(e) => setSl43Siren(e.target.checked)} 
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }} 
+                    />
+                    <strong>Siren</strong>
+                  </label>
+                  {sl43Siren && (
+                    <div style={{ display: 'flex', gap: '8px', marginLeft: '28px'}}>
+                      {['8-82613', '8-82415'].map((model) => (
+                        <button
+                          key={model}
+                          onClick={() => setSl43SirenModel(model as any)}
+                          className={`mode-tab ${sl43SirenModel === model ? 'active-tab' : ''}`}
+                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                        >
+                          {model}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ marginBottom: '22px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43ControlModule} 
+                      onChange={(e) => setSl43ControlModule(e.target.checked)}
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }}  
+                    />
+                    <strong>Control Module</strong>
+                  </label>
+                </div>
+
+                {!sl43Speaker && !sl43Sign && (
+                  <div style={{ marginBottom: '12px' }}>
+                    <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Centre Section Size:</span>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {['300mm', '290mm', '230mm', '160mm'].map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setSl43CentreType(size)}
+                          className={`mode-tab ${sl43CentreType === size ? 'active-tab' : ''}`}
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                </div>
+              </details>
+            )}
 
             <div className="step-footer-action button-group-row" style={{ marginTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button 
