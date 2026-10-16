@@ -196,7 +196,7 @@ const longmodule9 = "M140.63,128.68v15.34h-4.73v11.69l-.74,2.62h74.04l-1.07-2.91
         </button>
       </div>
 
-      <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 605.9 200" style={{ width: '100%', height: '250px', display: 'block' }}>
+      <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 605.9 200" style={{ width: '100%', height: '280px', display: 'block' }}>
         <defs>
         <style>{`
             .cls-label {fill: #969696; font-weight: 700;}
