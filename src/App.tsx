@@ -637,8 +637,21 @@ export default function App() {
                   style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
                 >Modules</summary>
                 <div style={{ marginTop: '16px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', borderBottom: '1px solid #1e293b', paddingBottom: '12px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '18px' }}
+                  >
+                    {/* LEFT COLUMN: Module number selectors */}
+                    <div
+                      style={{
+                        flex: '0 0 350px',
+                        minWidth: '200px',
+                        maxWidth: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                        paddingRight: '16px',
+                        borderRight: '1px solid #d1d5db',
+                      }}
+                    >
                     {/* Corner Modules */}
                     <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
                       <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Corner Modules</div>
@@ -770,10 +783,11 @@ export default function App() {
                         </div>
                       </div>
                     )}
-                  </div>
-                </div>
+                     </div>
 
-                {selectedSlotNumber >= 5 && (
+                  {/* RIGHT COLUMN: Selected module settings */}
+                  <div style={{ flex: '1 1 370px', minWidth: 0, paddingLeft: '10px' }}>
+                    {selectedSlotNumber >= 5 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px' }}>
                     <span style={{ fontSize: '0.8rem', color: '#282828' }}>Inner module:</span>
                     <button 
@@ -949,7 +963,9 @@ export default function App() {
                   </div>
                 )}
                 </div>
-              </details>           
+                </div>
+                </div>
+               </details>         
 
             <details open={openConfigSection === 'colours'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px', padding: '16px', borderRadius: '8px', textAlign: 'left' }}>
                 <summary
@@ -985,16 +1001,35 @@ export default function App() {
 
                 <div className="sub-category-block">
                   <label className="sub-label">Outer Lens Colour</label>
-                  <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+                  <div
+                    className="length-grid"
+                    style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}
+                  >
                     {lensOptions.map((lens) => (
-                      <div 
-                        key={lens.id} 
+                      <div
+                        key={lens.id}
                         className={`colour-card ${selectedLens === lens.id ? 'selected' : ''}`}
                         onClick={() => setSelectedLens(lens.id)}
-                        style={{ padding: '8px' }}
+                        style={{
+                          padding: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                        }}
                       >
-                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
-                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
+                        <div
+                          className="lens-swatch"
+                          style={{
+                            background: lens.hex,
+                            width: '20px',
+                            height: '20px',
+                            flexShrink: 0,
+                          }}
+                        />
+                        <div className="length-title" style={{ fontSize: '0.75rem' }}>
+                          {lens.name}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1033,9 +1068,20 @@ export default function App() {
                         key={lens.id} 
                         className={`colour-card ${rightLensColour === lens.hex ? 'selected' : ''}`}
                         onClick={() => setRightLensColour(lens.hex)} // <-- Make sure this is lens.hex, not lens.id
-                        style={{ padding: '8px' }}
+                        style={{
+                          padding: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                        }}
                       >
-                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
+                        <div className="lens-swatch" style={{
+                            background: lens.hex,
+                            width: '20px',
+                            height: '20px',
+                            flexShrink: 0,
+                          }}></div>
                         <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
                       </div>
                     ))}
