@@ -543,93 +543,9 @@ export default function App() {
                 )}
               </div>
 
-              {/* Chassis Swatches */}
-              <div style={{ display: 'grid', gridTemplateColumns: selectedModel === 'xl75' ? '1fr 1fr' : '1fr', gap: '16px', marginTop: '16px' }}>
-                {selectedModel === 'xl75' && (
-                  <div className="sub-category-block">
-                    <label className="sub-label">Top Cover Colour</label>
-                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-                      {topcoverOptions.map((cover) => (
-                        <div 
-                          key={cover.id} 
-                          className={`colour-card ${selectedTopCover === cover.id ? 'selected' : ''}`}
-                          onClick={() => setSelectedTopCover(cover.id)}
-                          style={{ padding: '8px' }}
-                        >
-                          <div className="lens-swatch" style={{ background: cover.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
-                          <div className="length-title" style={{ fontSize: '0.75rem' }}>{cover.name}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="sub-category-block">
-                  <label className="sub-label">Outer Lens Colour</label>
-                  <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
-                    {lensOptions.map((lens) => (
-                      <div 
-                        key={lens.id} 
-                        className={`colour-card ${selectedLens === lens.id ? 'selected' : ''}`}
-                        onClick={() => setSelectedLens(lens.id)}
-                        style={{ padding: '8px' }}
-                      >
-                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
-                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Split Lens Button */}
-                <div style={{ margin: '15px 0' }}>
-                  <button 
-                    type="button"
-                    onClick={() => setSplitLensEnabled(!splitLensEnabled)}
-                    style={{
-                      padding: '4px',
-                      fontSize: '13px',
-                      cursor: 'pointer',
-                      borderRadius: '6px',
-                      border: 'none',
-                      textDecoration: 'underline',
-                      background: splitLensEnabled ? '#ffffff' : '#ffffff',
-                      color: splitLensEnabled ? '#353fad' : '#353fad',
-                      fontWeight: '700',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    {splitLensEnabled ? '- Remove Split Lens' : '+ Split Lens Colours'}
-                  </button>
-                </div>
-
-                {/* Conditional Right Side Lens Selection Block */}
-                {splitLensEnabled && (
-                  <div className="sub-category-block" style={{ marginTop: '10px', paddingLeft: '8px', borderLeft: '3px solid #353fad' }}>
-                    <label className="sub-label">Right Side Lens Colour</label>
-                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
-                    {lensOptions.map((lens) => (
-                      <div 
-                        key={lens.id} 
-                        className={`colour-card ${rightLensColour === lens.hex ? 'selected' : ''}`}
-                        onClick={() => setRightLensColour(lens.hex)} // <-- Make sure this is lens.hex, not lens.id
-                        style={{ padding: '8px' }}
-                      >
-                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
-                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
-                      </div>
-                    ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
               {/* Blueprint Schematic Preview */}
               <div className="overhead-preview-container" style={{ marginTop: '16px' }}>
                 <div className="overhead-header">
-                  <span className="spec-badge">
-                    {currentLengthOptions.find(l => l.id === selectedLength)?.name}
-                  </span>
                 </div>
 
                 <div className="lightbar-schematic-stage">
@@ -711,6 +627,88 @@ export default function App() {
                 </div>
               </div>
             </div>
+
+            {/* Chassis Swatches */}
+            <div style={{ display: 'grid', gridTemplateColumns: selectedModel === 'xl75' ? '1fr 1fr' : '1fr', gap: '16px', marginTop: '16px' }}>
+                {selectedModel === 'xl75' && (
+                  <div className="sub-category-block">
+                    <label className="sub-label">Top Cover Colour</label>
+                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+                      {topcoverOptions.map((cover) => (
+                        <div 
+                          key={cover.id} 
+                          className={`colour-card ${selectedTopCover === cover.id ? 'selected' : ''}`}
+                          onClick={() => setSelectedTopCover(cover.id)}
+                          style={{ padding: '8px' }}
+                        >
+                          <div className="lens-swatch" style={{ background: cover.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
+                          <div className="length-title" style={{ fontSize: '0.75rem' }}>{cover.name}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="sub-category-block">
+                  <label className="sub-label">Outer Lens Colour</label>
+                  <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+                    {lensOptions.map((lens) => (
+                      <div 
+                        key={lens.id} 
+                        className={`colour-card ${selectedLens === lens.id ? 'selected' : ''}`}
+                        onClick={() => setSelectedLens(lens.id)}
+                        style={{ padding: '8px' }}
+                      >
+                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
+                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Split Lens Button */}
+                <div style={{ margin: '15px 0' }}>
+                  <button 
+                    type="button"
+                    onClick={() => setSplitLensEnabled(!splitLensEnabled)}
+                    style={{
+                      padding: '0px 4px',
+                      width: '100%',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      borderRadius: '6px',
+                      border: 'none',
+                      textDecoration: 'underline',
+                      background: splitLensEnabled ? '#ffffff' : '#ffffff',
+                      color: splitLensEnabled ? '#353fad' : '#353fad',
+                      fontWeight: '700',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {splitLensEnabled ? '- Remove Split Lens' : '+ Split Lens Colours'}
+                  </button>
+                </div>
+
+                {/* Conditional Right Side Lens Selection Block */}
+                {splitLensEnabled && (
+                  <div className="sub-category-block" style={{ marginTop: '10px', paddingLeft: '8px', borderLeft: '3px solid #353fad' }}>
+                    <label className="sub-label">Right Side Lens Colour</label>
+                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+                    {lensOptions.map((lens) => (
+                      <div 
+                        key={lens.id} 
+                        className={`colour-card ${rightLensColour === lens.hex ? 'selected' : ''}`}
+                        onClick={() => setRightLensColour(lens.hex)} // <-- Make sure this is lens.hex, not lens.id
+                        style={{ padding: '8px' }}
+                      >
+                        <div className="lens-swatch" style={{ background: lens.hex, width: '20px', height: '20px', margin: '0 auto 4px' }}></div>
+                        <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
+                      </div>
+                    ))}
+                    </div>
+                  </div>
+                )}
+              </div>
               
             {/* SECTION SELECTOR & CONFIGURATION TOOLBAR */}
             {selectedLength === 'SL43' && (
@@ -1326,32 +1324,14 @@ export default function App() {
                   {selectedLength === 'XL7574' && <XL7574 lensColour={getLensColourHex()} topcoverColour={getTopCoverColourHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
                   {selectedLength === 'XL7568' && <XL7568 lensColour={getLensColourHex()} topcoverColour={getTopCoverColourHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
                   {selectedLength === 'XL7561' && <XL7561 lensColour={getLensColourHex()} topcoverColour={getTopCoverColourHex()} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}} />}
-                  {selectedLength === 'SL43' && (
-                    <SL43 
-                      lensColour={getLensColourHex()}
-                      speakerSelected={sl43Speaker}
-                      signSelected={sl43Sign}
-                      signSize={sl43SignSize}
-                      signColour={sl43SignColour}
-                      signText={sl43SignText}
-                      sirenSelected={sl43Siren}
-                      sirenModel={sl43SirenModel}
-                      controlModuleSelected={sl43ControlModule}
-                      dividerColour={sl43DividerColour}
-                      centreSectionType={sl43CentreType}
-                      rightLensColour={rightLensColour}
-                      splitLensEnabled={splitLensEnabled}
-                      slotData={{}}
-                      selectedSlotKey={0}
-                      onSelectSlot={() => {}}
+                  {selectedLength === 'SL43' && ( <SL43 lensColour={getLensColourHex()} speakerSelected={sl43Speaker} signSelected={sl43Sign} signSize={sl43SignSize}signColour={sl43SignColour} signText={sl43SignText} sirenSelected={sl43Siren} sirenModel={sl43SirenModel} controlModuleSelected={sl43ControlModule} dividerColour={sl43DividerColour} centreSectionType={sl43CentreType} rightLensColour={rightLensColour} splitLensEnabled={splitLensEnabled} slotData={slotData} selectedSlotKey={0} onSelectSlot={() => {}}
                     />
                   )}
                 </div>
               </div>
 
               {/* Full Slots & Modules Table (Only shown if slots exist) */}
-              {selectedLength !== 'SL43' && (
-                <>
+               <>
                   <h3 style={{ fontSize: '16px', margin: '20px 0 10px 0', textAlign: 'left' }}>Configured Slots & Modules</h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px', fontSize: '13px', textAlign: 'left' }}>
                     <thead>
@@ -1381,7 +1361,6 @@ export default function App() {
                     </tbody>
                   </table>
                 </>
-              )}
             </div>
 
             {/* Customer Form */}
