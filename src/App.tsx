@@ -11,6 +11,8 @@ import { getModuleOrderCode } from './OrderCodes';
 
 export default function App() {
   const [currentStage, setCurrentStage] = useState<'model' | 'exterior' | 'modules' | 'form' | 'success'>('model');
+  // Keep the Featured Options and Modules accordions mutually exclusive.
+  const [openConfigSection, setOpenConfigSection] = useState<'featured' | 'modules' | null>(null);
 
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [selectedLength, setSelectedLength] = useState<string | null>(null);
@@ -225,7 +227,7 @@ export default function App() {
       case 'XL7561': return 20;
       case 'XL7568':
       case 'XL7574': return 24;
-      case 'SL43': return 0;
+      case 'SL43': return 12;
       default: return 24;
     }
   };
@@ -255,6 +257,8 @@ export default function App() {
     const found = topcoverOptions.find(c => c.id === selectedTopCover);
     return found ? found.hex : '#1e293b';
   };
+
+  const [sl43SignTextColour, setSl43SignTextColour] = useState('#231f20');
 
   const handleSelectModel = (modelId: string) => {
     setSelectedModel(modelId);
@@ -323,12 +327,24 @@ export default function App() {
           }
         });
       }
+      else if (lengthId === 'SL43') {
+        [5, 6, 7, 8].forEach(num => {
+          if (updated[num]) {
+            updated[num] = { 
+              ...updated[num], 
+              optionType: 'shortmodule',
+              mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode 
+            };
+          }
+        });
+      }
   
       return updated;
     });
   };
 
   const handleResetAllModules = () => {
+    // Reset every module slot to the standard configuration.
     setSlotData(prev => {
       const resetState = { ...prev };
       Object.keys(resetState).forEach((k) => {
@@ -345,6 +361,22 @@ export default function App() {
       });
       return resetState;
     });
+    setSelectedSlotNumber(1);
+
+    // SL43's reset also restores all Featured Options to their initial values.
+    if (selectedLength === 'SL43') {
+      setSl43Speaker(false);
+      setSl43Sign(false);
+      setSl43SignSize('300mm');
+      setSl43SignColour('white');
+      setSl43SignText('');
+      setSl43SignTextColour('#231f20');
+      setSl43Siren(false);
+      setSl43SirenModel('8-82613');
+      setSl43ControlModule(false);
+      setSl43DividerColour('black');
+      setSl43CentreType('300mm');
+    }
   };
 
   // Clean and pure — relies entirely on what optionType tag is stored in state
@@ -499,13 +531,14 @@ export default function App() {
                   <p className="subtext">Configure chassis appearance and customize your lightbar sections below.</p>
                 </div>
                 
-                {selectedLength !== 'SL43' && (
+                {selectedLength && (
                   <button 
                     className="btn-secondary animate-fade" 
                     style={{ padding: '6px 14px', fontSize: '0.8rem', background: '#ef4444', color: '#ffffff', borderColor: '#ef444444' }}
                     onClick={handleResetAllModules}
+                    type="button"
                   >
-                    ↺ Reset Modules
+                    {selectedLength === 'SL43' ? '↺ Reset Modules & Featured Options' : '↺ Reset Modules'}
                   </button>
                 )}
               </div>
@@ -566,7 +599,7 @@ export default function App() {
                       transition: 'all 0.2s'
                     }}
                   >
-                    {splitLensEnabled ? 'Remove Split Lens' : 'Add Split Lens Colours'}
+                    {splitLensEnabled ? '- Remove Split Lens' : '+ Split Lens Colours'}
                   </button>
                 </div>
 
@@ -669,6 +702,10 @@ export default function App() {
                       controlModuleSelected={sl43ControlModule}
                       dividerColour={sl43DividerColour}
                       centreSectionType={sl43CentreType}
+                      signTextColour={sl43SignTextColour}
+                      slotData={slotData} 
+                      selectedSlotKey={selectedSlotNumber}
+                      onSelectSlot={handleSelectSlot}
                     />
                   )}
                 </div>
@@ -676,9 +713,16 @@ export default function App() {
             </div>
               
             {/* SECTION SELECTOR & CONFIGURATION TOOLBAR */}
-            {selectedLength === 'SL43' ? (
-              <div className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', padding: '16px', display: 'block', marginTop: '20px', borderRadius: '8px', textAlign: 'left' }}>
-                <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', marginBottom: '20px' }}>Xpert SL 43" Options</h3>
+            {selectedLength === 'SL43' && (
+              <details open={openConfigSection === 'featured'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', padding: '16px', display: 'block', marginTop: '20px', borderRadius: '8px', textAlign: 'left' }}>
+                <summary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenConfigSection((current) => current === 'featured' ? null : 'featured');
+                  }}
+                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
+                >Featured Options</summary>
+                <div style={{ marginTop: '16px' }}>
                 
                 <div style={{ marginBottom: '18px' }}>
                   <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -763,7 +807,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div>
+                    <div style={{ marginBottom: '15px' }}>
                       <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Custom Text:</span>
                       <input 
                         type="text" 
@@ -772,6 +816,20 @@ export default function App() {
                         placeholder="Enter sign text..." 
                         style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }} 
                       />
+                    </div>
+
+                    {/* Sign Text Colour Dropdown */}
+                    <div>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Text Colour:</span>
+                      <select 
+                        value={sl43SignTextColour} 
+                        onChange={(e) => setSl43SignTextColour(e.target.value)} 
+                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                      >
+                        <option value="#231f20">Black</option>
+                        <option value="#ef4444">Red</option>
+                        <option value="#140f64">Blue</option>
+                      </select>
                     </div>
                   </div>
                 )}
@@ -789,7 +847,7 @@ export default function App() {
                         cursor: 'pointer'
                       }} 
                     />
-                    <strong>Siren Option</strong>
+                    <strong>Siren</strong>
                   </label>
                   {sl43Siren && (
                     <div style={{ display: 'flex', gap: '8px', marginLeft: '28px'}}>
@@ -820,7 +878,7 @@ export default function App() {
                         cursor: 'pointer'
                       }}  
                     />
-                    <strong>Control Module Option</strong>
+                    <strong>Control Module</strong>
                   </label>
                 </div>
 
@@ -828,7 +886,7 @@ export default function App() {
                   <div style={{ marginBottom: '12px' }}>
                     <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Centre Section Size:</span>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      {['300mm', '290mm', '230mm'].map((size) => (
+                      {['300mm', '290mm', '230mm', '160mm'].map((size) => (
                         <button
                           key={size}
                           onClick={() => setSl43CentreType(size)}
@@ -857,9 +915,19 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px' }}>
+                </div>
+              </details>
+            )}
+
+            <details open={openConfigSection === 'modules'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px', padding: '16px', borderRadius: '8px', textAlign: 'left' }}>
+                <summary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenConfigSection((current) => current === 'modules' ? null : 'modules');
+                  }}
+                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
+                >Modules</summary>
+                <div style={{ marginTop: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', borderBottom: '1px solid #1e293b', paddingBottom: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {/* Corner Modules */}
@@ -889,6 +957,28 @@ export default function App() {
                         <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                           {Array.from({length: 2}, (_, i) => i + 5).map(num => (
+                            <button
+                              key={num}
+                              onClick={() => handleSelectSlot(num)}
+                              style={{
+                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
+                                color: selectedSlotNumber === num ? '#166bdb' : '#282828',
+                                border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
+                              }}
+                            >
+                              {num}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedLength === 'SL43' && (
+                      <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                          {Array.from({length: 8}, (_, i) => i + 5).map(num => (
                             <button
                               key={num}
                               onClick={() => handleSelectSlot(num)}
@@ -1149,8 +1239,8 @@ export default function App() {
                     This inner module section is currently empty.
                   </div>
                 )}
-              </div>
-            )}
+                </div>
+              </details>
 
             <div className="step-footer-action button-group-row" style={{ marginTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button 
