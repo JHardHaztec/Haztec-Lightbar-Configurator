@@ -54,12 +54,10 @@ body {
 
 .sub-label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #282828;
   margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .length-grid {
@@ -115,8 +113,8 @@ body {
 }
 
 .colour-card {
-  background: #f7f7f7;
-  border: 2px solid #f7f7f7;
+  background: #ffffff;
+  border: 2px solid #ffffff;
   border-radius: 18px;
   padding: 34px 14px;
   cursor: pointer;
@@ -125,12 +123,12 @@ body {
 }
 
 .colour-card:hover {
-  background: #d9d9d9;
-  border-color: #d9d9d9;
+  background: #ffffff;
+  border-color: #84a3c0;
 }
 
 .colour-card.selected {
-  background: #f7f7f7;
+  background: #ffffff;
   border-color: #353fad;
 }
 
