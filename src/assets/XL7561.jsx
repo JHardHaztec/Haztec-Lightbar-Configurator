@@ -1,8 +1,8 @@
 import React from 'react';
 
 export default function XL7561({ 
-  lensColour = '#a1a1a1',
-  topcoverColour = "#231f20", 
+  lensColour,
+  topcoverColour, 
   slotData, 
   selectedSlotKey, 
   onSelectSlot 
@@ -199,10 +199,10 @@ const shortmodule5 = "M126.82,151.78v-11.32h4.84v-15.37c2.55-.78,4.41-3.16,4.41-
       </g>
 
       {/* --- CORNERS (1 - 4) --- */}
-      {renderModule(1, cornerBottomLeft, {}, 'corner-1')} 
-      {renderModule(2, cornerTopLeft, {}, 'corner-2')} 
-      {renderModule(3, cornerBottomRight, {}, 'corner-3')} 
-      {renderModule(4, cornerTopRight, {}, 'corner-4')} 
+      {renderModule('C1', cornerBottomLeft, {}, 'corner-1')} 
+      {renderModule('C2', cornerTopLeft, {}, 'corner-2')} 
+      {renderModule('C3', cornerBottomRight, {}, 'corner-3')} 
+      {renderModule('C4', cornerTopRight, {}, 'corner-4')} 
 
             {/* --- TOP ROW MODULES --- */}
         {renderModule(7, shortmodule7, {}, 'top-7')}
@@ -227,11 +227,11 @@ const shortmodule5 = "M126.82,151.78v-11.32h4.84v-15.37c2.55-.78,4.41-3.16,4.41-
           </g>
 
 
-     {/* --- NUMBERS --- */}
-     <text className="cls-num" onClick={() => onSelectSlot(1)} transform="translate(73.5 126)"><tspan x="0" y="0">1</tspan></text>
-        <text className="cls-num" onClick={() => onSelectSlot(2)} transform="translate(755 126)"><tspan x="0" y="0">2</tspan></text>
-        <text className="cls-num" onClick={() => onSelectSlot(3)} transform="translate(73.5 48)"><tspan x="0" y="0">3</tspan></text>
-        <text className="cls-num" onClick={() => onSelectSlot(4)} transform="translate(755 48)"><tspan x="0" y="0">4</tspan></text>
+        {/* --- NUMBERS --- */}
+       <text className="cls-num" onClick={() => onSelectSlot(1)}  transform="translate(73.5 126)"><tspan x="0" y="0">C1</tspan></text>
+        <text className="cls-num" onClick={() => onSelectSlot(2)} transform="translate(755 126)"><tspan x="0" y="0">C2</tspan></text>
+        <text className="cls-num" onClick={() => onSelectSlot(3)} transform="translate(73.5 48)"><tspan x="0" y="0">C3</tspan></text>
+        <text className="cls-num" onClick={() => onSelectSlot(4)} transform="translate(755 48)"><tspan x="0" y="0">C4</tspan></text>
         <text className="cls-num" onClick={() => onSelectSlot(5)} transform="translate(142 126)"><tspan x="0" y="0">5</tspan></text>
         <text className="cls-num" onClick={() => onSelectSlot(6)} transform="translate(688 126)"><tspan x="0" y="0">6</tspan></text>
         <text className="cls-num" onClick={() => onSelectSlot(7)} transform="translate(142 48)"><tspan x="0" y="0">7</tspan></text>
