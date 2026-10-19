@@ -28,7 +28,7 @@ export default function App() {
   });
 
   // Currently active slot being configured in the control panel
-  const [selectedSlotNumber, setSelectedSlotNumber] = useState<number>(1);
+  const [selectedSlotNumber, setSelectedSlotNumber] = useState<number | string>('C1');
 
   // --- XPERT SL 43" CUSTOM OPTIONS STATE ---
   const [sl43Speaker, setSl43Speaker] = useState(false);
@@ -39,13 +39,14 @@ export default function App() {
   const [sl43Siren, setSl43Siren] = useState(false);
   const [sl43SirenModel, setSl43SirenModel] = useState<'8-82613' | '8-82415'>('8-82613');
   const [sl43ControlModule, setSl43ControlModule] = useState(false);
+  const [sl43ModuleLayout, setSl43ModuleLayout] = useState<'corner' | 'beacon'>('corner');
   const [sl43DividerColour, setSl43DividerColour] = useState('black');
   const [sl43CentreType, setSl43CentreType] = useState('300mm');
   const [rightLensColour, setRightLensColour] = useState('#dbd9d9');
   const [splitLensEnabled, setSplitLensEnabled] = useState(false);
   
   // Master slot configuration state for sections 1 through 24
-  const [slotData, setSlotData] = useState<Record<number, {
+  const [slotData, setSlotData] = useState<Record<string, {
     active: boolean;
     mode: 'single' | 'dual' | 'tri';
     primary: string;
@@ -53,10 +54,10 @@ export default function App() {
     tertiary: string;
     optionType?: string;
   }>>({
-    1: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
-    2: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
-    3: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
-    4: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    1: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    2: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    3: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    4: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
     5: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
     6: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
     7: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
@@ -77,14 +78,20 @@ export default function App() {
     22: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
     23: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
     24: { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    C1: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    C2: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    C3: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    C4: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
+    B1: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'beacon' },
+    B2: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'beacon' },
   });
 
   useEffect(() => {
-    if (selectedLength === '25' && selectedSlotNumber > 4) {
+    if (typeof selectedSlotNumber === 'number' && selectedLength === '25' && selectedSlotNumber > 4) {
       setSelectedSlotNumber(1);
-    } else if (selectedLength === 'XL7528' && selectedSlotNumber > 6) {
+    } else if (typeof selectedSlotNumber === 'number' && selectedLength === 'XL7528' && selectedSlotNumber > 6) {
       setSelectedSlotNumber(1);
-    } else if (selectedLength === 'XL7544' && selectedSlotNumber > 16) {
+    } else if (typeof selectedSlotNumber === 'number' && selectedLength === 'XL7544' && selectedSlotNumber > 16) {
       setSelectedSlotNumber(1);
     }
   }, [selectedLength, selectedSlotNumber]);
@@ -155,10 +162,10 @@ export default function App() {
   const currentLengthOptions = lengthOptionsMap[selectedModel || 'xl75'] || xl75LengthOptions;
 
   const lensOptions = [
-    { id: 'clear', name: 'Clear', hex: '#ebebeb' },
-    { id: 'amber', name: 'Amber', hex: '#f0a926' },
-    { id: 'blue', name: 'Blue', hex: '#3b82f6' },
-    { id: 'red', name: 'Red', hex: '#ef4444' },
+    { id: 'clear', name: 'Clear', hex: '#ebebebE6' },
+    { id: 'amber', name: 'Amber', hex: '#f0a926E6' },
+    { id: 'blue', name: 'Blue', hex: '#3b82f6E6' },
+    { id: 'red', name: 'Red', hex: '#ef4444E6' },
   ];
 
   const topcoverOptions = [
@@ -176,24 +183,49 @@ export default function App() {
   ];
 
 
+  
   // --- GLOBAL TRI-COLOUR SUPPORT HELPER ---
   const isTriColourSupported = (optionType?: string): boolean => {
-    if (!optionType) return true; 
+    if (!optionType) return true;
+
     const lower = optionType.toLowerCase();
-    
-    // If the tag contains short, twinned, linear, or alley, hide tri-colour globally
-    if (lower.includes('short') || lower.includes('twinned') || lower.includes('linear') || lower.includes('alley')) {
+
+    // Hide tri-colour for short, twinned, linear, alley, and beacon modules
+    if (
+      lower.includes('short') || lower.includes('twinned') ||
+      lower.includes('linear') ||
+      lower.includes('alley') ||
+      lower.includes('beacon')
+    ) {
       return false;
     }
+
     return true;
   };
 
+  // --- GLOBAL DUAL-COLOUR SUPPORT HELPER ---
+  const isDualColourSupported = (optionType?: string): boolean => {
+    if (!optionType) return true;
+
+    const lower = optionType.toLowerCase();
+
+    // Hide dual-colour for beacon modules
+    if (lower.includes('beacon')) {
+      return false;
+    }
+
+    return true;
+  };
+
+
   const handleSelectSlot = (slotKey: number | string) => {
-    const slotNum = Number(slotKey);
-    setSelectedSlotNumber(slotNum);
+    // Preserve string slot IDs (e.g. C1, C2) as well as numeric IDs.
+    const slotId = String(slotKey);
+    const slotNum = typeof slotKey === 'number' ? slotKey : Number(slotKey);
+    setSelectedSlotNumber(slotKey);
   
     setSlotData(prev => {
-      const existing = prev[slotNum] || {
+      const existing = prev[slotId] || {
         active: false,
         mode: 'single',
         primary: '#808285',
@@ -206,7 +238,7 @@ export default function App() {
   
       return {
         ...prev,
-        [slotNum]: {
+        [slotId]: {
           ...existing,
           active: true,
           optionType: isFixedShort ? 'shortmodule' : (existing.optionType || 'longmodule'),
@@ -227,7 +259,7 @@ export default function App() {
       case 'XL7561': return 20;
       case 'XL7568':
       case 'XL7574': return 24;
-      case 'SL43': return 12;
+      case 'SL43': return 14;
       default: return 24;
     }
   };
@@ -328,7 +360,7 @@ export default function App() {
         });
       }
       else if (lengthId === 'SL43') {
-        [5, 6, 7, 8].forEach(num => {
+        [1, 2, 3, 4, 5, 6, 7, 8].forEach(num => {
           if (updated[num]) {
             updated[num] = { 
               ...updated[num], 
@@ -343,25 +375,45 @@ export default function App() {
     });
   };
 
+  const handleSL43ModuleLayout = (layout: 'corner' | 'beacon') => {
+    setSl43ModuleLayout(layout);
+    setSelectedSlotNumber(layout === 'beacon' ? 'B1' : 'C1');
+    setSlotData(prev => {
+      const next = { ...prev };
+      ['C1', 'C2', 'C3', 'C4'].forEach(key => {
+        const existing = next[key] || { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' };
+        next[key] = { ...existing, active: layout === 'corner' };
+      });
+      ['B1', 'B2'].forEach(key => {
+        const existing = next[key] || { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' };
+        next[key] = { ...existing, active: layout === 'beacon' };
+      });
+      return next;
+    });
+  };
+
   const handleResetAllModules = () => {
     // Reset every module slot to the standard configuration.
     setSlotData(prev => {
       const resetState = { ...prev };
       Object.keys(resetState).forEach((k) => {
         const num = Number(k);
-        const isCorner = num >= 1 && num <= 4;
-        resetState[num] = {
+        const existing = resetState[k];
+        const isCorner = (num >= 25 && num <= 30) || k === 'C1' || k === 'C2' || k === 'C3' || k === 'C4' || k === 'B2' || k === 'B1';
+        resetState[k] = {
           active: isCorner,
           mode: 'single',
           primary: '#808285',
           secondary: '#3b82f6',
           tertiary: '',
-          optionType: 'longmodule'
+          // Preserve the module type so reset does not reveal unsupported colour modes.
+          optionType: existing?.optionType || 'longmodule'
         };
       });
       return resetState;
     });
-    setSelectedSlotNumber(1);
+    setSelectedSlotNumber('C1');
+    setSl43ModuleLayout('corner');
 
     // SL43's reset also restores all Featured Options to their initial values.
     if (selectedLength === 'SL43') {
@@ -386,7 +438,7 @@ export default function App() {
     primary: '#808285', 
     secondary: '#3b82f6', 
     tertiary: '', 
-    optionType: 'longmodule' 
+    optionType: 'longmodule'
   };
 
   const updateCurrentSlot = (updates: Partial<typeof currentSlotState>) => {
@@ -456,8 +508,8 @@ export default function App() {
     setShowNextStepsModal(false);
   };
 
-  const areCornersConfigured = [1, 2, 3, 4].every(num => {
-    const slot = slotData[num];
+  const areCornersConfigured = ['C1', 'C2', 'C3', 'C4', 'B1', 'B2'].every(slotkey => {
+    const slot = slotData[slotkey];
     return slot && slot.active && slot.primary !== '#808285';
   });
 
@@ -521,13 +573,13 @@ export default function App() {
           </section>
         )}
 
-        {/* --- STEP 3: SECTION-BY-SECTION CUSTOMIZATION --- */}
+        {/* --- STEP 3: SECTION-BY-SECTION CUSTOMISATION --- */}
         {currentStage === 'modules' && (
           <section className="step-card animate-fade">
             <div className="config-section-group">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                  <h2>3. Section-by-Section Customization</h2>
+                  <h2>3. Section-by-Section Customisation</h2>
                   <p className="subtext">Configure chassis appearance and customize your lightbar sections below.</p>
                 </div>
                 
@@ -538,7 +590,7 @@ export default function App() {
                     onClick={handleResetAllModules}
                     type="button"
                   >
-                    {selectedLength === 'SL43' ? '↺ Reset Modules & Featured Options' : '↺ Reset Modules'}
+                    ↺ Reset Modules
                   </button>
                 )}
               </div>
@@ -619,6 +671,7 @@ export default function App() {
                       dividerColour={sl43DividerColour}
                       centreSectionType={sl43CentreType}
                       signTextColour={sl43SignTextColour}
+                      moduleLayout={sl43ModuleLayout}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={handleSelectSlot}
@@ -652,38 +705,60 @@ export default function App() {
                         borderRight: '1px solid #d1d5db',
                       }}
                     >
-                    {/* Corner Modules */}
-                    <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Corner Modules</div>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        {[1, 2, 3, 4].map(num => (
+                    {selectedLength === 'SL43' ? (
+                      <div style={{ background: '#f5f5f5', padding: '10px 12px', borderRadius: '6px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '12px' }}>End Modules:</div>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <button
+                            onClick={() => handleSL43ModuleLayout('corner')}
+                            style={{ padding: '8px 14px', fontSize: '0.85rem', fontWeight: 700, background: sl43ModuleLayout === 'corner' ? '#166bdb42' : '#ffffff', color: sl43ModuleLayout === 'corner' ? '#166bdb' : '#282828', border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer' }}
+                          >XT Modules</button>
                           <button
-                            key={num}
-                            onClick={() => handleSelectSlot(num)}
-                            style={{
-                              width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
-                              background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
-                              color: selectedSlotNumber === num ? '#166bdb' : '#282828',
-                              border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
-                            }}
-                          >
-                            {num}
-                          </button>
-                        ))}
+                          className={`mode-tab ${sl43ModuleLayout === 'beacon' ? 'active-tab' : '' }`}
+                            onClick={() => handleSL43ModuleLayout('beacon')}
+                            style={{ padding: '8px 14px', fontSize: '0.85rem', fontWeight: 700, background: sl43ModuleLayout === 'beacon' ? '#166bdb42' : '#ffffff', color: sl43ModuleLayout === 'beacon' ? '#166bdb' : '#282828', border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer' }}
+                          >9-3541 Beacon</button>
+                        </div>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', margin: '15px 0 10px' }}>
+                          {sl43ModuleLayout === 'beacon' ? '' : ''}
+                        </div>
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                          {(sl43ModuleLayout === 'beacon'
+                            ? [{ key: 'B1', label: 'B1' }, { key: 'B2', label: 'B2' }]
+                            : [{ key: 'C1', label: 'C1' }, { key: 'C2', label: 'C2' }, { key: 'C3', label: 'C3' }, { key: 'C4', label: 'C4' }]
+                          ).map(({ key, label }) => (
+                            <button
+                              key={String(key)}
+                              onClick={() => handleSelectSlot(key)}
+                              style={{ minWidth: '38px', height: '36px', padding: '0 6px', fontSize: '0.85rem', fontWeight: 700, background: String(selectedSlotNumber) === String(key) ? '#166bdb42' : '#ffffff', color: String(selectedSlotNumber) === String(key) ? '#166bdb' : '#282828', border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer' }}
+                            >{label}</button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Corner Modules</div>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                          {['C1', 'C2', 'C3', 'C4'].map(slot => (
+                            <button key={slot} onClick={() => handleSelectSlot(slot)} style={{ width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700, background: selectedSlotNumber === slot ? '#166bdb42' : '#ffffff', color: selectedSlotNumber === slot ? '#166bdb' : '#282828', border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer' }}>
+                              {slot}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Inner Modules */}
                     {selectedLength === 'XL7528' && (
                       <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          {Array.from({length: 2}, (_, i) => i + 5).map(num => (
+                          {Array.from({length: 2}, (_, i) => i + 1).map(num => (
                             <button
                               key={num}
                               onClick={() => handleSelectSlot(num)}
                               style={{
-                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                minWidth: '38px', width: 'auto', height: '36px', padding: '0 6px', whiteSpace: 'nowrap', fontSize: '0.85rem', fontWeight: 700,
                                 background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
                                 color: selectedSlotNumber === num ? '#166bdb' : '#282828',
                                 border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
@@ -700,18 +775,18 @@ export default function App() {
                       <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          {Array.from({length: 8}, (_, i) => i + 5).map(num => (
+                          {Array.from({length: 8}, (_, i) => i + 1).map(num => (
                             <button
-                              key={num}
+                              key={`I${num}`}
                               onClick={() => handleSelectSlot(num)}
                               style={{
-                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                minWidth: '38px', width: 'auto', height: '36px', padding: '0 6px', whiteSpace: 'nowrap', fontSize: '0.85rem', fontWeight: 700,
                                 background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
                                 color: selectedSlotNumber === num ? '#166bdb' : '#282828',
                                 border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
                               }}
                             >
-                              {num}
+                              {`I${num}`}
                             </button>
                           ))}
                         </div>
@@ -722,12 +797,12 @@ export default function App() {
                       <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          {Array.from({length: 12}, (_, i) => i + 5).map(num => (
+                          {Array.from({length: 12}, (_, i) => i + 1).map(num => (
                             <button
                               key={num}
                               onClick={() => handleSelectSlot(num)}
                               style={{
-                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                minWidth: '38px', width: 'auto', height: '36px', padding: '0 6px', whiteSpace: 'nowrap', fontSize: '0.85rem', fontWeight: 700,
                                 background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
                                 color: selectedSlotNumber === num ? '#166bdb' : '#282828',
                                 border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
@@ -744,12 +819,12 @@ export default function App() {
                       <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          {Array.from({length: 20}, (_, i) => i + 5).map(num => (
+                          {Array.from({length: 20}, (_, i) => i + 1).map(num => (
                             <button
                               key={num}
                               onClick={() => handleSelectSlot(num)}
                               style={{
-                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                minWidth: '38px', width: 'auto', height: '36px', padding: '0 6px', whiteSpace: 'nowrap', fontSize: '0.85rem', fontWeight: 700,
                                 background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
                                 color: selectedSlotNumber === num ? '#166bdb' : '#282828',
                                 border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
@@ -766,12 +841,12 @@ export default function App() {
                       <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          {Array.from({length: 16}, (_, i) => i + 5).map(num => (
+                          {Array.from({length: 16}, (_, i) => i + 1).map(num => (
                             <button
                               key={num}
                               onClick={() => handleSelectSlot(num)}
                               style={{
-                                width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700,
+                                minWidth: '38px', width: 'auto', height: '36px', padding: '0 6px', whiteSpace: 'nowrap', fontSize: '0.85rem', fontWeight: 700,
                                 background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
                                 color: selectedSlotNumber === num ? '#166bdb' : '#282828',
                                 border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
@@ -787,7 +862,7 @@ export default function App() {
 
                   {/* RIGHT COLUMN: Selected module settings */}
                   <div style={{ flex: '1 1 370px', minWidth: 0, paddingLeft: '10px' }}>
-                    {selectedSlotNumber >= 5 && (
+                    {Number(selectedSlotNumber) >= 1 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px' }}>
                     <span style={{ fontSize: '0.8rem', color: '#282828' }}>Inner module:</span>
                     <button 
@@ -807,7 +882,7 @@ export default function App() {
                   </div>
                 )}
 
-                {currentSlotState.active && selectedLength === 'XL7544' && selectedSlotNumber >= 13 && selectedSlotNumber <= 16 && (
+                {currentSlotState.active && selectedLength === 'XL7544' && Number(selectedSlotNumber) >= 9 && Number(selectedSlotNumber) <= 12 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.8rem', color: '#282828' }}>Type of Module:</span>
                     <button 
@@ -834,7 +909,7 @@ export default function App() {
                   </div>
                 )}
 
-                {currentSlotState.active && (selectedLength === 'XL7574' || selectedLength === 'XL7568' || selectedLength === 'XL7561') && selectedSlotNumber >= 9 && (
+                {currentSlotState.active && (selectedLength === 'XL7574' || selectedLength === 'XL7568' || selectedLength === 'XL7561') && Number(selectedSlotNumber) >= 9 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.8rem', color: '#282828' }}>Type of Module:</span>
                     <button 
@@ -870,11 +945,13 @@ export default function App() {
                         Single-Colour
                       </button>
                       
+                      {isDualColourSupported(currentSlotState.optionType) && (
                       <button 
                         className={`mode-tab ${currentSlotState.mode === 'dual' ? 'colour-tab' : ''}`}
                         onClick={() => updateCurrentSlot({ mode: 'dual' })}>
                         Dual-Colour
                       </button>
+                      )}
 
                       {isTriColourSupported(currentSlotState.optionType) && (
                         <button 
@@ -1041,15 +1118,14 @@ export default function App() {
                     type="button"
                     onClick={() => setSplitLensEnabled(!splitLensEnabled)}
                     style={{
-                      padding: '0px 4px',
-                      width: '100%',
+                      padding: '6px',
                       fontSize: '13px',
                       cursor: 'pointer',
                       borderRadius: '6px',
-                      border: 'none',
+                      border: splitLensEnabled ? 'none' : 'none',
                       textDecoration: 'underline',
                       background: splitLensEnabled ? 'none' : 'none',
-                      color: splitLensEnabled ? '#353fad' : '#353fad',
+                      color: splitLensEnabled ? 'red' : 'green',
                       fontWeight: '700',
                       transition: 'all 0.2s',
                     }}
