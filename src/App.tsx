@@ -583,8 +583,7 @@ export default function App() {
             <div className="config-section-group">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                  <h2>3. Section-by-Section Customisation</h2>
-                  <p className="subtext">Configure chassis appearance and customize your lightbar sections below.</p>
+                  <h2>3. Lightbar Configuration</h2>
                 </div>
                 
                 {selectedLength && (
@@ -600,7 +599,7 @@ export default function App() {
               </div>
 
               {/* Blueprint Schematic Preview */}
-              <div className="overhead-preview-container" style={{ marginTop: '16px' }}>
+              <div className="overhead-preview-container">
                 <div className="overhead-header">
                 </div>
 
@@ -722,8 +721,8 @@ export default function App() {
                 )}
 
                 {!sl43Speaker && !sl43Sign && (
-                  <div style={{ marginBottom: '12px', marginTop: '10px' }}>
-                    <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Centre Section Size:</span>
+                  <div style={{ marginBottom: '0px', marginTop: '0px' }}>
+                    <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '12px' }}>Centre Section Length:</span>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       {['300mm', '220mm', '160mm'].map((size) => (
                         <button
@@ -738,6 +737,7 @@ export default function App() {
                     </div>
                   </div>
                 )}
+              <div><hr style={{ border: 'none', height: '1px', backgroundColor: '#c1c1c1' }} /></div>
                 <div className="sub-category-block">
                   <label className="sub-label">Outer Lens Colour</label>
                   <div
@@ -775,7 +775,7 @@ export default function App() {
                 </div>
 
                 {/* Split Lens Button */}
-                <div style={{ margin: '15px 0' }}>
+                <div style={{ margin: '0 0 10px 0' }}>
                   <button 
                     type="button"
                     onClick={() => setSplitLensEnabled(!splitLensEnabled)}
@@ -798,7 +798,7 @@ export default function App() {
 
                 {/* Conditional Right Side Lens Selection Block */}
                 {splitLensEnabled && (
-                  <div className="sub-category-block" style={{ marginTop: '0px', paddingLeft: '8px', borderLeft: '3px solid #353fad' }}>
+                  <div className="sub-category-block" style={{ marginBottom: '10px', paddingLeft: '8px', borderLeft: '3px solid #353fad' }}>
                     <label className="sub-label">Right Side Lens Colour</label>
                     <div className="colour-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', width: '50%' }}>
                     {lensOptions.map((lens) => (
@@ -827,8 +827,9 @@ export default function App() {
                   </div>
                 )}
               </div>
+              <div><hr style={{ border: 'none', height: '1px', backgroundColor: '#c1c1c1' }} /></div>
               <div>
-                  <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px', marginTop: '10px' }}>Bridge Colour:</span>
+                  <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '12px', marginTop: '10px' }}>Bridge Colour:</span>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     {['black','clear', 'amber', 'blue', 'red'].map((col) => (
                       <button
@@ -880,7 +881,7 @@ export default function App() {
                           )
                         }
                         style={{
-                          width: '100%', padding: '10px', fontSize: '0.9rem', border: '1px solid #d1d5db', borderRadius: '6px', background: '#fff', color: '#282828', cursor: 'pointer',
+                          width: '100%', padding: '6px 10px', fontSize: '0.9rem', border: '1px solid #d1d5db', borderRadius: '6px', background: '#fff', color: '#282828', cursor: 'pointer',
                         }}
                       >
                         <option value="corner">XT Modules</option>
@@ -927,7 +928,7 @@ export default function App() {
                         ].map(section => (
                           <label key={section.label} style={{ display: 'flex', flexDirection: 'column', gap: '5px', color: '#282828', fontSize: '0.82rem', fontWeight: 600 }}>
                             {section.label}
-                            <select value={section.value} onChange={e => section.setValue(e.target.value)} style={{ width: '100%', padding: '9px 10px', border: '1px solid #cbd5e1', borderRadius: '6px', background: '#fff', color: '#282828', fontSize: '0.85rem' }}>
+                            <select value={section.value} onChange={e => section.setValue(e.target.value)} style={{ width: '100%', padding: '6px 10px', border: '1px solid #cbd5e1', borderRadius: '6px', background: '#fff', color: '#282828', fontSize: '0.85rem' }}>
                               {section.options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
                             </select>
                           </label>
@@ -952,28 +953,6 @@ export default function App() {
                               }}
                             >
                               {num}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {selectedLength === 'SL43' && (
-                      <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Inner Modules</div>
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          {Array.from({length: 8}, (_, i) => i + 1).map(num => (
-                            <button
-                              key={`I${num}`}
-                              onClick={() => handleSelectSlot(num)}
-                              style={{
-                                minWidth: '38px', width: 'auto', height: '36px', padding: '0 6px', whiteSpace: 'nowrap', fontSize: '0.85rem', fontWeight: 700,
-                                background: selectedSlotNumber === num ? '#166bdb42' : '#ffffff',
-                                color: selectedSlotNumber === num ? '#166bdb' : '#282828',
-                                border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer'
-                              }}
-                            >
-                              {`I${num}`}
                             </button>
                           ))}
                         </div>
