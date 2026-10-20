@@ -40,6 +40,10 @@ export default function App() {
   const [sl43SirenModel, setSl43SirenModel] = useState<'8-82613' | '8-82415'>('8-82613');
   const [sl43ControlModule, setSl43ControlModule] = useState(false);
   const [sl43ModuleLayout, setSl43ModuleLayout] = useState<'corner' | 'beacon'>('corner');
+  const [sl43FrontOuterOption, setSl43FrontOuterOption] = useState('');
+  const [sl43FrontInnerOption, setSl43FrontInnerOption] = useState('');
+  const [sl43RearOuterOption, setSl43RearOuterOption] = useState('');
+  const [sl43RearInnerOption, setSl43RearInnerOption] = useState('');
   const [sl43DividerColour, setSl43DividerColour] = useState('black');
   const [sl43CentreType, setSl43CentreType] = useState('300mm');
   const [rightLensColour, setRightLensColour] = useState('#dbd9d9');
@@ -672,6 +676,10 @@ export default function App() {
                       centreSectionType={sl43CentreType}
                       signTextColour={sl43SignTextColour}
                       moduleLayout={sl43ModuleLayout}
+                      frontOuterOption={sl43FrontOuterOption}
+                      frontInnerOption={sl43FrontInnerOption}
+                      rearOuterOption={sl43RearOuterOption}
+                      rearInnerOption={sl43RearInnerOption}
                       slotData={slotData} 
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={handleSelectSlot}
@@ -851,58 +859,79 @@ export default function App() {
                   <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '18px' }}
                   >
                     {/* LEFT COLUMN: Module number selectors */}
-                    <div
-                      style={{
-                        flex: '0 0 350px',
-                        minWidth: '200px',
-                        maxWidth: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '10px',
-                        paddingRight: '16px',
-                        borderRight: '1px solid #d1d5db',
+                    <div style={{ flex: '0 0 350px', minWidth: '200px', maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '16px', borderRight: '1px solid #d1d5db', }}>
+                    {selectedLength === 'SL43' ? (
+                    <div style={{ background: '#f5f5f5', padding: '10px 12px', borderRadius: '6px',
                       }}
                     >
-                    {selectedLength === 'SL43' ? (
-                      <div style={{ background: '#f5f5f5', padding: '10px 12px', borderRadius: '6px' }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '12px' }}>End Modules:</div>
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                        <button
-                            onClick={() => handleSL43ModuleLayout('corner')}
-                            style={{ padding: '8px 14px', fontSize: '0.85rem', fontWeight: 700, background: sl43ModuleLayout === 'corner' ? '#166bdb42' : '#ffffff', color: sl43ModuleLayout === 'corner' ? '#166bdb' : '#282828', border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer' }}
-                          >XT Modules</button>
-                          <button
-                          className={`mode-tab ${sl43ModuleLayout === 'beacon' ? 'active-tab' : '' }`}
-                            onClick={() => handleSL43ModuleLayout('beacon')}
-                            style={{ padding: '8px 14px', fontSize: '0.85rem', fontWeight: 700, background: sl43ModuleLayout === 'beacon' ? '#166bdb42' : '#ffffff', color: sl43ModuleLayout === 'beacon' ? '#166bdb' : '#282828', border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer' }}
-                          >9-3541 Beacon</button>
-                        </div>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', margin: '15px 0 10px' }}>
-                          {sl43ModuleLayout === 'beacon' ? '' : ''}
-                        </div>
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          {(sl43ModuleLayout === 'beacon'
-                            ? [{ key: 'B1', label: 'B1' }, { key: 'B2', label: 'B2' }]
-                            : [{ key: 'C1', label: 'C1' }, { key: 'C2', label: 'C2' }, { key: 'C3', label: 'C3' }, { key: 'C4', label: 'C4' }]
-                          ).map(({ key, label }) => (
-                            <button
-                              key={String(key)}
-                              onClick={() => handleSelectSlot(key)}
-                              style={{ minWidth: '38px', height: '36px', padding: '0 6px', fontSize: '0.85rem', fontWeight: 700, background: String(selectedSlotNumber) === String(key) ? '#166bdb42' : '#ffffff', color: String(selectedSlotNumber) === String(key) ? '#166bdb' : '#282828', border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer' }}
-                            >{label}</button>
-                          ))}
-                        </div>
+                      <label
+                        htmlFor="sl43-end-modules"
+                        style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600,
+                          color: '#282828', marginBottom: '10px', }}>
+                        End Modules
+                      </label>
+
+                      <select
+                        id="sl43-end-modules"
+                        value={sl43ModuleLayout}
+                        onChange={(e) =>
+                          handleSL43ModuleLayout(
+                            e.target.value as 'corner' | 'beacon'
+                          )
+                        }
+                        style={{
+                          width: '100%', padding: '10px', fontSize: '0.9rem', border: '1px solid #d1d5db', borderRadius: '6px', background: '#fff', color: '#282828', cursor: 'pointer',
+                        }}
+                      >
+                        <option value="corner">XT Modules</option>
+                        <option value="beacon">9-3541 Beacon</option>
+                      </select>
+                    </div>
+                  ) : (
+                    <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>
+                        Corner Modules
                       </div>
-                    ) : (
-                      <div style={{ background: '#f5f5f5', padding: '10px 0px', borderRadius: '6px' }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#282828', marginBottom: '15px' }}>Corner Modules</div>
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                          {['C1', 'C2', 'C3', 'C4'].map(slot => (
-                            <button key={slot} onClick={() => handleSelectSlot(slot)} style={{ width: '38px', height: '36px', fontSize: '0.85rem', fontWeight: 700, background: selectedSlotNumber === slot ? '#166bdb42' : '#ffffff', color: selectedSlotNumber === slot ? '#166bdb' : '#282828', border: '1px solid #166bdb', borderRadius: '6px', cursor: 'pointer' }}>
-                              {slot}
-                            </button>
-                          ))}
-                        </div>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        {['C1', 'C2', 'C3', 'C4'].map(slot => (
+                          <button
+                            key={slot}
+                            onClick={() => handleSelectSlot(slot)}
+                            style={{
+                              width: '38px',
+                              height: '36px',
+                              fontSize: '0.85rem',
+                              fontWeight: 700,
+                              background: selectedSlotNumber === slot ? '#166bdb42' : '#ffffff',
+                              color: selectedSlotNumber === slot ? '#166bdb' : '#282828',
+                              border: '1px solid #166bdb',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {slot}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                    {selectedLength === 'SL43' && (
+                      <div style={{ background: '#f5f5f5', padding: '12px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#282828' }}>Front & Rear Modules</div>
+                        {[
+                          { label: 'Front Outer', value: sl43FrontOuterOption, setValue: setSl43FrontOuterOption, options: [{ value: '', label: 'None' }, { value: 'frontOuterLongShort', label: 'XT (Short / Long + Long / Short)' }, { value: 'frontOuterShortLong', label: 'XT (Long / Short + Short / Long)' }, { value: 'frontOuterLong', label: 'XT = (Long + Long)' }] },
+                          { label: 'Front Inner', value: sl43FrontInnerOption, setValue: setSl43FrontInnerOption, options: [{ value: '', label: 'None' }, { value: 'frontInnerShort', label: 'XT 2x Short Modules' }, { value: 'frontInnerLong', label: 'XT 2x Long Modules' }] },
+                          { label: 'Rear Outer', value: sl43RearOuterOption, setValue: setSl43RearOuterOption, options: [{ value: '', label: 'None' }, { value: 'rearOuterShortLong', label: 'XT (Short / Long + Long / Short)' }, { value: 'rearOuterLongShort', label: 'XT (Long / Short + Short / Long)' }] },
+                          { label: 'Rear Inner', value: sl43RearInnerOption, setValue: setSl43RearInnerOption, options: [{ value: '', label: 'None' }, { value: 'rearInnerShort', label: 'XT 3x Short Modules' }] },
+                        ].map(section => (
+                          <label key={section.label} style={{ display: 'flex', flexDirection: 'column', gap: '5px', color: '#282828', fontSize: '0.82rem', fontWeight: 600 }}>
+                            {section.label}
+                            <select value={section.value} onChange={e => section.setValue(e.target.value)} style={{ width: '100%', padding: '9px 10px', border: '1px solid #cbd5e1', borderRadius: '6px', background: '#fff', color: '#282828', fontSize: '0.85rem' }}>
+                              {section.options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                            </select>
+                          </label>
+                        ))}
                       </div>
                     )}
 
