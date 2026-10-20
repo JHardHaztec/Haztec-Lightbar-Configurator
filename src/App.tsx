@@ -725,7 +725,7 @@ export default function App() {
                   <div style={{ marginBottom: '12px', marginTop: '10px' }}>
                     <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Centre Section Size:</span>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      {['300mm', '290mm', '230mm', '160mm'].map((size) => (
+                      {['300mm', '220mm', '160mm'].map((size) => (
                         <button
                           key={size}
                           onClick={() => setSl43CentreType(size)}
