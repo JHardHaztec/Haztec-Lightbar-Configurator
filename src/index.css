@@ -112,11 +112,22 @@ body {
   color: #ffffff;
 }
 
+.colour-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .colour-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .colour-card {
   background: #ffffff;
   border: 2px solid #ffffff;
   border-radius: 18px;
-  padding: 34px 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
@@ -151,10 +162,9 @@ body {
 }
 
 .lens-swatch {
-  width: 28px;
-  height: 28px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  margin: 0 auto 6px auto;
   border: 1px solid rgba(255,255,255,0.2);
 }
 
