@@ -12,7 +12,7 @@ import { getModuleOrderCode } from './OrderCodes';
 export default function App() {
   const [currentStage, setCurrentStage] = useState<'model' | 'exterior' | 'modules' | 'form' | 'success'>('model');
   // Keep the Featured Options and Modules accordions mutually exclusive.
-  const [openConfigSection, setOpenConfigSection] = useState<'featured' | 'modules' | 'colours' | null>(null);
+  const [openConfigSection, setOpenConfigSection] = useState<'featured' | 'modules' | 'colours' | 'layout' | null>(null);
 
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [selectedLength, setSelectedLength] = useState<string | null>(null);
@@ -687,6 +687,154 @@ export default function App() {
                 </div>
               </div>
             </div>
+
+            <details open={openConfigSection === 'layout'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px', padding: '16px', borderRadius: '8px', textAlign: 'left' }}>
+                <summary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenConfigSection((current) => current === 'layout' ? null : 'layout');
+                  }}
+                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
+                >Layout</summary>
+                <div style={{ marginTop: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', paddingBottom: '12px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {/* Chassis Swatches */}
+            <div style={{ display: 'grid', gridTemplateColumns: selectedModel === 'xl75' ? '1fr 1fr' : '1fr', gap: '16px', marginTop: '16px' }}>
+
+                {!sl43Speaker && !sl43Sign && (
+                  <div style={{ marginBottom: '0px', marginTop: '0px' }}>
+                    <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '12px' }}>Centre Section Length:</span>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {['300mm', '220mm', '160mm'].map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setSl43CentreType(size)}
+                          className={`mode-tab ${sl43CentreType === size ? 'active-tab' : ''}`}
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '12px' }}>Options:</span>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43Speaker} 
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setSl43Speaker(checked);
+                        if (checked) setSl43Sign(false);
+                      }}
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }} 
+                    />
+                    <strong>Speaker</strong>
+                  </label>
+                </div>
+
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43Sign} 
+                      disabled={sl43Speaker} 
+                      onChange={(e) => {
+                        setSl43Sign(e.target.checked);
+                      }} 
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }} 
+                    />
+                    <strong>Illuminated Centre Sign</strong>
+                  </label>
+                </div>
+
+                {sl43Sign && (
+                  <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #ddd' }}>
+                    <div style={{ marginBottom: '15px' }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Size:</span>
+                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
+                        <button 
+                          className={`mode-tab ${sl43SignSize === '300mm' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignSize('300mm')}
+                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                        >
+                          300mm
+                        </button>
+                        <button 
+                          className={`mode-tab ${sl43SignSize === '160mm' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignSize('160mm')}
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          160mm
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '15px' }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Colour:</span>
+                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
+                        <button 
+                          className={`mode-tab ${sl43SignColour === 'white' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignColour('white')}
+                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                        >
+                          White
+                        </button>
+                        <button 
+                          className={`mode-tab ${sl43SignColour === 'yellow' ? 'active-tab' : ''}`}
+                          onClick={() => setSl43SignColour('yellow')}
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          Yellow
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '15px' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Custom Text:</span>
+                      <input 
+                        type="text" 
+                        value={sl43SignText} 
+                        onChange={(e) => setSl43SignText(e.target.value)} 
+                        placeholder="Enter sign text..." 
+                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }} 
+                      />
+                    </div>
+
+                    {/* Sign Text Colour Dropdown */}
+                    <div>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Text Colour:</span>
+                      <select 
+                        value={sl43SignTextColour} 
+                        onChange={(e) => setSl43SignTextColour(e.target.value)} 
+                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                      >
+                        <option value="#231f20">Black</option>
+                        <option value="#ef4444">Red</option>
+                        <option value="#140f64">Blue</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+              </div>
+              </div>
+              </div>
+              </div>
+              </details>
               
             <details open={openConfigSection === 'colours'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px', padding: '16px', borderRadius: '8px', textAlign: 'left' }}>
                 <summary
@@ -695,7 +843,7 @@ export default function App() {
                     setOpenConfigSection((current) => current === 'colours' ? null : 'colours');
                   }}
                   style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
-                >Layout & Lenses</summary>
+                >Lenses & Bridges</summary>
                 <div style={{ marginTop: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', paddingBottom: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -719,25 +867,6 @@ export default function App() {
                     </div>
                   </div>
                 )}
-
-                {!sl43Speaker && !sl43Sign && (
-                  <div style={{ marginBottom: '0px', marginTop: '0px' }}>
-                    <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '12px' }}>Centre Section Length:</span>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      {['300mm', '220mm', '160mm'].map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => setSl43CentreType(size)}
-                          className={`mode-tab ${sl43CentreType === size ? 'active-tab' : ''}`}
-                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              <div><hr style={{ border: 'none', height: '1px', backgroundColor: '#c1c1c1' }} /></div>
                 <div className="sub-category-block">
                   <label className="sub-label">Outer Lens Colour</label>
                   <div
@@ -855,7 +984,7 @@ export default function App() {
                     setOpenConfigSection((current) => current === 'modules' ? null : 'modules');
                   }}
                   style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
-                >Modules</summary>
+                >LED Module Selection</summary>
                 <div style={{ marginTop: '16px' }}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '18px' }}
                   >
@@ -1208,9 +1337,8 @@ export default function App() {
                 </div>
                 </div>
                 </div>
-               </details>         
-
-               {/* SECTION SELECTOR & CONFIGURATION TOOLBAR */}
+               </details>
+                             {/* SECTION SELECTOR & CONFIGURATION TOOLBAR */}
             {selectedLength === 'SL43' && (
               <details open={openConfigSection === 'featured'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', padding: '16px', display: 'block', marginTop: '20px', borderRadius: '8px', textAlign: 'left' }}>
                 <summary
@@ -1219,118 +1347,8 @@ export default function App() {
                     setOpenConfigSection((current) => current === 'featured' ? null : 'featured');
                   }}
                   style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
-                >Featured Options</summary>
+                >Additional Options</summary>
                 <div style={{ marginTop: '16px' }}>
-                
-                <div style={{ marginBottom: '18px' }}>
-                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={sl43Speaker} 
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setSl43Speaker(checked);
-                        if (checked) setSl43Sign(false);
-                      }}
-                      style={{ 
-                        accentColor: 'green',
-                        width: '15px', 
-                        height: '15px', 
-                        cursor: 'pointer'
-                      }} 
-                    />
-                    <strong>Speaker</strong>
-                  </label>
-                </div>
-
-                <div style={{ marginBottom: '18px' }}>
-                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={sl43Sign} 
-                      disabled={sl43Speaker} 
-                      onChange={(e) => {
-                        setSl43Sign(e.target.checked);
-                      }} 
-                      style={{ 
-                        accentColor: 'green',
-                        width: '15px', 
-                        height: '15px', 
-                        cursor: 'pointer'
-                      }} 
-                    />
-                    <strong>Illuminated Centre Sign</strong>
-                  </label>
-                </div>
-
-                {sl43Sign && (
-                  <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #ddd' }}>
-                    <div style={{ marginBottom: '15px' }}>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Size:</span>
-                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
-                        <button 
-                          className={`mode-tab ${sl43SignSize === '300mm' ? 'active-tab' : ''}`}
-                          onClick={() => setSl43SignSize('300mm')}
-                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
-                        >
-                          300mm
-                        </button>
-                        <button 
-                          className={`mode-tab ${sl43SignSize === '160mm' ? 'active-tab' : ''}`}
-                          onClick={() => setSl43SignSize('160mm')}
-                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                        >
-                          160mm
-                        </button>
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '15px' }}>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Colour:</span>
-                      <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
-                        <button 
-                          className={`mode-tab ${sl43SignColour === 'white' ? 'active-tab' : ''}`}
-                          onClick={() => setSl43SignColour('white')}
-                          style={{ padding: '4px 10px', fontSize: '0.8rem' }}
-                        >
-                          White
-                        </button>
-                        <button 
-                          className={`mode-tab ${sl43SignColour === 'yellow' ? 'active-tab' : ''}`}
-                          onClick={() => setSl43SignColour('yellow')}
-                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                        >
-                          Yellow
-                        </button>
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '15px' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Custom Text:</span>
-                      <input 
-                        type="text" 
-                        value={sl43SignText} 
-                        onChange={(e) => setSl43SignText(e.target.value)} 
-                        placeholder="Enter sign text..." 
-                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }} 
-                      />
-                    </div>
-
-                    {/* Sign Text Colour Dropdown */}
-                    <div>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Text Colour:</span>
-                      <select 
-                        value={sl43SignTextColour} 
-                        onChange={(e) => setSl43SignTextColour(e.target.value)} 
-                        style={{ width: '100%', padding: '6px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
-                      >
-                        <option value="#231f20">Black</option>
-                        <option value="#ef4444">Red</option>
-                        <option value="#140f64">Blue</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
 
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '8px' }}>
@@ -1381,7 +1399,7 @@ export default function App() {
                 </div>
                 </div>
               </details>
-            )}
+            )}   
 
             <div className="step-footer-action button-group-row" style={{ marginTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button 
