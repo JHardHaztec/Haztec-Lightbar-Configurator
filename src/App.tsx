@@ -741,8 +741,8 @@ export default function App() {
                 <div className="sub-category-block">
                   <label className="sub-label">Outer Lens Colour</label>
                   <div
-                    className="length-grid"
-                    style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}
+                    className="colour-grid"
+                    style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', width: '50%'}}
                   >
                     {lensOptions.map((lens) => (
                       <div
@@ -750,7 +750,7 @@ export default function App() {
                         className={`colour-card ${selectedLens === lens.id ? 'selected' : ''}`}
                         onClick={() => setSelectedLens(lens.id)}
                         style={{
-                          padding: '8px',
+                          padding: '5px 0px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -761,8 +761,8 @@ export default function App() {
                           className="lens-swatch"
                           style={{
                             background: lens.hex,
-                            width: '20px',
-                            height: '20px',
+                            width: '16px',
+                            height: '16px',
                             flexShrink: 0,
                           }}
                         />
@@ -800,24 +800,24 @@ export default function App() {
                 {splitLensEnabled && (
                   <div className="sub-category-block" style={{ marginTop: '0px', paddingLeft: '8px', borderLeft: '3px solid #353fad' }}>
                     <label className="sub-label">Right Side Lens Colour</label>
-                    <div className="length-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+                    <div className="colour-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', width: '50%' }}>
                     {lensOptions.map((lens) => (
                       <div 
                         key={lens.id} 
                         className={`colour-card ${rightLensColour === lens.hex ? 'selected' : ''}`}
                         onClick={() => setRightLensColour(lens.hex)} // <-- Make sure this is lens.hex, not lens.id
                         style={{
-                          padding: '8px',
+                          padding: '5px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '8px',
+                          gap: '6px',
                         }}
                       >
                         <div className="lens-swatch" style={{
                             background: lens.hex,
-                            width: '20px',
-                            height: '20px',
+                            width: '16px',
+                            height: '16px',
                             flexShrink: 0,
                           }}></div>
                         <div className="length-title" style={{ fontSize: '0.75rem' }}>{lens.name}</div>
