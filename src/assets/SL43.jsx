@@ -205,39 +205,6 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
 
   return (
     <div style={{ width: '100%', maxWidth: '650px', margin: '0 auto', fontFamily: 'Futura PT, sans-serif' }}>
-      {/* View Toggle Bar */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '50px', gap: '8px' }}>
-        <button
-          onClick={() => setViewMode('interior')}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '20px',
-            border: !isExterior ? '2px solid #353fad' : '2px solid #353fad',
-            background: !isExterior ? '#353fad' : 'none',
-            color: !isExterior ? '#ffffff' : '#353fad',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
-        >
-          Components View
-        </button>
-        <button
-          onClick={() => setViewMode('exterior')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '20px',
-            border: !isExterior ? '2px solid #353fad' : '2px solid #353fad',
-            background: isExterior ? '#353fad' : 'none',
-            color: isExterior ? '#ffffff' : '#353fad',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
-        >
-          Overhead View
-        </button>
-      </div>
 
       <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 605.9 200" style={{ width: '100%', height: '280px', display: 'block' }}>
         <defs>
@@ -542,6 +509,39 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
       <text className="cls-label" x="50%" y="9" textAnchor="middle"><tspan x="300" y="-10">REAR</tspan></text>
       <text className="cls-label" x="50%" y="192" textAnchor="middle"><tspan x="300" y="195">FRONT</tspan></text>
       </svg>
+      {/* View Toggle Bar */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '15px', gap: '8px' }}>
+        <button
+          onClick={() => setViewMode('interior')}
+          style={{
+            padding: '8px 14px',
+            borderRadius: '20px',
+            border: !isExterior ? '2px solid #a9a9a9' : '2px solid #a9a9a9',
+            background: !isExterior ? '#a9a9a9' : 'none',
+            color: !isExterior ? '#ffffff' : '#a9a9a9',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          Components View
+        </button>
+        <button
+          onClick={() => setViewMode('exterior')}
+          style={{
+            padding: '8px 16px',
+            borderRadius: '20px',
+            border: !isExterior ? '2px solid #a9a9a9' : '2px solid #a9a9a9',
+            background: isExterior ? '#a9a9a9' : 'none',
+            color: isExterior ? '#ffffff' : '#a9a9a9',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          Exterior View
+        </button>
+      </div>
     </div>
   );
 }
