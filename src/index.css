@@ -49,7 +49,12 @@ body {
 }
 
 .sub-category-block {
-  margin-top: 16px;
+  margin-top: 5px;
+}
+
+hr {
+  color: red;
+  background-color: red;
 }
 
 .sub-label {
