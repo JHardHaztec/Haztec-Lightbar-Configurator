@@ -1196,7 +1196,7 @@ export default function App() {
                 <div style={{ marginTop: '50px'}}>
                   <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600,
                           color: '#282828', marginBottom: '10px', }}>Modules Information</label>
-                          <div style={{ fontSize: '0.8rem', color: '#262626'}}> Find out more about our lightbar modules from our <a href="https://cdn.shopify.com/s/files/1/0958/9994/3255/files/Haztec-lightbar-modules-10-26.pdf?v=1792504679" target="blank">Lightbar Modules Datasheet</a>.
+                          <div style={{ fontSize: '0.8rem', color: '#262626'}}> Find out more about our lightbar modules from our <a href="https://cdn.shopify.com/s/files/1/0958/9994/3255/files/Haztec-lightbar-modules-10-26.pdf?v=1792504972" target="blank">Lightbar Modules Datasheet</a>.
                           </div>
                   </div>
                 </div>
