@@ -204,9 +204,9 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
   const visibleFrontRearSlots = selectedFrontRearOptions.flatMap((option) => option ? (frontRearModuleOptions[option] || []) : []);
 
   return (
-    <div style={{ width: '100%', maxWidth: '650px', margin: '0 auto', fontFamily: 'Futura PT, sans-serif' }}>
+    <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto', fontFamily: 'Futura PT, sans-serif' }}>
 
-      <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 605.9 200" style={{ width: '100%', height: '280px', display: 'block' }}>
+      <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 605.9 200" style={{ width: '100%', height: '250px', display: 'block' }}>
         <defs>
         <style>{`
             .cls-label {fill: #969696; font-weight: 700;}
