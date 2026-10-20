@@ -39,6 +39,7 @@ export default function App() {
   const [sl43Siren, setSl43Siren] = useState(false);
   const [sl43SirenModel, setSl43SirenModel] = useState<'8-82613' | '8-82415'>('8-82613');
   const [sl43ControlModule, setSl43ControlModule] = useState(false);
+  const [sl43AlleyLights, setSl43AlleyLights] = useState(false);
   const [sl43ModuleLayout, setSl43ModuleLayout] = useState<'corner' | 'beacon'>('corner');
   const [sl43FrontOuterOption, setSl43FrontOuterOption] = useState('');
   const [sl43FrontInnerOption, setSl43FrontInnerOption] = useState('');
@@ -430,6 +431,7 @@ export default function App() {
       setSl43Siren(false);
       setSl43SirenModel('8-82613');
       setSl43ControlModule(false);
+      setSl43AlleyLights(false);
       setSl43DividerColour('black');
       setSl43CentreType('300mm');
     }
@@ -671,6 +673,7 @@ export default function App() {
                       sirenSelected={sl43Siren}
                       sirenModel={sl43SirenModel}
                       controlModuleSelected={sl43ControlModule}
+                      alleyLightsSelected={sl43AlleyLights}
                       dividerColour={sl43DividerColour}
                       centreSectionType={sl43CentreType}
                       signTextColour={sl43SignTextColour}
@@ -873,7 +876,7 @@ export default function App() {
                         }}
                       >
                         <option value="corner">XT Modules</option>
-                        <option value="beacon">9-3541 Beacon</option>
+                        <option value="beacon">9-3751 360 Degree Module</option>
                       </select>
                     </div>
                   ) : (
@@ -1388,7 +1391,7 @@ export default function App() {
                   )}
                 </div>
 
-                <div style={{ marginBottom: '22px' }}>
+                <div style={{ marginBottom: '16px' }}>
                   <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                     <input 
                       type="checkbox" 
@@ -1402,6 +1405,22 @@ export default function App() {
                       }}  
                     />
                     <strong>Control Module</strong>
+                  </label>
+                </div>
+                <div style={{ marginBottom: '22px' }}>
+                  <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={sl43AlleyLights} 
+                      onChange={(e) => setSl43AlleyLights(e.target.checked)}
+                      style={{ 
+                        accentColor: 'green',
+                        width: '15px', 
+                        height: '15px', 
+                        cursor: 'pointer'
+                      }}  
+                    />
+                    <strong>Alley Lights</strong>
                   </label>
                 </div>
                 </div>
