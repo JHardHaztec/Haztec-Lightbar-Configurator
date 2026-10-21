@@ -17,7 +17,7 @@ export default function SL43({
   dividerColour = 'black',    // 'amber', 'blue', 'red', 'black', 'clear'
   centreSectionType = '300mm', // '300mm', '220mm'
   defaultViewMode = 'interior', // 'interior' or 'exterior'
-  rightLensColour = '#dbd9d9',
+  rightLensColour = '#dbd9d9E6',
   splitLensEnabled = false,
   signText = '',
   signTextColour = '#231f20',
@@ -265,7 +265,7 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
             .cls-shell2 { fill: ${rightShellFill}; stroke: ${rightShellStroke}; stroke-miterlimit: 10; stroke-width: 3px; }
             .cls-stroke { fill: none; stroke: #231f20; stroke-miterlimit: 10; stroke-width: 3px; }
             .cls-white { fill: #fff; stroke: #231f20; stroke-miterlimit: 10; stroke-width: 1px; }
-            .sign-text { font-family: 'Futura PT', sans-serif; font-weight: 800; font-size: 19px; fill: #231f20; letter-spacing: 1.5px; text-anchor: middle; dominant-baseline: middle; }
+            .sign-text { font-family: 'Futura PT', sans-serif; font-weight: 800; font-size: 23px; fill: #231f20; letter-spacing: 1.5px; text-anchor: middle; dominant-baseline: middle; }
 
             .cls-1 { fill: #6b6b6b; }
             .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8 { fill-rule: evenodd; }
@@ -504,15 +504,18 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
               <path id="_300mm_divider_right" data-name="300mm divider right" className="cls-4" fill={dividerHex} d="M386.78,170.67c.66,0,1.19-.81,1.19-1.81v-3.87c0-1.03.25-2.02.71-2.75s1.07-1.14,1.71-1.14,1.26.41,1.71,1.14c.45.73.71,1.72.71,2.75v3.87c0,1,.53,1.81,1.19,1.81h2.72c.32,0,.62-.19.84-.53.22-.34.35-.8.35-1.28v-39.94c0-1.69.44-3.3,1.22-4.49.79-1.2,1.82-2.76,2.61-3.96.78-1.19,1.22-2.8,1.22-4.49v-61.39c0-1.69-.44-3.3-1.22-4.49-.79-1.2-1.82-2.76-2.61-3.96-.78-1.19-1.22-2.8-1.22-4.49V1.81c0-.48-.13-.94-.35-1.28-.22-.34-.52-.53-.84-.53h-2.72c-.66,0-1.19.81-1.19,1.81v3.63c0,1.03-.25,2.02-.71,2.75-.45.73-1.07,1.14-1.71,1.14s-1.26-.41-1.71-1.14c-.45-.73-.71-1.72-.71-2.75V1.81c0-1-.53-1.81-1.19-1.81h-2.72c-.32,0-.62.19-.84.53-.22.34-.35.8-.35,1.28v39.83c0,1.69-.44,3.3-1.22,4.49-.79,1.2-1.82,2.76-2.61,3.96-.78,1.19-1.22,2.8-1.22,4.49v61.39c0,1.69.44,3.3,1.22,4.49.79,1.2,1.82,2.76,2.61,3.96.78,1.19,1.22,2.8,1.22,4.49v39.94c0,.48.13.94.35,1.28.22.34.53.53.84.53h2.72Z"/>
             </g>
             {isExterior && signSelected && signText && (
-             <text 
-             x="302.95" 
-             y="155.63" 
-             className="sign-text"
-             style={{ fill: signTextColour }} // Overrides the default black fill from CSS
-           >
-             {signText}
-           </text>
+              <text
+                x="302.95"
+                y="155.63"
+                className="sign-text"
+                style={{ fill: signTextColour }}
+                textLength={signSize === '300mm' ? 140 : 80}
+                lengthAdjust="spacingAndGlyphs"
+              >
+                {signText}
+              </text>
             )}
+
             {isExterior && signSelected && signText && (
              <text 
              x="302.95" 
@@ -520,6 +523,8 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
              className="sign-text"
              transform="rotate(180, 302.95, 18.63)"
              style={{ fill: signTextColour }} // Overrides the default black fill from CSS
+             textLength={signSize === '300mm' ? 140 : 80}
+            lengthAdjust="spacingAndGlyphs"
            >
              {signText}
            </text>
@@ -565,15 +570,17 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
           <path id="_160mm_divider_left" data-name="160mm divider left" className="cls-4" fill={dividerHex} d="M256.52,171.17c.66,0,1.19-.81,1.19-1.81v-3.87c0-1.03.25-2.02.71-2.75s1.07-1.14,1.71-1.14,1.26.41,1.71,1.14c.45.73.71,1.72.71,2.75v3.87c0,1,.53,1.81,1.19,1.81h2.72c.32,0,.62-.19.84-.53.22-.34.35-.8.35-1.28v-39.94c0-1.69.44-3.3,1.22-4.49.79-1.2,1.82-2.76,2.61-3.96.78-1.19,1.22-2.8,1.22-4.49v-61.39c0-1.69-.44-3.3-1.22-4.49-.79-1.2-1.82-2.76-2.61-3.96-.78-1.19-1.22-2.8-1.22-4.49V2.31c0-.48-.13-.94-.35-1.28-.22-.34-.52-.53-.84-.53h-2.72c-.66,0-1.19.81-1.19,1.81v3.63c0,1.03-.25,2.02-.71,2.75-.45.73-1.07,1.14-1.71,1.14s-1.26-.41-1.71-1.14c-.45-.73-.71-1.72-.71-2.75v-3.63c0-1-.53-1.81-1.19-1.81h-2.72c-.32,0-.62.19-.84.53-.22.34-.35.8-.35,1.28v39.83c0,1.69-.44,3.3-1.22,4.49-.79,1.2-1.82,2.76-2.61,3.96-.78,1.19-1.22,2.8-1.22,4.49v61.39c0,1.69.44,3.3,1.22,4.49.79,1.2,1.82,2.76,2.61,3.96.78,1.19,1.22,2.8,1.22,4.49v39.94c0,.48.13.94.35,1.28.22.34.53.53.84.53h2.72Z"/>
           <path id="_160mm_divider_right" data-name="160mm divider right" className="cls-4" fill={dividerHex} d="M342.16,171.17c.66,0,1.19-.81,1.19-1.81v-3.87c0-1.03.25-2.02.71-2.75s1.07-1.14,1.71-1.14,1.26.41,1.71,1.14c.45.73.71,1.72.71,2.75v3.87c0,1,.53,1.81,1.19,1.81h2.72c.32,0,.62-.19.84-.53.22-.34.35-.8.35-1.28v-39.94c0-1.69.44-3.3,1.22-4.49.79-1.2,1.82-2.76,2.61-3.96.78-1.19,1.22-2.8,1.22-4.49v-61.39c0-1.69-.44-3.3-1.22-4.49-.79-1.2-1.82-2.76-2.61-3.96-.78-1.19-1.22-2.8-1.22-4.49V2.31c0-.48-.13-.94-.35-1.28-.22-.34-.52-.53-.84-.53h-2.72c-.66,0-1.19.81-1.19,1.81v3.63c0,1.03-.25,2.02-.71,2.75-.45.73-1.07,1.14-1.71,1.14s-1.26-.41-1.71-1.14c-.45-.73-.71-1.72-.71-2.75v-3.63c0-1-.53-1.81-1.19-1.81h-2.72c-.32,0-.62.19-.84.53-.22.34-.35.8-.35,1.28v39.83c0,1.69-.44,3.3-1.22,4.49-.79,1.2-1.82,2.76-2.61,3.96-.78,1.19-1.22,2.8-1.22,4.49v61.39c0,1.69.44,3.3,1.22,4.49.79,1.2,1.82,2.76,2.61,3.96.78,1.19,1.22,2.8,1.22,4.49v39.94c0,.48.13.94.35,1.28.22.34.53.53.84.53h2.72Z"/>
         </g>
-            {isExterior && signSelected && signText && (
-              <text 
-              x="302.95" 
-              y="155.63" 
-              className="sign-text"
-              style={{ fill: signTextColour }} // Overrides the default black fill from CSS
-            >
-              {signText}
-            </text>
+        {isExterior && signSelected && signText && (
+              <text
+                x="302.95"
+                y="155.63"
+                className="sign-text"
+                style={{ fill: signTextColour }}
+                textLength={signSize === '160mm' ? 65 : 80}
+                lengthAdjust="spacingAndGlyphs"
+              >
+                {signText}
+              </text>
             )}
             {isExterior && signSelected && signText && (
              <text 
@@ -582,6 +589,8 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
              className="sign-text"
              transform="rotate(180, 302.95, 18.63)"
              style={{ fill: signTextColour }} // Overrides the default black fill from CSS
+             textLength={signSize === '160mm' ? 65 : 80}
+            lengthAdjust="spacingAndGlyphs"
            >
              {signText}
            </text>
