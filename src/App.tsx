@@ -776,19 +776,8 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                     </button>
                   ))}
                 </div>
-
-                <span
-                  style={{
-                    color: '#282828',
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    display: 'block',
-                    marginBottom: '12px'
-                  }}
-                >
-                  Centre Section Colour:
-                </span>
-
+                
+                {(sl43CentreType === '300mm' || sl43CentreType === '160mm') && (
                 <div style={{ display: 'flex', gap: '8px' }}>
                   {['none', 'black'].map((colour) => (
                     <button
@@ -803,6 +792,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                     </button>
                   ))}
                 </div>
+                )}
               </div>
             )}
 
