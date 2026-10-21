@@ -456,6 +456,11 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
       setSl43AlleyLights(false);
       setSl43DividerColour('clear');
       setSl43CentreType('300mm');
+      setSl43FrontOuterOption('none');
+      setSl43FrontInnerOption('none');
+      setSl43RearOuterOption('none');
+      setSl43RearInnerOption('none');
+      setSelectedLens('clear');
     }
   };
 
@@ -746,11 +751,10 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                 <div style={{ marginTop: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', paddingBottom: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-
+                  <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Central Configuration Layout</div>
+                  <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '20px', }}>Choose a fully lensed lightbar or one with any central configurations:</div>
             {!sl43Speaker && !sl43Sign && (
               <div style={{ marginBottom: '0px', marginTop: '0px' }}>
-                <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Central Configuration Layout</div>
-                  <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '20px', }}>Choose a fully lensed lightbar or one with any central configurations:</div>
                 <span
                   style={{
                     color: '#282828',
