@@ -5,7 +5,7 @@ export default function SL43({
   slotData, 
   selectedSlotKey, 
   onSelectSlot, 
-  centreColour,
+  centreColour = 'none',
   speakerSelected = false,
   signSelected = false,
   signSize = '300mm',        // '300mm' or '160mm'
