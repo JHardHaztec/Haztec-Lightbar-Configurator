@@ -12,7 +12,7 @@ import { getModuleOrderCode } from './OrderCodes';
 export default function App() {
   const [currentStage, setCurrentStage] = useState<'model' | 'exterior' | 'modules' | 'form' | 'success'>('model');
   // Keep the Featured Options and Modules accordions mutually exclusive.
-  const [openConfigSection, setOpenConfigSection] = useState<'featured' | 'modules' | 'colours' | 'layout' | null>(null);
+  const [openConfigSection, setOpenConfigSection] = useState<'featured' | 'modules' | 'colours' | 'layout'>('layout');
 
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [selectedLength, setSelectedLength] = useState<string | null>(null);
@@ -40,7 +40,7 @@ export default function App() {
   const [sl43SirenModel, setSl43SirenModel] = useState<'8-82613' | '8-82415'>('8-82613');
   const [sl43ControlModule, setSl43ControlModule] = useState(false);
   const [sl43AlleyLights, setSl43AlleyLights] = useState(false);
-  const [sl43ModuleLayout, setSl43ModuleLayout] = useState<'corner' | 'beacon'>('corner');
+  const [sl43ModuleLayout, setSl43ModuleLayout] = useState<'corner' | 'beacon' | 'vmirrors'>('corner');
   const [sl43FrontOuterOption, setSl43FrontOuterOption] = useState('');
   const [sl43FrontInnerOption, setSl43FrontInnerOption] = useState('');
   const [sl43RearOuterOption, setSl43RearOuterOption] = useState('');
@@ -89,7 +89,15 @@ export default function App() {
     C4: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' },
     B1: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'beacon' },
     B2: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'beacon' },
+    BV1: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'vmirrors' },
+    BV2: { active: true, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'vmirrors' },
   });
+
+  useEffect(() => {
+    if (selectedLength !== 'SL43' && openConfigSection === 'featured') {
+      setOpenConfigSection('layout');
+    }
+  }, [selectedLength, openConfigSection]);
 
   useEffect(() => {
     if (typeof selectedSlotNumber === 'number' && selectedLength === '25' && selectedSlotNumber > 4) {
@@ -380,7 +388,7 @@ export default function App() {
     });
   };
 
-  const handleSL43ModuleLayout = (layout: 'corner' | 'beacon') => {
+  const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors' ) => {
     setSl43ModuleLayout(layout);
     setSelectedSlotNumber(layout === 'beacon' ? 'B1' : 'C1');
     setSlotData(prev => {
@@ -392,6 +400,10 @@ export default function App() {
       ['B1', 'B2'].forEach(key => {
         const existing = next[key] || { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' };
         next[key] = { ...existing, active: layout === 'beacon' };
+      });
+        ['B1', 'B2'].forEach(key => {
+          const existing = next[key] || { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' };
+          next[key] = { ...existing, active: layout === 'vmirrors' };
       });
       return next;
     });
@@ -691,14 +703,35 @@ export default function App() {
               </div>
             </div>
 
-            <details open={openConfigSection === 'layout'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px', padding: '16px', borderRadius: '8px', textAlign: 'left' }}>
-                <summary
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenConfigSection((current) => current === 'layout' ? null : 'layout');
-                  }}
-                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
-                >Layout</summary>
+            {/* Horizontal configuration tabs */}
+            <div
+              role="tablist"
+              aria-label="Configuration sections"
+              className="config-tabs"
+              style={{ display: 'flex', flexWrap: 'nowrap', overflowX: 'auto', gap: '8px', alignItems: 'center', marginTop: '20px', borderBottom: '1px solid #d1d5db', paddingBottom: '10px' }}
+            >
+              {[
+                { id: 'layout', label: 'Layout' },
+                { id: 'modules', label: 'LED Module Selection' },
+                { id: 'colours', label: 'Lenses & Bridges' },
+                ...(selectedLength === 'SL43' ? [{ id: 'featured', label: 'Additional Options' }] : []),
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={openConfigSection === tab.id}
+                  onClick={() => setOpenConfigSection(tab.id as 'featured' | 'modules' | 'colours' | 'layout')}
+                  className={`config-tab ${openConfigSection === tab.id ? 'active-tab' : ''}`}
+                  style={{ padding: '10px 14px', fontSize: '0.85rem', borderRadius: '6px 6px 0 0', whiteSpace: 'nowrap', flexShrink: 0 }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {openConfigSection === 'layout' && (
+              <div className="palette-toolbar animate-fade" style={{ border: '0px solid #d5d5d5', background: '#ffffff', display: 'block', marginTop: '0', padding: '16px', borderRadius: '0 0 8px 8px', textAlign: 'left' }}>
                 <div style={{ marginTop: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', paddingBottom: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -723,8 +756,8 @@ export default function App() {
                   </div>
                 )}
 
-                <div>
-                <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '12px' }}>Options:</span>
+                <div style={{ marginTop: '5px' }}>
+                <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', margin: '15px 0px' }}>Options:</span>
                   <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                     <input 
                       type="checkbox" 
@@ -766,7 +799,7 @@ export default function App() {
                 </div>
 
                 {sl43Sign && (
-                  <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #ddd' }}>
+                  <div style={{ background: '#fafafa', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #ddd' }}>
                     <div style={{ marginBottom: '15px' }}>
                       <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Sign Size:</span>
                       <div style={{ display: 'flex', gap: '8px', margin: '10px 0px' }}>
@@ -837,23 +870,18 @@ export default function App() {
               </div>
               </div>
               </div>
-              </details>
+              </div>
+            )}
 
-            <details open={openConfigSection === 'modules'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px', padding: '16px', borderRadius: '8px', textAlign: 'left' }}>
-                <summary
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenConfigSection((current) => current === 'modules' ? null : 'modules');
-                  }}
-                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
-                >LED Module Selection</summary>
+            {openConfigSection === 'modules' && (
+              <div className="palette-toolbar animate-fade" style={{ border: '0px solid #f5f5f5', background: '#fff', display: 'block', marginTop: '0', padding: '16px', borderRadius: '0 0 8px 8px', textAlign: 'left' }}>
                 <div style={{ marginTop: '16px' }}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '18px' }}
                   >
                     {/* LEFT COLUMN: Module number selectors */}
                     <div style={{ flex: '0 0 350px', minWidth: '200px', maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '16px', borderRight: '1px solid #d1d5db', }}>
                     {selectedLength === 'SL43' ? (
-                    <div style={{ background: '#f5f5f5', padding: '10px 12px', borderRadius: '6px',
+                    <div style={{ background: '#fff', padding: '10px 12px', borderRadius: '6px',
                       }}
                     >
                       <label
@@ -868,15 +896,16 @@ export default function App() {
                         value={sl43ModuleLayout}
                         onChange={(e) =>
                           handleSL43ModuleLayout(
-                            e.target.value as 'corner' | 'beacon'
+                            e.target.value as 'corner' | 'beacon' | 'vmirrors'
                           )
                         }
                         style={{
-                          width: '100%', padding: '6px 10px', fontSize: '0.9rem', border: '1px solid #d1d5db', borderRadius: '6px', background: '#fff', color: '#282828', cursor: 'pointer',
+                          width: '100%', padding: '6px 10px', fontSize: '0.9rem', border: '1px solid #d1d5db', borderRadius: '6px', background: '#fafafa', color: '#282828', cursor: 'pointer',
                         }}
                       >
                         <option value="corner">XT Modules</option>
                         <option value="beacon">9-3751 360 Degree Module</option>
+                        <option value="vmirrors">9-3751 360 Degree Module with V Mirrors</option>
                       </select>
                     </div>
                   ) : (
@@ -909,7 +938,7 @@ export default function App() {
                   )}
 
                     {selectedLength === 'SL43' && (
-                      <div style={{ background: '#f5f5f5', padding: '12px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#282828' }}>Front & Rear Modules</div>
                         {[
                           { label: 'Front Outer', value: sl43FrontOuterOption, setValue: setSl43FrontOuterOption, options: [{ value: '', label: 'None' }, { value: 'frontOuterLongShort', label: 'XT (Short / Long + Long / Short)' }, { value: 'frontOuterShortLong', label: 'XT (Long / Short + Short / Long)' }, { value: 'frontOuterLong', label: 'XT = (Long + Long)' }] },
@@ -919,7 +948,7 @@ export default function App() {
                         ].map(section => (
                           <label key={section.label} style={{ display: 'flex', flexDirection: 'column', gap: '5px', color: '#282828', fontSize: '0.82rem', fontWeight: 600 }}>
                             {section.label}
-                            <select value={section.value} onChange={e => section.setValue(e.target.value)} style={{ width: '100%', padding: '6px 10px', border: '1px solid #cbd5e1', borderRadius: '6px', background: '#fff', color: '#282828', fontSize: '0.85rem' }}>
+                            <select value={section.value} onChange={e => section.setValue(e.target.value)} style={{ width: '100%', padding: '6px 10px', border: '1px solid #cbd5e1', borderRadius: '6px', background: '#fafafa', color: '#282828', fontSize: '0.85rem' }}>
                               {section.options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
                             </select>
                           </label>
@@ -1205,16 +1234,11 @@ export default function App() {
                 </div>
                 </div>
                 </div>
-               </details>
+               </div>
+            )}
 
-               <details open={openConfigSection === 'colours'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', display: 'block', marginTop: '20px', padding: '16px', borderRadius: '8px', textAlign: 'left' }}>
-                <summary
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenConfigSection((current) => current === 'colours' ? null : 'colours');
-                  }}
-                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
-                >Lenses & Bridges</summary>
+               {openConfigSection === 'colours' && (
+              <div className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#fff', display: 'block', marginTop: '0', padding: '16px', borderRadius: '0 0 8px 8px', textAlign: 'left' }}>
                 <div style={{ marginTop: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', paddingBottom: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -1255,6 +1279,7 @@ export default function App() {
                           alignItems: 'center',
                           justifyContent: 'center',
                           gap: '8px',
+                          background: '#fafafa',
                         }}
                       >
                         <div
@@ -1275,7 +1300,7 @@ export default function App() {
                 </div>
 
                 {/* Split Lens Button */}
-                <div style={{ margin: '0 0 10px 0' }}>
+                <div style={{ margin: '0' }}>
                   <button 
                     type="button"
                     onClick={() => setSplitLensEnabled(!splitLensEnabled)}
@@ -1285,14 +1310,14 @@ export default function App() {
                       cursor: 'pointer',
                       borderRadius: '6px',
                       border: splitLensEnabled ? 'none' : 'none',
-                      textDecoration: 'underline',
                       background: splitLensEnabled ? 'none' : 'none',
-                      color: splitLensEnabled ? 'red' : 'green',
-                      fontWeight: '700',
+                      color: splitLensEnabled ? '#da2e2e' : '#004D25',
+                      fontWeight: '600',
                       transition: 'all 0.2s',
+                      marginTop: '15px',
                     }}
                   >
-                    {splitLensEnabled ? '- Remove Split Lens' : '+ Split Lens Colours'}
+                    {splitLensEnabled ? 'Remove Second Len Colour' : 'Add Second Lens Colour'}
                   </button>
                 </div>
 
@@ -1312,6 +1337,7 @@ export default function App() {
                           alignItems: 'center',
                           justifyContent: 'center',
                           gap: '6px',
+                          background: '#fafafa',
                         }}
                       >
                         <div className="lens-swatch" style={{
@@ -1346,20 +1372,13 @@ export default function App() {
               </div>
               </div>
               </div>
-              </details>
-
+              </div>
+            )}
                              {/* SECTION SELECTOR & CONFIGURATION TOOLBAR */}
-            {selectedLength === 'SL43' && (
-              <details open={openConfigSection === 'featured'} className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#f5f5f5', padding: '16px', display: 'block', marginTop: '20px', borderRadius: '8px', textAlign: 'left' }}>
-                <summary
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenConfigSection((current) => current === 'featured' ? null : 'featured');
-                  }}
-                  style={{ fontSize: '0.95rem', fontWeight: 700, color: '#282828', cursor: 'pointer', listStylePosition: 'inside' }}
-                >Additional Options</summary>
+            {selectedLength === 'SL43' && openConfigSection === 'featured' && (
+                <div className="palette-toolbar animate-fade" style={{ border: '0px solid #f5f5f5', background: '#fff', padding: '16px', display: 'block', marginTop: '0', borderRadius: '0 0 8px 8px', textAlign: 'left' }}>
                 <div style={{ marginTop: '16px' }}>
-
+                <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', margin: '15px 0px' }}>Optional Equipment:</span>
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '8px' }}>
                     <input 
@@ -1424,7 +1443,7 @@ export default function App() {
                   </label>
                 </div>
                 </div>
-              </details>
+              </div>
             )}   
 
             <div className="step-footer-action button-group-row" style={{ marginTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
