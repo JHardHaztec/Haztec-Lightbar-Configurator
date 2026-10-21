@@ -425,32 +425,24 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
        </g>
         )}
 
-         {/* --- CORNERS (1 - 4) --- */}
-         {moduleLayout === 'corner' && (
-          <>
-            {renderModule('C1', cornerBottomLeft, {}, 'corner-1')}
-            {renderModule('C3', cornerTopLeft, {}, 'corner-2')}
-            {renderModule('C2', cornerBottomRight, {}, 'corner-3')}
-            {renderModule('C4', cornerTopRight, {}, 'corner-4')}
-          </>
-        )}
-
-        {/* --- BEACON MODULES --- */}
-        {(moduleLayout === 'beacon' ||
-          moduleLayout === 'vmirrors') && (
-          <>
-            {renderModule('B1', beaconleft, {}, 'beacon-1')}
-            {renderModule('B2', beaconright, {}, 'beacon-2')}
-          </>
-        )}
-
-        {/* --- V MIRRORS --- */}
-        {moduleLayout === 'vmirrors' && (
-          <>
-            {vmirrorleft}
-            {vmirrorright}
-          </>
-        )}
+          {/* --- CORNERS (1 - 4) --- */}
+      {moduleLayout === 'corner' && (<>
+        {renderModule('C1', cornerBottomLeft, {}, 'corner-1')}
+        {renderModule('C3', cornerTopLeft, {}, 'corner-2')}
+        {renderModule('C2', cornerBottomRight, {}, 'corner-3')}
+        {renderModule('C4', cornerTopRight, {}, 'corner-4')}
+      </>)}
+      {moduleLayout === 'beacon' && (<>
+        {renderModule('B1', beaconleft, {}, 'beacon-1')}
+        {renderModule('B2', beaconright, {}, 'beacon-2')}
+      </>)}
+      {moduleLayout === 'vmirrors' && (<>
+        {/* Beacons remain present with the 9-3751 module when V mirrors are added. */}
+        {renderModule('B1', beaconleft, {}, 'beacon-1')}
+        {renderModule('B2', beaconright, {}, 'beacon-2')}
+        {vmirrorleft}
+        {vmirrorright}
+      </>)}
 
        
         {/* Dropdown-selected front/rear modules */}
