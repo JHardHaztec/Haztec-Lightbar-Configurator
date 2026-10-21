@@ -47,7 +47,7 @@ export default function App() {
   const [sl43RearInnerOption, setSl43RearInnerOption] = useState('');
   const [sl43DividerColour, setSl43DividerColour] = useState('black');
   const [sl43CentreType, setSl43CentreType] = useState('300mm');
-  const [rightLensColour, setRightLensColour] = useState('#dbd9d9');
+  const [rightLensColour, setRightLensColour] = useState('#ebebebD6');
   const [splitLensEnabled, setSplitLensEnabled] = useState(false);
   
   // Master slot configuration state for sections 1 through 24
