@@ -33,8 +33,9 @@ export default function App() {
   // --- XPERT SL 43" CUSTOM OPTIONS STATE ---
   const [sl43Speaker, setSl43Speaker] = useState(false);
   const [sl43Sign, setSl43Sign] = useState(false);
+  const [sl43CentreColour, setSl43CentreColour] = useState('none');
   const [sl43SignSize, setSl43SignSize] = useState<'300mm' | '160mm'>('300mm');
-  const [sl43SignColour, setSl43SignColour] = useState<'white' | 'yellow'>('white');
+  const [sl43SignColour, setSl43SignColour] = useState<'white' | 'yellow' |'black'>('white');
   const [sl43SignText, setSl43SignText] = useState('');
   const [sl43Siren, setSl43Siren] = useState(false);
   const [sl43SirenModel, setSl43SirenModel] = useState<'8-82613' | '8-82415'>('8-82613');
@@ -687,6 +688,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                       rightLensColour={rightLensColour}
                       splitLensEnabled={splitLensEnabled}
                       speakerSelected={sl43Speaker}
+                      centreColour={sl43CentreColour}
                       signSelected={sl43Sign}
                       signSize={sl43SignSize}
                       signColour={sl43SignColour}
@@ -747,23 +749,62 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                     {/* Chassis Swatches */}
             <div style={{ display: 'grid', gridTemplateColumns: selectedModel === 'xl75' ? '1fr 1fr' : '1fr', gap: '16px', marginTop: '16px' }}>
 
-                {!sl43Speaker && !sl43Sign && (
-                  <div style={{ marginBottom: '0px', marginTop: '0px' }}>
-                    <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '12px' }}>Centre Section Length:</span>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      {['300mm', '220mm', '160mm'].map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => setSl43CentreType(size)}
-                          className={`mode-tab ${sl43CentreType === size ? 'active-tab' : ''}`}
-                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+
+            {!sl43Speaker && !sl43Sign && (
+              <div style={{ marginBottom: '0px', marginTop: '0px' }}>
+                <span
+                  style={{
+                    color: '#282828',
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    display: 'block',
+                    marginBottom: '12px'
+                  }}
+                >
+                  Centre Section Length:
+                </span>
+
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                  {['300mm', '220mm', '160mm'].map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSl43CentreType(size)}
+                      className={`mode-tab ${sl43CentreType === size ? 'active-tab' : ''}`}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+
+                <span
+                  style={{
+                    color: '#282828',
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    display: 'block',
+                    marginBottom: '12px'
+                  }}
+                >
+                  Centre Section Colour:
+                </span>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {['none', 'black'].map((colour) => (
+                    <button
+                      key={colour}
+                      onClick={() => setSl43CentreColour(colour)}
+                      className={`mode-tab ${
+                        sl43CentreColour === colour ? 'active-tab' : ''
+                      }`}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      {colour === 'none' ? 'None' : 'Black'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
                 <div style={{ marginTop: '5px' }}>
                 <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', margin: '15px 0px' }}>Options:</span>
