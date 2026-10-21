@@ -17,7 +17,7 @@ export default function SL43({
   alleyLightsSelected = false,
   dividerColour = 'clear',    // 'amber', 'blue', 'red', 'black', 'clear'
   centreSectionType = '300mm', // '300mm', '220mm'
-  defaultViewMode = 'interior', // 'interior' or 'exterior'
+  defaultViewMode = 'exterior', // 'interior' or 'exterior'
   rightLensColour = '#dbd9d9E6',
   splitLensEnabled = false,
   signText = '',
@@ -655,6 +655,21 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
       </svg>
       {/* View Toggle Bar */}
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '15px', gap: '8px' }}>
+      <button
+          onClick={() => setViewMode('exterior')}
+          style={{
+            padding: '8px 16px',
+            borderRadius: '20px',
+            border: !isExterior ? '2px solid #a9a9a9' : '2px solid #a9a9a9',
+            background: isExterior ? '#a9a9a9' : 'none',
+            color: isExterior ? '#ffffff' : '#a9a9a9',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          Exterior View
+        </button>
         <button
           onClick={() => setViewMode('interior')}
           style={{
@@ -669,21 +684,6 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
           }}
         >
           Components View
-        </button>
-        <button
-          onClick={() => setViewMode('exterior')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '20px',
-            border: !isExterior ? '2px solid #a9a9a9' : '2px solid #a9a9a9',
-            background: isExterior ? '#a9a9a9' : 'none',
-            color: isExterior ? '#ffffff' : '#a9a9a9',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
-        >
-          Exterior View
         </button>
       </div>
     </div>
