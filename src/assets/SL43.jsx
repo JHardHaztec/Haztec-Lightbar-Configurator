@@ -122,14 +122,17 @@ const getCentreFill = () => {
     return '#ffffff';
   }
 
-  // 4. Centre Section Colour
-  if (centreColour === 'black') {
-    return '#262626';
-  }
+  // 4. Centre Section Colour Priority
+if (
+  centreColour === 'black' &&
+  (effectiveCentreType === '300mm' || effectiveCentreType === '160mm')
+) {
+  return '#262626';
+}
 
-  if (centreColour === 'none') {
-    return 'none';
-  }
+if (centreColour === 'none') {
+  return 'none';
+}
 
   // 5. Default Base Lens
   return '#ffffff00';
