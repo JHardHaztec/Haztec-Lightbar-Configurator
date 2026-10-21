@@ -388,22 +388,31 @@ export default function App() {
     });
   };
 
-  const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors' ) => {
+const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
     setSl43ModuleLayout(layout);
-    setSelectedSlotNumber(layout === 'beacon' ? 'B1' : 'C1');
+    setSelectedSlotNumber(layout === 'beacon' ? 'B1' : layout === 'vmirrors' ? 'BV1' : 'C1');
     setSlotData(prev => {
       const next = { ...prev };
+      const defaults: { active: boolean; mode: 'single' | 'dual' | 'tri';
+        primary: string; secondary: string; tertiary: string; } = {
+        active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: ''
+      };
+
       ['C1', 'C2', 'C3', 'C4'].forEach(key => {
-        const existing = next[key] || { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' };
+        const existing = next[key] || { ...defaults, optionType: 'longmodule' };
         next[key] = { ...existing, active: layout === 'corner' };
       });
+
+      // The 9-3751 360° module includes beacons in both beacon layouts.
       ['B1', 'B2'].forEach(key => {
-        const existing = next[key] || { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' };
-        next[key] = { ...existing, active: layout === 'beacon' };
+        const existing = next[key] || { ...defaults, optionType: 'beacon' };
+        next[key] = { ...existing, active: layout === 'beacon' || layout === 'vmirrors', optionType: 'beacon' };
       });
-        ['B1', 'B2'].forEach(key => {
-          const existing = next[key] || { active: false, mode: 'single', primary: '#808285', secondary: '#3b82f6', tertiary: '', optionType: 'longmodule' };
-          next[key] = { ...existing, active: layout === 'vmirrors' };
+
+      // V mirrors are additional slots, not replacements for the beacons.
+      ['BV1', 'BV2'].forEach(key => {
+        const existing = next[key] || { ...defaults, optionType: 'vmirrors' };
+        next[key] = { ...existing, active: layout === 'vmirrors', optionType: 'vmirrors' };
       });
       return next;
     });
