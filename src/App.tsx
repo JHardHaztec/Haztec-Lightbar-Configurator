@@ -46,7 +46,7 @@ export default function App() {
   const [sl43FrontInnerOption, setSl43FrontInnerOption] = useState('');
   const [sl43RearOuterOption, setSl43RearOuterOption] = useState('');
   const [sl43RearInnerOption, setSl43RearInnerOption] = useState('');
-  const [sl43DividerColour, setSl43DividerColour] = useState('black');
+  const [sl43DividerColour, setSl43DividerColour] = useState('clear');
   const [sl43CentreType, setSl43CentreType] = useState('300mm');
   const [rightLensColour, setRightLensColour] = useState('#ebebebD6');
   const [splitLensEnabled, setSplitLensEnabled] = useState(false);
@@ -454,7 +454,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
       setSl43SirenModel('8-82613');
       setSl43ControlModule(false);
       setSl43AlleyLights(false);
-      setSl43DividerColour('black');
+      setSl43DividerColour('clear');
       setSl43CentreType('300mm');
     }
   };
@@ -746,12 +746,11 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                 <div style={{ marginTop: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', paddingBottom: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {/* Chassis Swatches */}
-            <div style={{ display: 'grid', gridTemplateColumns: selectedModel === 'xl75' ? '1fr 1fr' : '1fr', gap: '16px', marginTop: '16px' }}>
-
 
             {!sl43Speaker && !sl43Sign && (
               <div style={{ marginBottom: '0px', marginTop: '0px' }}>
+                <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Central Configuration Layout</div>
+                  <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '20px', }}>Choose a fully lensed lightbar or one with any central configurations:</div>
                 <span
                   style={{
                     color: '#282828',
@@ -910,7 +909,6 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
               </div>
               </div>
               </div>
-              </div>
             )}
 
             {openConfigSection === 'modules' && (
@@ -919,14 +917,16 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                   <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '18px' }}
                   >
                     {/* LEFT COLUMN: Module number selectors */}
-                    <div style={{ flex: '0 0 350px', minWidth: '200px', maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '16px', borderRight: '1px solid #d1d5db', }}>
+                    <div style={{ flex: '0 0 350px', minWidth: '200px', maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: '0px', paddingRight: '16px', borderRight: '1px solid #d1d5db', }}>
+                    <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Module Selection</div>
+                  <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '20px', }}>Choose the module combinations for your lightbar:</div>
                     {selectedLength === 'SL43' ? (
-                    <div style={{ background: '#fff', padding: '10px 12px', borderRadius: '6px',
+                    <div style={{ background: '#fff', padding: '10px 0px', borderRadius: '6px',
                       }}
                     >
                       <label
                         htmlFor="sl43-end-modules"
-                        style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600,
+                        style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700',
                           color: '#282828', marginBottom: '10px', }}>
                         End Modules
                       </label>
@@ -978,7 +978,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                   )}
 
                     {selectedLength === 'SL43' && (
-                      <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ background: '#fff', padding: '12px 0px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#282828' }}>Front & Rear Modules</div>
                         {[
                           { label: 'Front Outer', value: sl43FrontOuterOption, setValue: setSl43FrontOuterOption, options: [{ value: '', label: 'None' }, { value: 'frontOuterLongShort', label: 'XT (Short / Long + Long / Short)' }, { value: 'frontOuterShortLong', label: 'XT (Long / Short + Short / Long)' }, { value: 'frontOuterLong', label: 'XT = (Long + Long)' }] },
@@ -1085,9 +1085,10 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                       </div>
                     )}
                      </div>
-
                   {/* RIGHT COLUMN: Selected module settings */}
                   <div style={{ flex: '1 1 370px', minWidth: 0, paddingLeft: '10px' }}>
+                  <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Colour Selection</div>
+                  <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '30px', }}>Click on the module and choose your colours:</div>
                     {Number(selectedSlotNumber) >= 1 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px' }}>
                     <span style={{ fontSize: '0.8rem', color: '#282828' }}>Inner module:</span>
@@ -1194,7 +1195,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
 
                     <div className="palette-section" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', width: '100%' }}>
                       <span className="palette-label" style={{ minWidth: '70px' }}>
-                        {currentSlotState.mode === 'single' ? 'Colour:' : 'Colour 1:'}
+                        {currentSlotState.mode === 'single' ? 'LED Colour:' : 'Colour 1:'}
                       </span>
                       <div className="palette-swatches" style={{ display: 'flex', gap: '6px' }}>
                         {ledOptions.map(l => (
@@ -1279,6 +1280,8 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
 
                {openConfigSection === 'colours' && (
               <div className="palette-toolbar animate-fade" style={{ border: '1px solid #f5f5f5', background: '#fff', display: 'block', marginTop: '0', padding: '16px', borderRadius: '0 0 8px 8px', textAlign: 'left' }}>
+                <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Exterior Colour Selection</div>
+                  <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '20px', }}>Choose the lens and bridge colours:</div>
                 <div style={{ marginTop: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '14px', paddingBottom: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -1395,7 +1398,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
               </div>
               <div><hr style={{ border: 'none', height: '1px', backgroundColor: '#c1c1c1' }} /></div>
               <div>
-                  <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', marginBottom: '12px', marginTop: '10px' }}>Bridge Colour:</span>
+                  <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: '700', display: 'block', marginBottom: '12px', marginTop: '10px' }}>Bridge Colour:</span>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     {['black','clear', 'amber', 'blue', 'red'].map((col) => (
                       <button
@@ -1417,8 +1420,9 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                              {/* SECTION SELECTOR & CONFIGURATION TOOLBAR */}
             {selectedLength === 'SL43' && openConfigSection === 'featured' && (
                 <div className="palette-toolbar animate-fade" style={{ border: '0px solid #f5f5f5', background: '#fff', padding: '16px', display: 'block', marginTop: '0', borderRadius: '0 0 8px 8px', textAlign: 'left' }}>
+                   <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Optional Equipment</div>
+                  <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '20px', }}>If you require any additional options integrated into the lightbar:</div>
                 <div style={{ marginTop: '16px' }}>
-                <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', margin: '15px 0px' }}>Optional Equipment:</span>
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '8px' }}>
                     <input 
@@ -1482,10 +1486,16 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                     <strong>Alley Lights</strong>
                   </label>
                 </div>
+                <div style={{ display: 'block', fontSize: '0.75rem', fontWeight: '400', color: '#282828', marginBottom: '20px', }}>*Please be aware options listed above will depend on the lightbar length and configurations that have already been selected.</div>
                 </div>
               </div>
             )}   
-
+             <div className="step-footer-action">
+               <div style={{padding: '20px 0px 1px 0px'}}>
+            <div style={{ display: 'block', fontSize: '0.95rem', fontWeight: '600', color: '#282828', marginBottom: '10px', }}>Can't find the right configuration?</div>
+            <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '20px', }}>Contact our sales experts today, by emailing <a href ="mailto:sales@haztec.uk">sales@haztec.uk</a> or call us on <a href="tel:+441132029115">+44 113 202 9115</a>, we'd be happy to help.</div></div>
+            </div>
+            
             <div className="step-footer-action button-group-row" style={{ marginTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button 
                 className="btn-secondary" 
