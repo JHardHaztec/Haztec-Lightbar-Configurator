@@ -198,24 +198,30 @@ export default function App() {
 
 
   
-  // --- GLOBAL TRI-COLOUR SUPPORT HELPER ---
-  const isTriColourSupported = (optionType?: string): boolean => {
-    if (!optionType) return true;
+// --- GLOBAL TRI-COLOUR SUPPORT HELPER ---
+const isTriColourSupported = (optionType?: string): boolean => {
+  if (!optionType) return true;
 
-    const lower = optionType.toLowerCase();
+  const lower = optionType.toLowerCase();
 
-    // Hide tri-colour for short, twinned, linear, alley, and beacon modules
-    if (
-      lower.includes('short') || lower.includes('twinned') ||
-      lower.includes('linear') ||
-      lower.includes('alley') ||
-      lower.includes('beacon')
-    ) {
-      return false;
-    }
+  if (
+    lower === 'shortmodule' ||
+    lower.includes('frontinnershort') ||
+    lower.includes('rearinnershort') ||
+    lower.includes('frontouterlongshort-short') ||
+    lower.includes('frontoutershortlong-short') ||
+    lower.includes('rearoutershortlong-short') ||
+    lower.includes('rearouterlongshort-short') ||
+    lower.includes('twinned') ||
+    lower.includes('linear') ||
+    lower.includes('alley') ||
+    lower.includes('beacon')
+  ) {
+    return false;
+  }
 
-    return true;
-  };
+  return true;
+};
 
   // --- GLOBAL DUAL-COLOUR SUPPORT HELPER ---
   const isDualColourSupported = (optionType?: string): boolean => {
@@ -245,20 +251,32 @@ export default function App() {
         primary: '#808285',
         secondary: '#3b82f6',
         tertiary: '',
-        optionType: 'longmodule'
+        optionType: 'longmodule',
       };
-      
-      const isFixedShort = selectedLength === 'XL7528' && (slotNum === 5 || slotNum === 6);
-  
+    
+      const isFixedShort =
+        selectedLength === 'XL7528' &&
+        (slotNum === 5 || slotNum === 6);
+    
+      // Replace this with your actual SL43 short-module check
+      const isSelectedShort = isFixedShort;
+    
+      const optionType = isSelectedShort
+        ? 'shortmodule'
+        : (existing.optionType || 'longmodule');
+    
       return {
         ...prev,
         [slotId]: {
           ...existing,
           active: true,
-          optionType: isFixedShort ? 'shortmodule' : (existing.optionType || 'longmodule'),
-          mode: (isFixedShort && existing.mode === 'tri') ? 'dual' : (existing.mode || 'single'),
+          optionType,
+          mode:
+            (isSelectedShort && existing.mode === 'tri')
+              ? 'dual'
+              : (existing.mode || 'single'),
           primary: existing.primary || '#808285',
-        }
+        },
       };
     });
   };
@@ -388,6 +406,103 @@ export default function App() {
       return updated;
     });
   };
+
+
+  type SL43OptionGroup =
+  | 'frontOuter'
+  | 'frontInner'
+  | 'rearOuter'
+  | 'rearInner';
+
+const sl43FrontRearModuleOptions: Record<string, number[]> = {
+  'frontOuterLongShort-Long': [9, 11],
+  'frontOuterLongShort-Short': [10, 12],
+  'frontOuterShortLong-Long': [13, 15],
+  'frontOuterShortLong-Short': [14, 16],
+  'frontOuterLong': [17, 18],
+  'frontInnerShort': [19, 20],
+  'frontInnerLong': [21, 22],
+  'rearInnerShort': [23, 24, 25],
+  'rearOuterShortLong-Long': [26, 28],
+  'rearOuterShortLong-Short': [27, 29],
+  'rearOuterLongShort-Long': [30, 32],
+  'rearOuterLongShort-Short': [31, 33],
+};
+
+const handleSL43ModuleOptionChange = (
+  group: SL43OptionGroup,
+  value: string
+) => {
+  const nextOptions = {
+    frontOuter: sl43FrontOuterOption,
+    frontInner: sl43FrontInnerOption,
+    rearOuter: sl43RearOuterOption,
+    rearInner: sl43RearInnerOption,
+    [group]: value,
+  };
+
+  switch (group) {
+    case 'frontOuter':
+      setSl43FrontOuterOption(value);
+      break;
+    case 'frontInner':
+      setSl43FrontInnerOption(value);
+      break;
+    case 'rearOuter':
+      setSl43RearOuterOption(value);
+      break;
+    case 'rearInner':
+      setSl43RearInnerOption(value);
+      break;
+  }
+
+  const shortSlots = new Set<number>();
+
+  Object.values(nextOptions).forEach(optionValue => {
+    optionValue.split('+').filter(Boolean).forEach(optionKey => {
+      const slotIds = sl43FrontRearModuleOptions[optionKey] || [];
+
+      const isShort =
+        optionKey === 'frontInnerShort' ||
+        optionKey === 'rearInnerShort' ||
+        optionKey.endsWith('-Short');
+
+      if (isShort) {
+        slotIds.forEach(id => shortSlots.add(id));
+      }
+    });
+  });
+
+  setSlotData(prev => {
+    const updated = { ...prev };
+
+    // Recalculate every SL43 front/rear module slot.
+    for (let slotNum = 9; slotNum <= 33; slotNum++) {
+      const slotId = String(slotNum);
+      const existing = updated[slotId] || {
+        active: false,
+        mode: 'single' as const,
+        primary: '#808285',
+        secondary: '#3b82f6',
+        tertiary: '',
+      };
+
+      const isShort = shortSlots.has(slotNum);
+
+      updated[slotId] = {
+        ...existing,
+        optionType: isShort ? 'shortmodule' : 'longmodule',
+        mode:
+          isShort && existing.mode === 'tri'
+            ? 'dual'
+            : existing.mode,
+      };
+    }
+
+    return updated;
+  });
+};
+
 
 const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
     setSl43ModuleLayout(layout);
@@ -782,7 +897,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                 
                 {(sl43CentreType === '300mm' || sl43CentreType === '160mm') && (
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  {['none', 'black'].map((colour) => (
+                  {['lens colour', 'clear', 'black'].map((colour) => (
                     <button
                       key={colour}
                       onClick={() => setSl43CentreColour(colour)}
@@ -791,7 +906,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                       }`}
                       style={{ padding: '4px 10px', fontSize: '0.75rem' }}
                     >
-                      {colour === 'none' ? 'None' : 'Black'}
+                      {colour === 'lens colour' ? 'Lens Colour' : colour === 'clear' ? 'Clear' : 'Black'}
                     </button>
                   ))}
                 </div>
@@ -805,10 +920,13 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                     <input 
                       type="checkbox" 
                       checked={sl43Speaker} 
+                      disabled={sl43Sign} 
                       onChange={(e) => {
                         const checked = e.target.checked;
                         setSl43Speaker(checked);
                         if (checked) setSl43Sign(false);
+                        if (checked) setSl43FrontInnerOption('');
+                        if (checked) setSl43RearInnerOption('');
                       }}
                       style={{ 
                         accentColor: 'green',
@@ -828,8 +946,12 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                       checked={sl43Sign} 
                       disabled={sl43Speaker} 
                       onChange={(e) => {
-                        setSl43Sign(e.target.checked);
-                      }} 
+                        const checked = e.target.checked;
+                        setSl43Sign(checked);
+                        if (checked) setSl43Speaker(false);
+                        if (checked) setSl43FrontInnerOption('');
+                        if (checked) setSl43RearInnerOption('');
+                      }}
                       style={{ 
                         accentColor: 'green',
                         width: '15px', 
@@ -984,19 +1106,104 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                     {selectedLength === 'SL43' && (
                       <div style={{ background: '#fff', padding: '12px 0px', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#282828' }}>Front & Rear Modules</div>
-                        {[
-                          { label: 'Front Outer', value: sl43FrontOuterOption, setValue: setSl43FrontOuterOption, options: [{ value: '', label: 'None' }, { value: 'frontOuterLongShort', label: 'XT (Short / Long + Long / Short)' }, { value: 'frontOuterShortLong', label: 'XT (Long / Short + Short / Long)' }, { value: 'frontOuterLong', label: 'XT = (Long + Long)' }] },
-                          { label: 'Front Inner', value: sl43FrontInnerOption, setValue: setSl43FrontInnerOption, options: [{ value: '', label: 'None' }, { value: 'frontInnerShort', label: 'XT 2x Short Modules' }, { value: 'frontInnerLong', label: 'XT 2x Long Modules' }] },
-                          { label: 'Rear Outer', value: sl43RearOuterOption, setValue: setSl43RearOuterOption, options: [{ value: '', label: 'None' }, { value: 'rearOuterShortLong', label: 'XT (Short / Long + Long / Short)' }, { value: 'rearOuterLongShort', label: 'XT (Long / Short + Short / Long)' }] },
-                          { label: 'Rear Inner', value: sl43RearInnerOption, setValue: setSl43RearInnerOption, options: [{ value: '', label: 'None' }, { value: 'rearInnerShort', label: 'XT 3x Short Modules' }] },
-                        ].map(section => (
-                          <label key={section.label} style={{ display: 'flex', flexDirection: 'column', gap: '5px', color: '#282828', fontSize: '0.82rem', fontWeight: 600 }}>
-                            {section.label}
-                            <select value={section.value} onChange={e => section.setValue(e.target.value)} style={{ width: '100%', padding: '6px 10px', border: '1px solid #cbd5e1', borderRadius: '6px', background: '#fafafa', color: '#282828', fontSize: '0.85rem' }}>
-                              {section.options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-                            </select>
-                          </label>
-                        ))}
+                        
+                      {[
+                        {
+                          key: 'frontOuter',
+                          label: 'Front Outer',
+                          value: sl43FrontOuterOption,
+                          disabled: sl43ModuleLayout === 'vmirrors',
+                          options: [
+                            { value: '', label: 'None' },
+                            {
+                              value: 'frontOuterLongShort-Long+frontOuterLongShort-Short',
+                              label: 'XT (Short / Long + Long / Short)',
+                            },
+                            {
+                              value: 'frontOuterShortLong-Short+frontOuterShortLong-Long',
+                              label: 'XT (Long / Short + Short / Long)',
+                            },
+                            { value: 'frontOuterLong', label: 'XT = (Long + Long)' },
+                          ],
+                        },
+                        {
+                          key: 'frontInner',
+                          label: 'Front Inner',
+                          value: sl43FrontInnerOption,
+                          disabled: sl43Speaker || sl43Sign || sl43CentreColour === 'black',
+                          options: [
+                            { value: '', label: 'None' },
+                            { value: 'frontInnerShort', label: 'XT 2x Short Modules' },
+                            { value: 'frontInnerLong', label: 'XT 2x Long Modules' },
+                          ],
+                        },
+                        {
+                          key: 'rearOuter',
+                          label: 'Rear Outer',
+                          value: sl43RearOuterOption,
+                          disabled: sl43ModuleLayout === 'vmirrors',
+                          options: [
+                            { value: '', label: 'None' },
+                            {
+                              value: 'rearOuterShortLong-Short+rearOuterShortLong-Long',
+                              label: 'XT (Short / Long + Long / Short)',
+                            },
+                            {
+                              value: 'rearOuterLongShort-Short+rearOuterLongShort-Long',
+                              label: 'XT (Long / Short + Short / Long)',
+                            },
+                          ],
+                        },
+                        {
+                          key: 'rearInner',
+                          label: 'Rear Inner',
+                          value: sl43RearInnerOption,
+                          disabled: sl43Speaker || sl43Sign || sl43CentreColour === 'black',
+                          options: [
+                            { value: '', label: 'None' },
+                            { value: 'rearInnerShort', label: 'XT 3x Short Modules' },
+                          ],
+                        },
+                      ].map(section => (
+                        <label
+                          key={section.key}
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '5px',
+                            color: '#282828',
+                            fontSize: '0.82rem',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {section.label}
+                          <select
+                            value={section.value}
+                            disabled={'disabled' in section && section.disabled}
+                            onChange={e =>
+                              handleSL43ModuleOptionChange(
+                                section.key as SL43OptionGroup,
+                                e.target.value
+                              )
+                            }
+                            style={{
+                              width: '100%',
+                              padding: '6px 10px',
+                              border: '1px solid #cbd5e1',
+                              borderRadius: '6px',
+                              background: '#fafafa',
+                              color: '#282828',
+                              fontSize: '0.85rem',
+                            }}
+                          >
+                            {section.options.map(option => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      ))}
                       </div>
                     )}
 
@@ -1093,7 +1300,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                   <div style={{ flex: '1 1 370px', minWidth: 0, paddingLeft: '10px' }}>
                   <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Colour Selection</div>
                   <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '30px', }}>Click on the module and choose your colours:</div>
-                    {Number(selectedSlotNumber) >= 1 && (
+                  {/*{Number(selectedSlotNumber) >= 1 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px' }}>
                     <span style={{ fontSize: '0.8rem', color: '#282828' }}>Inner module:</span>
                     <button 
@@ -1111,7 +1318,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                       Leave Section Empty
                     </button>
                   </div>
-                )}
+)}*/}
 
                 {currentSlotState.active && selectedLength === 'XL7544' && Number(selectedSlotNumber) >= 9 && Number(selectedSlotNumber) <= 12 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px', flexWrap: 'wrap' }}>
@@ -1168,6 +1375,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                 )}
 
                 {currentSlotState.active ? (
+                  
                   <>
                     <div className="mode-selector-group" style={{ display: 'inline-flex', marginBottom: '12px' }}>
                       <button 
@@ -1184,7 +1392,10 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                       </button>
                       )}
 
-                      {isTriColourSupported(currentSlotState.optionType) && (
+                        {isTriColourSupported(
+                          (console.log('Tri-colour optionType:', currentSlotState.optionType),
+                          currentSlotState.optionType)
+                        ) && (
                         <button 
                           className={`mode-tab ${currentSlotState.mode === 'tri' ? 'colour-tab' : ''}`}
                           onClick={() => updateCurrentSlot({ 
@@ -1432,6 +1643,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                     <input 
                       type="checkbox" 
                       checked={sl43Siren} 
+                      disabled={sl43ModuleLayout === 'beacon' || sl43ModuleLayout === 'vmirrors'}
                       onChange={(e) => setSl43Siren(e.target.checked)} 
                       style={{ 
                         accentColor: 'green',
@@ -1462,7 +1674,8 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                   <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                     <input 
                       type="checkbox" 
-                      checked={sl43ControlModule} 
+                      checked={sl43ControlModule}
+                      disabled={sl43ModuleLayout === 'vmirrors'}
                       onChange={(e) => setSl43ControlModule(e.target.checked)}
                       style={{ 
                         accentColor: 'green',
@@ -1479,6 +1692,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                     <input 
                       type="checkbox" 
                       checked={sl43AlleyLights} 
+                      disabled={sl43ModuleLayout === 'beacon' || sl43ModuleLayout === 'vmirrors'}
                       onChange={(e) => setSl43AlleyLights(e.target.checked)}
                       style={{ 
                         accentColor: 'green',
