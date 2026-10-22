@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
 export default function SL43({
-  lensColour = '#ebebebD6',
+  lensColour = '#ebebebB6',
   slotData, 
   selectedSlotKey, 
   onSelectSlot, 
-  centreColour = 'none',
+  centreColour = 'lens colour',
   speakerSelected = false,
   signSelected = false,
   signSize = '300mm',        // '300mm' or '160mm'
@@ -18,7 +18,7 @@ export default function SL43({
   dividerColour = 'clear',    // 'amber', 'blue', 'red', 'black', 'clear'
   centreSectionType = '300mm', // '300mm', '220mm'
   defaultViewMode = 'exterior', // 'interior' or 'exterior'
-  rightLensColour = '#dbd9d9E6',
+  rightLensColour = '#ebebebB6',
   splitLensEnabled = false,
   signText = '',
   signTextColour = '#231f20',
@@ -116,12 +116,7 @@ const getCentreFill = () => {
     return '#292929';
   }
 
-  // 3. Split Lens Priority
-  if (splitLensEnabled) {
-    return '#ffffff';
-  }
-
-  // 4. Centre Section Colour Priority
+  // 3. Centre Section Colour Priority
 if (
   centreColour === 'black' &&
   (effectiveCentreType === '300mm' || effectiveCentreType === '160mm')
@@ -134,7 +129,7 @@ if (centreColour === 'lens colour') {
 }
 
 if (centreColour === 'clear') {
-  return '#ebebebD6';
+  return '#ebebebB6';
 }
 
   // 5. Default Base Lens
@@ -507,7 +502,7 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
           const shape = frontRearModuleShapes[slotKey];
           if (!shape) return null;
           const slot = slotData?.[slotKey];
-          const fill = slot && slot.active !== false ? getFill(slotKey) : '#a7a9ac';
+          const fill = slot && slot.active !== false ? getFill(slotKey) : '#808285';
           const selected = isSelected(slotKey);
           return (
             <g key={`front-rear-${slotKey}`}>
