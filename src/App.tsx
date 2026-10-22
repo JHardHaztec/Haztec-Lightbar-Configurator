@@ -420,6 +420,7 @@ const sl43FrontRearModuleOptions: Record<string, number[]> = {
   'frontOuterShortLong-Long': [13, 15],
   'frontOuterShortLong-Short': [14, 16],
   'frontOuterLong': [17, 18],
+  'frontOuterFourxLong':[34, 35, 36, 37],
   'frontInnerShort': [19, 20],
   'frontInnerLong': [21, 22],
   'rearInnerShort': [23, 24, 25],
@@ -576,6 +577,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
       setSl43RearOuterOption('none');
       setSl43RearInnerOption('none');
       setSelectedLens('clear');
+      setSl43CentreColour('lens colour');
     }
   };
 
@@ -1122,15 +1124,17 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                           disabled: sl43ModuleLayout === 'vmirrors',
                           options: [
                             { value: '', label: 'None' },
-                            {
-                              value: 'frontOuterLongShort-Long+frontOuterLongShort-Short',
-                              label: 'XT (Short / Long + Long / Short)',
-                            },
-                            {
-                              value: 'frontOuterShortLong-Short+frontOuterShortLong-Long',
-                              label: 'XT (Long / Short + Short / Long)',
-                            },
-                            { value: 'frontOuterLong', label: 'XT = (Long + Long)' },
+                            {  value: 'frontOuterLong', label: 'XT (Long + Long)' },
+                            ...(sl43CentreType !== '220mm' && sl43CentreType !== '160mm'
+                            ? [{ value: 'frontOuterLongShort-Long+frontOuterLongShort-Short', label: 'XT (Short / Long + Long / Short)'}]
+                            : []),
+                            ...(sl43CentreType !== '220mm' && sl43CentreType !== '160mm'
+                            ? [{ value: 'frontOuterShortLong-Short+frontOuterShortLong-Long',
+                              label: 'XT (Long / Short + Short / Long)'}]
+                              : []),
+                            ...(sl43CentreType !== '300mm'
+                            ? [{ value: 'frontOuterFourxLong', label: 'XT (Long / Long + Long /Long)' }]
+                            : []),
                           ],
                         },
                         {
@@ -1140,8 +1144,15 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                           disabled: sl43Speaker || sl43Sign || sl43CentreColour === 'black',
                           options: [
                             { value: '', label: 'None' },
-                            { value: 'frontInnerShort', label: 'XT 2x Short Modules' },
-                            { value: 'frontInnerLong', label: 'XT 2x Long Modules' },
+                            ...(sl43CentreType !== '220mm' && sl43CentreType !== '160mm'
+                              ? [{ value: 'frontInnerShort', label: 'XT 2x Short Modules' }]
+                              : []),
+                              ...(sl43CentreType !== '220mm' && sl43CentreType !== '160mm'
+                            ? [{ value: 'frontInnerLong', label: 'XT 2x Long Modules' }]
+                            : []),
+                            ...(sl43CentreType !== '300mm' && sl43CentreType !== '160mm'
+                              ? [{ value: 'frontInnerShort-220', label: 'XT 2x Short Modules' }]
+                              : []),
                           ],
                         },
                         {
@@ -1151,14 +1162,20 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                           disabled: sl43ModuleLayout === 'vmirrors',
                           options: [
                             { value: '', label: 'None' },
-                            {
-                              value: 'rearOuterShortLong-Short+rearOuterShortLong-Long',
-                              label: 'XT (Short / Long + Long / Short)',
-                            },
-                            {
-                              value: 'rearOuterLongShort-Short+rearOuterLongShort-Long',
-                              label: 'XT (Long / Short + Short / Long)',
-                            },
+                            { value: 'rearOuterLong', label: 'XT (Long + Long)' },
+                            ...(sl43CentreType !== '220mm' && sl43CentreType !== '160mm'
+                            ? [{ value: 'rearOuterShortLong-Short+rearOuterShortLong-Long', label: 'XT (Short / Long + Long / Short)' }]
+                            : []),
+                            ...(sl43CentreType !== '220mm' && sl43CentreType !== '160mm'
+                            ? [{ value: 'rearOuterLongShort-Short+rearOuterLongShort-Long', label: 'XT (Long / Short + Short / Long)' }]
+                              : []),
+                            ...(sl43CentreType !== '300mm'
+                            ? [{ value: 'rearOuterSixShort',  label: 'XT (3x Short + 3x Short)' }]
+                            : []),
+                            ...(sl43CentreType !== '300mm' && sl43CentreType !== '220mm'
+                            ? [{ value: 'rearOuterFourxLong',
+                              label: 'XT (Long / Long + Long / Long)' }]
+                              : []),
                           ],
                         },
                         {
@@ -1168,7 +1185,16 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                           disabled: sl43Speaker || sl43Sign || sl43CentreColour === 'black',
                           options: [
                             { value: '', label: 'None' },
-                            { value: 'rearInnerShort', label: 'XT 3x Short Modules' },
+                            { value: 'rearInnerShort', label: 'XT Single Short Module' },
+                            { value: 'rearInnerLong', label: 'XT Single Long Module' },
+                            ...(sl43CentreType !== '300mm' && sl43CentreType !== '220mm'
+                            ? [{ value: 'rearInnerThreeShort', label: 'XT 3x Short Modules' }] : []),
+                            ...(sl43CentreType !== '300mm'
+                            ? [{ value: 'rearInnerTwoShort-220', label: 'XT 2x Short Modules' }] : []),
+                            ...(sl43CentreType !== '220mm' && sl43CentreType !== '160mm'
+                            ? [{ value: 'rearInnerTwoShort', label: 'XT 2x Short Modules' }] : []),
+                            ...(sl43CentreType !== '220mm' && sl43CentreType !== '160mm'
+                            ? [{ value: 'rearInnerTwoLong', label: 'XT 2x Long Modules' }] : []),
                           ],
                         },
                       ].map(section => (
@@ -1306,7 +1332,7 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                   {/* RIGHT COLUMN: Selected module settings */}
                   <div style={{ flex: '1 1 370px', minWidth: 0, paddingLeft: '10px' }}>
                   <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Colour Selection</div>
-                  <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '30px', }}>Click on the module and choose your colours:</div>
+                  <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '30px', }}>Click on the module in the preview and select your LED colours:</div>
                   {/*{Number(selectedSlotNumber) >= 1 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '6px' }}>
                     <span style={{ fontSize: '0.8rem', color: '#282828' }}>Inner module:</span>
