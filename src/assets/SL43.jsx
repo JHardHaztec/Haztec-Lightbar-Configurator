@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 export default function SL43({
-  lensColour = '#dbd9d9E6',
+  lensColour = '#ebebebD6',
   slotData, 
   selectedSlotKey, 
   onSelectSlot, 
@@ -129,12 +129,16 @@ if (
   return '#262626';
 }
 
-if (centreColour === 'none') {
-  return 'none';
+if (centreColour === 'lens colour') {
+  return lensColour;
+}
+
+if (centreColour === 'clear') {
+  return '#ebebebD6';
 }
 
   // 5. Default Base Lens
-  return '#ffffff00';
+  return lensColour;
 };
 
 const getCentreStrokeColour = () => {
@@ -253,17 +257,28 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
   33: { points: "176.22 40.21 176.22 24.87 171.49 24.87 171.49 13.18 170.75 10.56 209.11 10.56 208.04 13.47 208.04 24.79 203.2 24.79 203.2 40.16", labelX: 189.78, labelY: 22.75 },
   };
   const frontRearModuleOptions = {
-    'frontOuterLongShort': [9, 10, 11, 12],
-    'frontOuterShortLong': [13, 14, 15, 16],
+    'frontOuterLongShort-Long': [9, 11],
+    'frontOuterLongShort-Short': [10, 12],
+    'frontOuterShortLong-Long': [13, 15],
+    'frontOuterShortLong-Short': [14, 16],
     'frontOuterLong': [17, 18],
     'frontInnerShort': [19, 20],
     'frontInnerLong': [21, 22],
     'rearInnerShort': [23, 24, 25],
-    'rearOuterShortLong': [26, 27, 28, 29],
-    'rearOuterLongShort': [30, 31, 32, 33],
+    'rearOuterShortLong-Long': [26, 28],
+    'rearOuterShortLong-Short': [27, 29],
+    'rearOuterLongShort-Long': [30, 32],
+    'rearOuterLongShort-Short': [31, 33],
   };
   const selectedFrontRearOptions = [frontOuterOption, frontInnerOption, rearOuterOption, rearInnerOption];
-  const visibleFrontRearSlots = selectedFrontRearOptions.flatMap((option) => option ? (frontRearModuleOptions[option] || []) : []);
+  const visibleFrontRearSlots = selectedFrontRearOptions.flatMap((option) => {
+    if (!option) return [];
+  
+    // Support multiple module options in one selection
+    return option.split('+').flatMap((singleOption) =>
+      frontRearModuleOptions[singleOption] || []
+    );
+  });
 
   return (
     <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto', fontFamily: 'Futura PT, sans-serif' }}>
@@ -519,19 +534,19 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
           <text className="cls-num" onClick={() => onSelectSlot('B2')} transform="translate(544 91)"><tspan x="0" y="0">B2</tspan></text>
         </>)}
 
-        {/* Lightbar Shell */}
-        <g id="Lightbar_Shell" data-name="Lightbar Shell">
+        {/* 300mm Centre Section & Dividers */}
+        {effectiveCentreType === '300mm' && (
+          <>
+
+         {/* Lightbar Shell */}
+         <g id="Lightbar_Shell" data-name="Lightbar Shell">
           <g>
-            <path className="cls-shell2" d="M300.82,4.99l214.85-.03c49,0,88.72,36.17,88.72,80.79v-.25c0,44.62-39.72,81.03-88.72,81.03l-214.85.03"/>
-            <path className="cls-shell" d="M301.4,166.5l-211.35.03c-48.91,0-88.56-36.17-88.56-80.79h0c0-44.62,39.65-80.79,88.56-80.79l211.35-.03"/>
+            <path className="cls-shell2" d="M385.71,5.85h138.59c44.24,0,80.1,36.17,80.1,80.79v-.25c0,44.62-35.86,81.03-80.1,81.03h-138.59"/>
+            <path className="cls-shell" d="M219.92,167.43H81.6C37.36,167.43,1.5,131.26,1.5,86.64h0C1.5,42.02,37.36,5.85,81.6,5.85h138.32"/>
           </g>
           <line className="cls-shell" x1="218.85" y1="166.63" x2="386.18" y2="166.63"/>
           <line className="cls-shell" x1="218.85" y1="5.06" x2="386.18" y2="5.06"/>
         </g>
-
-        {/* 300mm Centre Section & Dividers */}
-        {effectiveCentreType === '300mm' && (
-          <>
             <rect 
               id="_300mm_centre_sign" 
               data-name="300mm centre sign" 
@@ -577,6 +592,15 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
         {/* 220mm Centre Section */}
         {!speakerSelected && effectiveCentreType === '220mm' && (
           <>
+          {/* Lightbar Shell */}
+         <g id="Lightbar_Shell" data-name="Lightbar Shell">
+          <g>
+            <path className="cls-shell2" d="M367.01,5.85h157.29c44.24,0,80.1,36.17,80.1,80.79v-.25c0,44.62-35.86,81.03-80.1,81.03h-157.29"/>
+            <path className="cls-shell" d="M239.18,167.45l-157.58-.03C37.36,167.43,1.5,131.26,1.5,86.64h0C1.5,42.02,37.36,5.85,81.6,5.85l157.58.03"/>
+          </g>
+          <line className="cls-shell" x1="218.85" y1="166.63" x2="386.18" y2="166.63"/>
+          <line className="cls-shell" x1="218.85" y1="5.06" x2="386.18" y2="5.06"/>
+        </g>
             <rect 
               id="_220mm_centre_sign" 
               data-name="220mm centre sign" 
@@ -599,6 +623,16 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
       {/* 160mm Centre Section */}
       {effectiveCentreType === '160mm' && (
                 <>
+
+               {/* Lightbar Shell */}
+         <g id="Lightbar_Shell" data-name="Lightbar Shell">
+          <g>
+            <path className="cls-shell2" d="M348.24,5.94l176.06-.09c44.24,0,80.1,36.17,80.1,80.79v-.25c0,44.62-35.86,81.03-80.1,81.03l-176.06.09"/>
+            <path className="cls-shell" d="M259.47,167.49l-177.87-.07C37.36,167.43,1.5,131.26,1.5,86.64h0C1.5,42.02,37.36,5.85,81.6,5.85l177.87.07"/>
+          </g>
+          <line className="cls-shell" x1="218.85" y1="166.63" x2="386.18" y2="166.63"/>
+          <line className="cls-shell" x1="218.85" y1="5.06" x2="386.18" y2="5.06"/>
+        </g>
                   <rect 
                     id="_160mm_centre_sign" 
                     data-name="160mm centre sign" 
