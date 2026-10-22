@@ -33,7 +33,7 @@ export default function App() {
   // --- XPERT SL 43" CUSTOM OPTIONS STATE ---
   const [sl43Speaker, setSl43Speaker] = useState(false);
   const [sl43Sign, setSl43Sign] = useState(false);
-  const [sl43CentreColour, setSl43CentreColour] = useState('none');
+  const [sl43CentreColour, setSl43CentreColour] = useState('lens colour');
   const [sl43SignSize, setSl43SignSize] = useState<'300mm' | '160mm'>('300mm');
   const [sl43SignColour, setSl43SignColour] = useState<'white' | 'yellow' |'black'>('white');
   const [sl43SignText, setSl43SignText] = useState('');
@@ -176,10 +176,10 @@ export default function App() {
   const currentLengthOptions = lengthOptionsMap[selectedModel || 'xl75'] || xl75LengthOptions;
 
   const lensOptions = [
-    { id: 'clear', name: 'Clear', hex: '#ebebebD6' },
-    { id: 'amber', name: 'Amber', hex: '#f0a926E6' },
-    { id: 'blue', name: 'Blue', hex: '#3b82f6E6' },
-    { id: 'red', name: 'Red', hex: '#ef4444E6' },
+    { id: 'clear', name: 'Clear', hex: '#ebebebB6' },
+    { id: 'amber', name: 'Amber', hex: '#f0a926D6' },
+    { id: 'blue', name: 'Blue', hex: '#006effD6' },
+    { id: 'red', name: 'Red', hex: '#e81a1aD6' },
   ];
 
   const topcoverOptions = [
@@ -895,25 +895,32 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                   ))}
                 </div>
                 
-                {(sl43CentreType === '300mm' || sl43CentreType === '160mm') && (
+                              {(sl43CentreType === '300mm' || sl43CentreType === '160mm') && (
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  {['lens colour', 'clear', 'black'].map((colour) => (
-                    <button
+                  {['lens colour', 'clear', 'black'].map((colour) => {
+                    const isDisabled =
+                    colour === 'lens colour' && rightLensColour !== '#ebebebD6';
+
+                    return (
+                      <button
                       key={colour}
+                      disabled={isDisabled}
                       onClick={() => setSl43CentreColour(colour)}
                       className={`mode-tab ${
                         sl43CentreColour === colour ? 'active-tab' : ''
-                      }`}
-                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                    >
-                      {colour === 'lens colour' ? 'Lens Colour' : colour === 'clear' ? 'Clear' : 'Black'}
-                    </button>
-                  ))}
+                        }`}
+                        style={{ padding: '4px 10px', fontSize: '0.75rem', cursor: isDisabled ? 'not-allowed' : 'pointer',
+                          opacity: isDisabled ? 0.5 : 1,
+                        }}
+                      >
+                        {colour === 'lens colour' ? 'Lens Colour' : colour === 'clear' ? 'Clear' : 'Black'}
+                      </button>
+                    );
+                  })}
                 </div>
-                )}
+              )}
               </div>
             )}
-
                 <div style={{ marginTop: '5px' }}>
                 <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', margin: '15px 0px' }}>Options:</span>
                   <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
