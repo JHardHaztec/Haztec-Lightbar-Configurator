@@ -897,7 +897,12 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                       <div
                         key={lens.id}
                         className={`colour-card ${selectedLens === lens.id ? 'selected' : ''}`}
-                        onClick={() => setSelectedLens(lens.id)}
+                        onClick={() => {
+                          setSelectedLens(lens.id);
+                          if (!sl43Speaker && !sl43Sign) {
+                          setSl43DividerColour(lens.id);
+                          }
+                        }}
                         style={{
                           padding: '5px 0px',
                           display: 'flex',
