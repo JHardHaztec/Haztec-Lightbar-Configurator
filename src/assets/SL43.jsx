@@ -593,30 +593,42 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
               <path id="_300mm_divider_right" data-name="300mm divider right" className="cls-4" fill={dividerHex} d="M386.52,170.16c.66,0,1.19-.8,1.19-1.79v-3.83c0-1.02.25-2,.71-2.72s1.07-1.12,1.71-1.12,1.26.4,1.71,1.12c.45.72.71,1.7.71,2.72v3.83c0,.99.53,1.79,1.19,1.79h2.72c.32,0,.62-.19.84-.53.22-.34.35-.79.35-1.26v-39.47c0-1.67.44-3.26,1.22-4.43.79-1.19,12.71-3.19,13.51-4.38.78-1.17,1.22-2.77,1.22-4.43v-60.67c0-1.67-.44-3.26-1.22-4.44-.79-1.19-12.71-2.27-13.51-3.45-.78-1.17-1.22-2.77-1.22-4.44V3.29c0-.47-.13-.93-.35-1.26-.22-.34-.52-.52-.84-.52h-2.72c-.66,0-1.19.8-1.19,1.79v3.59c0,1.02-.25,1.99-.71,2.71-.45.72-1.07,1.13-1.71,1.13s-1.26-.4-1.71-1.13c-.45-.72-.71-1.7-.71-2.71v-3.59c0-.99-.53-1.79-1.19-1.79h-2.72c-.32,0-.62.19-.84.52-.22.34-.35.79-.35,1.26v39.37c0,1.67-.44,3.26-1.22,4.44-.79,1.19-12.49,1.56-13.28,2.75-.78,1.17-1.22,2.77-1.22,4.44v60.67c0,1.67.44,3.26,1.22,4.43.79,1.19,12.49,3.9,13.28,5.08.78,1.17,1.22,2.77,1.22,4.43v39.47c0,.47.13.93.35,1.26.22.34.53.53.84.53h2.72Z"/>
             </g>
             {isExterior && signSelected && signColour !== 'black' && signText && (
-              <text
-                x="302.95"
-                y="155.63"
+              <text x="302.95"  y="155.63"
                 className="sign-text"
                 style={{ fill: signTextColour }}
-                textLength={signSize === '300mm' ? 140 : 80}
+                textLength={signSize === '300mm' ? 140 : 0} 
                 lengthAdjust="spacingAndGlyphs"
+                
               >
-                {signText}
+                {signText.split('\n').map((line, index) => (
+                  <tspan key={index} x="302.95" dy={index === 0 ? 0 : '1.2em'}
+                  >
+                    {line}
+                  </tspan>
+                ))}
               </text>
             )}
 
             {isExterior && signSelected && signColour !== 'black' && signText && (
-             <text 
-             x="302.95" 
-             y="20.63" 
-             className="sign-text"
-             transform="rotate(180, 302.95, 18.63)"
-             style={{ fill: signTextColour }} // Overrides the default black fill from CSS
-             textLength={signSize === '300mm' ? 140 : 80}
-            lengthAdjust="spacingAndGlyphs"
-           >
-             {signText}
-           </text>
+              <text
+                x="302.95"
+                y="20.63"
+                className="sign-text"
+                transform="rotate(180, 302.95, 18.63)"
+                style={{ fill: signTextColour }}
+                textLength={signSize === '300mm' ? 140 : 80}
+                lengthAdjust="spacingAndGlyphs"
+              >
+                {signText.split('\n').map((line, index) => (
+                  <tspan
+                    key={index}
+                    x="302.95"
+                    dy={index === 0 ? 0 : '1.2em'}
+                  >
+                    {line}
+                  </tspan>
+                ))}
+              </text>
             )}
           </>
         )}
