@@ -844,8 +844,8 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
               style={{ display: 'flex', flexWrap: 'nowrap', overflowX: 'auto', gap: '8px', alignItems: 'center', marginTop: '20px', borderBottom: '1px solid #d1d5db', paddingBottom: '10px' }}
             >
               {[
-                { id: 'layout', label: 'Layout' },
-                { id: 'modules', label: 'LED Module Selection' },
+                { id: 'layout', label: 'Lens & Featured Options' },
+                { id: 'modules', label: 'Module Layout' },
                 ...(selectedLength === 'SL43' ? [{ id: 'featured', label: 'Additional Options' }] : []),
               ].map((tab) => (
                 <button
@@ -983,62 +983,8 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                   </div>
                 )}
               <div><hr style={{ border: 'none', height: '1px', backgroundColor: '#c1c1c1' }} /></div>
-            {!sl43Speaker && !sl43Sign && (
-              <div style={{ marginBottom: '15px', marginTop: '5px' }}>
-                <span
-                  style={{
-                    color: '#282828',
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    display: 'block',
-                    marginBottom: '12px'
-                  }}
-                >
-                  Centre Section Length:
-                </span>
-
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-                  {['300mm', '220mm', '160mm'].map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSl43CentreType(size)}
-                      className={`mode-tab ${sl43CentreType === size ? 'active-tab' : ''}`}
-                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-                
-                              {(sl43CentreType === '300mm' || sl43CentreType === '160mm') && (
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {['lens colour', 'clear', 'black'].map((colour) => {
-                    const isDisabled =
-                    colour === 'lens colour' && rightLensColour !== '#ebebebD6';
-
-                    return (
-                      <button
-                      key={colour}
-                      disabled={isDisabled}
-                      onClick={() => setSl43CentreColour(colour)}
-                      className={`mode-tab ${
-                        sl43CentreColour === colour ? 'active-tab' : ''
-                        }`}
-                        style={{ padding: '4px 10px', fontSize: '0.75rem', cursor: isDisabled ? 'not-allowed' : 'pointer',
-                          opacity: isDisabled ? 0.5 : 1,
-                        }}
-                      >
-                        {colour === 'lens colour' ? 'Lens Colour' : colour === 'clear' ? 'Clear' : 'Black'}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-              </div>
-            )}
-            <div><hr style={{ border: 'none', height: '1px', backgroundColor: '#c1c1c1' }} /></div>
-                <div style={{ marginTop: '5px' }}>
-                <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', margin: '15px 0px' }}>Options:</span>
+                <div style={{ marginTop: '0px' }}>
+                <span style={{ color: '#282828', fontSize: '0.9rem', fontWeight: 600, display: 'block', margin: '15px 0px' }}>Featured Options:</span>
                   <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                     <input 
                       type="checkbox" 
@@ -1185,8 +1131,62 @@ const handleSL43ModuleLayout = (layout: 'corner' | 'beacon' | 'vmirrors') => {
                   >
                     {/* LEFT COLUMN: Module number selectors */}
                     <div style={{ flex: '0 0 350px', minWidth: '200px', maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: '0px', paddingRight: '16px', borderRight: '1px solid #d1d5db', }}>
-                    <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Module Selection</div>
+                    <div style={{ display: 'block', fontSize: '1rem', fontWeight: '700', color: '#353fad', marginBottom: '5px', }}>Module Layout & Selection</div>
                   <div style={{ display: 'block', fontSize: '0.85rem', fontWeight: '400', color: '#282828', marginBottom: '20px', }}>Choose the module combinations for your lightbar:</div>
+                              {!sl43Speaker && !sl43Sign && (
+              <div style={{ marginBottom: '15px', marginTop: '5px', padding: '10px', background: '#fafafa' }}>
+                <span
+                  style={{
+                    color: '#282828',
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    display: 'block',
+                    marginBottom: '12px'
+                  }}
+                >
+                  Centre Section Length:
+                </span>
+
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                  {['300mm', '220mm', '160mm'].map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSl43CentreType(size)}
+                      className={`mode-tab ${sl43CentreType === size ? 'active-tab' : ''}`}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                
+                              {(sl43CentreType === '300mm' || sl43CentreType === '160mm') && (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {['lens colour', 'clear', 'black'].map((colour) => {
+                    const isDisabled =
+                    colour === 'lens colour' && rightLensColour !== '#ebebebD6';
+
+                    return (
+                      <button
+                      key={colour}
+                      disabled={isDisabled}
+                      onClick={() => setSl43CentreColour(colour)}
+                      className={`mode-tab ${
+                        sl43CentreColour === colour ? 'active-tab' : ''
+                        }`}
+                        style={{ padding: '4px 10px', fontSize: '0.75rem', cursor: isDisabled ? 'not-allowed' : 'pointer',
+                          opacity: isDisabled ? 0.5 : 1,
+                        }}
+                      >
+                        {colour === 'lens colour' ? 'Lens Colour' : colour === 'clear' ? 'Clear' : 'Black'}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              </div>
+            )}
+            <div><hr style={{ border: 'none', height: '1px', backgroundColor: '#c1c1c1' }} /></div>
                     {selectedLength === 'SL43' ? (
                     <div style={{ background: '#fff', padding: '10px 0px', borderRadius: '6px',
                       }}
