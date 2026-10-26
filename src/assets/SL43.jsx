@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function SL43({
   lensColour = '#ebebebB6',
@@ -26,11 +26,18 @@ export default function SL43({
   frontOuterOption = '',
   frontInnerOption = '',
   rearOuterOption = '',
-  rearInnerOption = ''
+  rearInnerOption = '',
+  resetKey = 0,
+  innerModuleRequest = null,
+  removeInnerModuleRequest = null,
+  onAddInnerModule = (_slotKey, _type) => {},
+  onRemoveInnerModule = (_slotKey) => {}
 }) {
   
 
   const [viewMode, setViewMode] = useState(defaultViewMode);
+  const [innerModulePositions, setInnerModulePositions] = useState({});
+  const [draggingInnerModule, setDraggingInnerModule] = useState(null);
 
   const getFill = (slotKey) => {
     const slot = slotData?.[slotKey];
@@ -72,6 +79,11 @@ export default function SL43({
   };
 
   const isExterior = viewMode === 'exterior';
+
+  useEffect(() => {
+    setInnerModulePositions({});
+    setDraggingInnerModule(null);
+  }, [resetKey]);
 
   const getDividerHex = (colour) => {
     switch (colour?.toLowerCase()) {
@@ -278,39 +290,109 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
   59: { points: "231.73 40.21 231.73 24.87 227 24.87 227 13.17 226.26 10.55 300.29 10.55 299.22 13.46 299.22 24.79 294.38 24.79 294.38 40.16", labelX: 201.78, labelY: 148.63},
   };
 
-  const frontRearModuleOptions = {
-    'frontOuterLongShort-Long': [9, 11],
-    'frontOuterLongShort-Short': [10, 12],
-    'frontOuterShortLong-Long': [13, 15],
-    'frontOuterShortLong-Short': [14, 16],
-    'frontOuterFourxLong':[34, 35, 36, 37],
-    'frontOuterLong': [17, 18],
-    'frontInnerShort': [19, 20],
-    'frontInnerLong': [21, 22],
-    'frontInnerShort-220': [50, 51],
-    'rearInnerThreeShort': [23, 24, 25],
-    'rearInnerTwoShort-220': [52, 53],
-    'rearInnerTwoShort': [56, 57],
-    'rearInnerTwoLong': [58, 59],
-    'rearInnerLong' : [54],
-    'rearInnerShort' : [55],
-    'rearOuterShortLong-Long': [26, 28],
-    'rearOuterShortLong-Short': [27, 29],
-    'rearOuterLongShort-Long': [30, 32],
-    'rearOuterLongShort-Short': [31, 33],
-    'rearOuterLong': [38, 39],
-    'rearOuterSixShort': [40, 41, 42, 43, 44, 45],
-    'rearOuterFourxLong': [46, 47, 48, 49],
+  const innerModulesBlocked = false;
+  const innerLineBounds =
+  effectiveCentreType === '300mm'
+    ? [86, 520]
+    : effectiveCentreType === '220mm'
+      ? [86, 524]
+      : [86, 524];
+  const innerModulePools = {
+    short: {
+      frontInner: [19, 20, 50, 51],
+      frontOuter: [10, 12, 14, 16],
+      rearInner: [23, 24, 25, 52, 53, 55, 56, 57],
+      rearOuter: [27, 29, 31, 33, 40, 41, 42, 43, 44, 45],
+    },
+    long: {
+      frontInner: [21, 22],
+      frontOuter: [9, 11, 13, 15, 17, 18, 34, 35, 36, 37],
+      rearInner: [54, 58, 59],
+      rearOuter: [26, 28, 30, 32, 38, 39, 46, 47, 48, 49],
+    },
   };
-  const selectedFrontRearOptions = [frontOuterOption, frontInnerOption, rearOuterOption, rearInnerOption];
-  const visibleFrontRearSlots = selectedFrontRearOptions.flatMap((option) => {
-    if (!option) return [];
+  const getShapeBounds = (slotKey) => {
+    const shape = frontRearModuleShapes[Number(slotKey)];
+    if (!shape) return null;
+    const xs = shape.points.trim().split(/\s+/).filter((_, index) => index % 2 === 0).map(Number);
+    return { min: Math.min(...xs), max: Math.max(...xs), centre: (Math.min(...xs) + Math.max(...xs)) / 2 };
+  };
+  const getInnerModuleWidth = (slotKey) => {
+    const bounds = getShapeBounds(slotKey);
+    return bounds ? bounds.max - bounds.min : 0;
+  };
+  const isOuterModule = (slotKey) => [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49].includes(Number(slotKey));
+  const getAllowedModuleBounds = (slotKey) => {
+    if (isOuterModule(slotKey)) return [2, 603];
   
-    // Support multiple module options in one selection
-    return option.split('+').flatMap((singleOption) =>
-      frontRearModuleOptions[singleOption] || []
+    if (speakerSelected || signSelected) {
+      return [[86, 226], [400, 524]];
+    }
+  
+    return innerLineBounds;
+  };
+  const isValidInnerCentre = (slotKey, centre, positions = innerModulePositions) => {
+    if (innerModulesBlocked) return false;
+    const width = getInnerModuleWidth(slotKey);
+    const bounds = getAllowedModuleBounds(slotKey);
+const moduleLeft = centre - width / 2;
+const moduleRight = centre + width / 2;
+
+const fitsBounds = Array.isArray(bounds[0])
+  ? bounds.some(([left, right]) => moduleLeft >= left && moduleRight <= right)
+  : moduleLeft >= bounds[0] && moduleRight <= bounds[1];
+
+if (!fitsBounds) return false;
+    const isFront = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 34, 35, 36, 37, 50, 51].includes(Number(slotKey));
+    return Object.entries(positions).every(([otherKey, otherCentre]) => {
+      if (otherKey === slotKey) return true;
+      const otherIsFront = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 34, 35, 36, 37, 50, 51].includes(Number(otherKey));
+      if (isFront !== otherIsFront) return true;
+      const gap = (width + getInnerModuleWidth(otherKey)) / 2 + 2;
+      return Math.abs(centre - otherCentre) >= gap;
+    });
+  };
+  const addInnerModule = (side, type) => {
+    if (innerModulesBlocked) return;
+    const pool = innerModulePools[type][side];
+    const available = pool.find(id => !innerModulePositions[String(id)] && !slotData?.[id]?.active);
+    if (available === undefined) return;
+    const width = getInnerModuleWidth(String(available));
+    const bounds = getAllowedModuleBounds(available);
+    const ranges = Array.isArray(bounds[0])
+      ? bounds
+      : [bounds];
+
+    const candidates = ranges.flatMap(([left, right]) =>
+      Array.from(
+        { length: Math.floor((right - left - width) / 2) + 1 },
+        (_, i) => left + width / 2 + i * 2
+      )
     );
-  });
+    const centre = candidates.find(x => isValidInnerCentre(String(available), x));
+    if (centre === undefined) return;
+    setInnerModulePositions(prev => ({ ...prev, [String(available)]: centre }));
+    onAddInnerModule(String(available), type);
+  };
+  useEffect(() => {
+    if (innerModuleRequest?.type && innerModuleRequest?.side) addInnerModule(innerModuleRequest.side, innerModuleRequest.type);
+  }, [innerModuleRequest?.nonce]);
+  useEffect(() => {
+    const key = removeInnerModuleRequest?.slotKey;
+    if (!key) return;
+    setInnerModulePositions(prev => { const next = { ...prev }; delete next[String(key)]; return next; });
+    onRemoveInnerModule(String(key));
+  }, [removeInnerModuleRequest?.nonce]);
+  useEffect(() => {
+    if (!innerModulesBlocked || Object.keys(innerModulePositions).length === 0) return;
+    Object.keys(innerModulePositions).forEach(slotKey => onRemoveInnerModule(slotKey));
+    setInnerModulePositions({});
+  }, [innerModulesBlocked]);
+  useEffect(() => {
+    if (Object.keys(innerModulePositions).length === 0) return;
+    Object.keys(innerModulePositions).forEach(slotKey => onRemoveInnerModule(slotKey));
+    setInnerModulePositions({});
+  }, [effectiveCentreType]);
 
   return (
     <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto', fontFamily: 'Futura PT, sans-serif' }}>
@@ -504,7 +586,7 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
           </g>
         )}
 
-        {/* Speaker Graphic (Rendered AFTER interior elements so exterior protrusion sits above) */}
+            {/* Speaker Graphic (Rendered AFTER interior elements so exterior protrusion sits above) */}
       {speakerSelected && (
          <g id="_9152_speakers" data-name="9152 speaker">
          <path className="cls-10" d="M272.27,25.26c14.86,0,26.91,12.75,26.91,28.49s-12.05,28.49-26.91,28.49-26.91-12.75-26.91-28.49,12.05-28.49,26.91-28.49Z"/>
@@ -534,20 +616,67 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
       </>)}
 
        
-        {/* Dropdown-selected front/rear modules */}
-        {visibleFrontRearSlots.map((slotKey) => {
-          const shape = frontRearModuleShapes[slotKey];
-          if (!shape) return null;
+          {/* Inner modules are placed individually and dragged along their front/rear line. */}
+        {Object.entries(innerModulePositions).map(([slotKey, centre]) => {
+          const shape = frontRearModuleShapes[Number(slotKey)];
+          const bounds = getShapeBounds(slotKey);
+          if (!shape || !bounds || innerModulesBlocked) return null;
+          const dx = centre - bounds.centre;
           const slot = slotData?.[slotKey];
           const fill = slot && slot.active !== false ? getFill(slotKey) : '#808285';
           const selected = isSelected(slotKey);
-          return (
-            <g key={`front-rear-${slotKey}`}>
-              <polygon points={shape.points} fill={fill} stroke={selected ? '#38bdf8' : '#231f20'} strokeWidth={selected ? 1.8 : 0.8} style={{ cursor: 'pointer' }} onClick={() => onSelectSlot(slotKey)} />
-              <text x={shape.labelX} y={shape.labelY} textAnchor="middle" dominantBaseline="middle" fontSize="7" fontWeight="700" fill="#231f20" style={{ cursor: 'pointer', pointerEvents: 'none' }}>I{slotKey}</text>
-            </g>
-          );
+          const startDrag = (event) => {
+            if (isExterior) return;
+            event.preventDefault();
+            event.currentTarget.setPointerCapture(event.pointerId);
+            setDraggingInnerModule({ slotKey, startX: event.clientX, startCentre: centre });
+            onSelectSlot(Number(slotKey));
+          };
+          const moveDrag = (event) => {
+            if (isExterior || !draggingInnerModule || draggingInnerModule.slotKey !== slotKey) return;
+          
+            const rect = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
+            if (!rect || !rect.width) return;
+          
+            const proposed =
+              draggingInnerModule.startCentre +
+              ((event.clientX - draggingInnerModule.startX) / rect.width) * 605.9;
+          
+            if (speakerSelected || signSelected) {
+              const width = getInnerModuleWidth(slotKey);
+              const half = width / 2;
+              const ranges = [
+                [86 + half, 206 - half],
+                [400 + half, 524 - half],
+              ];
+          
+              // Choose the side based on the pointer's intended position.
+              const targetRange = proposed < 285 ? ranges[0] : ranges[1];
+              const snapped = Math.max(
+                targetRange[0],
+                Math.min(targetRange[1], proposed)
+              );
+          
+              if (isValidInnerCentre(slotKey, snapped)) {
+                setInnerModulePositions(prev => ({
+                  ...prev,
+                  [slotKey]: snapped,
+                }));
+              }
+              return;
+            }
+          
+            if (isValidInnerCentre(slotKey, proposed)) {
+              setInnerModulePositions(prev => ({
+                ...prev,
+                [slotKey]: proposed,
+              }));
+            }
+          };
+          return <g key={`inner-${slotKey}`} transform={`translate(${dx} 0)`}><polygon points={shape.points} fill={fill} stroke={selected ? '#38bdf8' : '#231f20'} strokeWidth={selected ? 1.8 : 0.8} style={{ cursor: isExterior ? 'default' : 'grab', touchAction: 'none' }} onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={() => setDraggingInnerModule(null)} onPointerCancel={() => setDraggingInnerModule(null)} /><text x={shape.labelX} y={shape.labelY} textAnchor="middle" dominantBaseline="middle" fontSize="11" fontWeight="700" fill="#231f20" style={{ pointerEvents: 'none' }}>I{slotKey}</text></g>;
         })}
+
+
 
 
            {/* --- OUTER MODULE NUMBERS: match the currently displayed paths --- */}
@@ -598,7 +727,7 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
                 style={{ fill: signTextColour }}
                 textLength={signSize === '300mm' ? 140 : 0} 
                 lengthAdjust="spacingAndGlyphs"
-                
+
               >
                 {signText.split('\n').map((line, index) => (
                   <tspan key={index} x="302.95" dy={index === 0 ? 0 : '1.2em'}
@@ -719,6 +848,8 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
         )}
 
       
+
+
       {/* Speaker Graphic (Rendered AFTER interior elements so exterior protrusion sits above) */}
       {speakerSelected && (
           <g id="_9152_speaker-2" data-name="9152 speaker">
