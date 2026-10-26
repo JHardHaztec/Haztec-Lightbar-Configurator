@@ -26,8 +26,8 @@ export default function SL43({
   frontInnerOption = '',
   rearInnerOption = '',
   resetKey = 0,
-  innerModuleRequest = null,
-  removeInnerModuleRequest = null,
+  innerModuleRequest,
+  removeInnerModuleRequest,
   onAddInnerModule = (_slotKey, _type) => {},
   onRemoveInnerModule = (_slotKey) => {}
 }) {
