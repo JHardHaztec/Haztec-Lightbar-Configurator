@@ -68,7 +68,7 @@ export default function App() {
     'short' | 'long' | ''
   >('');
   const [sl43InnerModuleRequest, setSl43InnerModuleRequest] = useState<{
-    side: 'frontInner' | 'frontOuter' | 'rearInner' | 'rearOuter';
+    side: 'frontInner' | 'rearInner';
     type: 'short' | 'long';
     nonce: number;
   } | null>(null);
