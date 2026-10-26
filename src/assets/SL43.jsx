@@ -23,9 +23,7 @@ export default function SL43({
   signText = '',
   signTextColour = '#231f20',
   moduleLayout = 'corner', // 'corner' or 'beacon'
-  frontOuterOption = '',
   frontInnerOption = '',
-  rearOuterOption = '',
   rearInnerOption = '',
   resetKey = 0,
   innerModuleRequest = null,
