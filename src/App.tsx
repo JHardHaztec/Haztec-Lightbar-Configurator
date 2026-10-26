@@ -68,7 +68,7 @@ export default function App() {
     'short' | 'long' | ''
   >('');
   const [sl43InnerModuleRequest, setSl43InnerModuleRequest] = useState<{
-    side: 'frontInner' | 'rearInner';
+    side: 'frontInner' | 'frontOuter' | 'rearInner' | 'rearOuter';
     type: 'short' | 'long';
     nonce: number;
   } | null>(null);
@@ -3500,6 +3500,10 @@ export default function App() {
                       slotData={slotData}
                       selectedSlotKey={0}
                       onSelectSlot={() => {}}
+                      innerModuleRequest={sl43InnerModuleRequest}
+                      removeInnerModuleRequest={sl43RemoveInnerRequest}
+                      onAddInnerModule={handleAddSL43InnerModule}
+                      onRemoveInnerModule={handleRemoveSL43InnerModule}
                     />
                   )}
                 </div>
