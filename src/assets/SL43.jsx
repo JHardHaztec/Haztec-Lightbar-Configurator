@@ -395,7 +395,7 @@ if (!fitsBounds) return false;
   return (
     <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto', fontFamily: 'Futura PT, sans-serif' }}>
 
-      <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 605.9 200" style={{ width: '100%', height: '250px', display: 'block' }}>
+      <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 605.9 200" style={{ width: '100%', height: '250px', display: 'block', touchAction:'none' }}>
         <defs>
         <style>{`
             .cls-label {fill: #969696; font-weight: 700;}
@@ -671,7 +671,32 @@ if (!fitsBounds) return false;
               }));
             }
           };
-          return <g key={`inner-${slotKey}`} transform={`translate(${dx} 0)`}><polygon points={shape.points} fill={fill} stroke={selected ? '#38bdf8' : '#231f20'} strokeWidth={selected ? 1.8 : 0.8} style={{ cursor: isExterior ? 'default' : 'grab', touchAction: 'none' }} onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={() => setDraggingInnerModule(null)} onPointerCancel={() => setDraggingInnerModule(null)} /><text x={shape.labelX} y={shape.labelY} textAnchor="middle" dominantBaseline="middle" fontSize="11" fontWeight="700" fill="#231f20" style={{ pointerEvents: 'none' }}>I{slotKey}</text></g>;
+          return (
+            <g key={`inner-${slotKey}`} transform={`translate(${dx} 0)`}>
+              <polygon
+                points={shape.points}
+                fill={fill}
+                stroke={selected ? '#38bdf8' : '#231f20'}
+                strokeWidth={selected ? 1.8 : 0.8}
+                style={{ cursor: isExterior ? 'default' : 'grab', touchAction: 'none' }}
+                onPointerDown={(event) => {
+                  if (isExterior) return;
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  startDrag(event);
+                }}
+                onPointerMove={moveDrag}
+                onPointerUp={(event) => {
+                  if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+                  setDraggingInnerModule(null);
+                }}
+                onPointerCancel={() => setDraggingInnerModule(null)}
+                onLostPointerCapture={() => setDraggingInnerModule(null)}
+              />
+              <text x={shape.labelX} y={shape.labelY} textAnchor="middle" dominantBaseline="middle" fontSize="11" fontWeight="700" fill="#231f20" style={{ pointerEvents: 'none' }}>
+                I{slotKey}
+              </text>
+            </g>
+          );
         })}
 
 
