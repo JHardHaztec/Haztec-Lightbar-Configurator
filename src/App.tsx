@@ -1011,24 +1011,7 @@ export default function App() {
       }
     } catch (e) {}
 
-    const printImages = Array.from(
-      document.querySelectorAll<HTMLImageElement>('.print-spec-sheet img')
-    );
-    
-    Promise.all(
-      printImages.map((img) => {
-        if (img.complete && img.naturalWidth > 0) {
-          return Promise.resolve();
-        }
-    
-        return new Promise<void>((resolve) => {
-          img.onload = () => resolve();
-          img.onerror = () => resolve();
-        });
-      })
-    ).then(() => {
-      window.print();
-    });
+    window.print();
 
     document.title = originalTitle;
     try {
