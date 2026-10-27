@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { getModuleOrderCode } from '../OrderCodes';
 
 export default function SL43({
   lensColour = '#ebebebB6',
@@ -22,18 +23,33 @@ export default function SL43({
   splitLensEnabled = false,
   signText = '',
   signTextColour = '#231f20',
-  moduleLayout = 'corner', // 'corner' or 'beacon'
+  moduleLayout = 'corner',
+  selectedModel = '',
   frontInnerOption = '',
   rearInnerOption = '',
   resetKey = 0,
   innerModuleRequest,
+  onInnerModuleRequestHandled,
   removeInnerModuleRequest,
+  innerModulePositions: sharedInnerModulePositions,
+  onInnerModulePositionsChange,
   onAddInnerModule = (_slotKey, _type) => {},
-  onRemoveInnerModule = (_slotKey) => {}
+  onRemoveInnerModule = (_slotKey) => {},
+  lightbarModel = 'XpertSL',
+  manageInnerModules = true,
+  detailsComponentsView = false,
 }) {
   
+  const previousResetKey = useRef(resetKey);
 
   const [viewMode, setViewMode] = useState(defaultViewMode);
+
+  useEffect(() => {
+    if (detailsComponentsView) {
+      setViewMode('interior');
+    }
+  }, [detailsComponentsView]);
+
   const [innerModulePositions, setInnerModulePositions] = useState({});
   const [draggingInnerModule, setDraggingInnerModule] = useState(null);
 
@@ -78,10 +94,19 @@ export default function SL43({
 
   const isExterior = viewMode === 'exterior';
 
-  useEffect(() => {
-    setInnerModulePositions({});
-    setDraggingInnerModule(null);
-  }, [resetKey]);
+ 
+useEffect(() => {
+  if (!manageInnerModules) return;
+
+  if (previousResetKey.current === resetKey) return;
+
+  previousResetKey.current = resetKey;
+
+  setInnerModulePositions({});
+  onInnerModulePositionsChange?.({});
+  setDraggingInnerModule(null);
+}, [resetKey, manageInnerModules, onInnerModulePositionsChange]);
+
 
   const getDividerHex = (colour) => {
     switch (colour?.toLowerCase()) {
@@ -170,6 +195,13 @@ const getCentreStrokeColour = () => {
 
 const centreFill = getCentreFill();
 const centreStrokeColour = getCentreStrokeColour();
+
+const getSvgOrderCode = (slotKey) => {
+  const slot = slotData?.[slotKey];
+  if (!slot?.active) return '';
+
+  return getModuleOrderCode(slotKey, slot, selectedModel) || '';
+};
 
               
 {/*End Modules */}
@@ -276,16 +308,16 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
   47: { points: "160.36 40.21 160.36 24.87 165.09 24.87 165.09 13.17 165.83 10.55 91.79 10.55 92.86 13.46 92.86 24.79 97.7 24.79 97.7 40.16", labelX: 201.78, labelY: 148.63},
   48: { points: "239.83 40.21 239.83 24.87 244.56 24.87 244.56 13.17 245.3 10.55 171.26 10.55 172.33 13.46 172.33 24.79 177.17 24.79 177.17 40.16", labelX: 403.78, labelY: 148.63 },
   49: { points: "367.04 40.21 367.04 24.87 362.31 24.87 362.31 13.17 361.57 10.55 435.6 10.55 434.54 13.46 434.54 24.79 429.69 24.79 429.69 40.16", labelX: 201.78, labelY: 148.63},
-  50: { points: "293.94 130.99 293.94 146.33 298.67 146.33 298.67 158.02 299.41 160.64 261.06 160.64 262.13 157.73 262.13 146.41 266.97 146.41 266.97 131.04", labelX: 403.78, labelY: 148.63 },
-  51: { points: "311.96 130.99 311.96 146.33 307.23 146.33 307.23 158.02 306.49 160.64 344.84 160.64 343.78 157.73 343.78 146.41 338.93 146.41 338.93 131.04", labelX: 201.78, labelY: 148.63},
-  52: { points: "311.96 40.21 311.96 24.87 307.23 24.87 307.23 13.17 306.49 10.55 344.84 10.55 343.78 13.46 343.78 24.79 338.93 24.79 338.93 40.15", labelX: 403.78, labelY: 148.63 },
-  53: { points: "294.94 40.21 294.94 24.87 299.67 24.87 299.67 13.17 300.41 10.55 262.06 10.55 263.13 13.46 263.13 24.79 267.97 24.79 267.97 40.15", labelX: 201.78, labelY: 148.63},
-  54: { points: "334.5 40.21 334.5 24.87 339.23 24.87 339.23 13.17 339.97 10.55 265.93 10.55 267 13.46 267 24.79 271.84 24.79 271.84 40.16", labelX: 201.78, labelY: 148.63},
-  55: { points: "316.66 40.21 316.66 24.87 321.39 24.87 321.39 13.17 322.13 10.55 283.77 10.55 284.84 13.46 284.84 24.79 289.68 24.79 289.68 40.15", labelX: 201.78, labelY: 148.63},
-  56: { points: "320.96 40.21 320.96 24.87 316.23 24.87 316.23 13.17 315.49 10.55 353.84 10.55 352.78 13.46 352.78 24.79 347.93 24.79 347.93 40.15", labelX: 201.78, labelY: 148.63},
-  57: { points: "284.94 40.21 284.94 24.87 289.67 24.87 289.67 13.17 290.41 10.55 252.06 10.55 253.13 13.46 253.13 24.79 257.97 24.79 257.97 40.15", labelX: 201.78, labelY: 148.63},
-  58: { points: "311.08 40.21 311.08 24.87 306.35 24.87 306.35 13.17 305.61 10.55 379.65 10.55 378.58 13.46 378.58 24.79 373.74 24.79 373.74 40.16", labelX: 201.78, labelY: 148.63},
-  59: { points: "231.73 40.21 231.73 24.87 227 24.87 227 13.17 226.26 10.55 300.29 10.55 299.22 13.46 299.22 24.79 294.38 24.79 294.38 40.16", labelX: 201.78, labelY: 148.63},
+  50: { points: "293.94 130.99 293.94 146.33 298.67 146.33 298.67 158.02 299.41 160.64 261.06 160.64 262.13 157.73 262.13 146.41 266.97 146.41 266.97 131.04", labelX: 280.78, labelY:148.63 },
+  51: { points: "311.96 130.99 311.96 146.33 307.23 146.33 307.23 158.02 306.49 160.64 344.84 160.64 343.78 157.73 343.78 146.41 338.93 146.41 338.93 131.04", labelX: 325.78, labelY: 148.63},
+  52: { points: "311.96 40.21 311.96 24.87 307.23 24.87 307.23 13.17 306.49 10.55 344.84 10.55 343.78 13.46 343.78 24.79 338.93 24.79 338.93 40.15", labelX: 325.78, labelY: 22.74 },
+  53: { points: "294.94 40.21 294.94 24.87 299.67 24.87 299.67 13.17 300.41 10.55 262.06 10.55 263.13 13.46 263.13 24.79 267.97 24.79 267.97 40.15", labelX: 280.78, labelY: 22.74},
+  54: { points: "334.5 40.21 334.5 24.87 339.23 24.87 339.23 13.17 339.97 10.55 265.93 10.55 267 13.46 267 24.79 271.84 24.79 271.84 40.16", labelX: 301.78, labelY: 22.74},
+  55: { points: "316.66 40.21 316.66 24.87 321.39 24.87 321.39 13.17 322.13 10.55 283.77 10.55 284.84 13.46 284.84 24.79 289.68 24.79 289.68 40.15", labelX: 301.78, labelY: 22.74},
+  56: { points: "320.96 40.21 320.96 24.87 316.23 24.87 316.23 13.17 315.49 10.55 353.84 10.55 352.78 13.46 352.78 24.79 347.93 24.79 347.93 40.15", labelX: 334.78, labelY: 22.74},
+  57: { points: "284.94 40.21 284.94 24.87 289.67 24.87 289.67 13.17 290.41 10.55 252.06 10.55 253.13 13.46 253.13 24.79 257.97 24.79 257.97 40.15", labelX: 271.78, labelY: 22.74},
+  58: { points: "311.08 40.21 311.08 24.87 306.35 24.87 306.35 13.17 305.61 10.55 379.65 10.55 378.58 13.46 378.58 24.79 373.74 24.79 373.74 40.16", labelX: 341.78, labelY: 22.74},
+  59: { points: "231.73 40.21 231.73 24.87 227 24.87 227 13.17 226.26 10.55 300.29 10.55 299.22 13.46 299.22 24.79 294.38 24.79 294.38 40.16", labelX: 263.78, labelY: 22.74},
   };
 
   const innerModulesBlocked = false;
@@ -297,10 +329,8 @@ const beaconleft = "M65.01,100.03l-.04-.04M65.08,98.83l.04.04M65.63,99.49v.04M64
       : [86, 524];
   const innerModulePools = {
     short: {
-      frontInner: [19, 20, 50, 51],
-      frontOuter: [10, 12, 14, 16],
-      rearInner: [23, 24, 25, 52, 53, 55, 56, 57],
-      rearOuter: [27, 29, 31, 33, 40, 41, 42, 43, 44, 45],
+      frontInner: [19, 20, 50, 51, 10, 12, 14, 16],
+      rearInner: [23, 24, 25, 52, 53, 55, 56, 57, 27, 29, 31, 33, 40, 41, 42, 43, 44, 45],
     },
     long: {
       frontInner: [21, 22],
@@ -370,32 +400,78 @@ if (!fitsBounds) return false;
     const centre = candidates.find(x => isValidInnerCentre(String(available), x));
     if (centre === undefined) return;
     setInnerModulePositions(prev => ({ ...prev, [String(available)]: centre }));
+    onInnerModulePositionsChange?.(prev => ({ ...prev, [String(available)]: centre }));
     onAddInnerModule(String(available), type);
   };
+ 
+
+ 
+useEffect(() => {
+  if (!manageInnerModules) return;
+  if (!innerModuleRequest?.type || !innerModuleRequest?.side) return;
+
+  addInnerModule(innerModuleRequest.side, innerModuleRequest.type);
+  onInnerModuleRequestHandled?.();
+}, [
+  innerModuleRequest?.nonce,
+  manageInnerModules,
+  onInnerModuleRequestHandled,
+]);
+  
+ 
+useEffect(() => {
+  const key = removeInnerModuleRequest?.slotKey;
+  if (!key) return;
+
+  setInnerModulePositions(prev => {
+    const next = { ...prev };
+    delete next[String(key)];
+    return next;
+  });
+
+  onInnerModulePositionsChange?.(prev => {
+    const next = { ...prev };
+    delete next[String(key)];
+    return next;
+  });
+
+  onRemoveInnerModule(String(key));
+}, [removeInnerModuleRequest?.nonce]);
+
   useEffect(() => {
-    if (innerModuleRequest?.type && innerModuleRequest?.side) addInnerModule(innerModuleRequest.side, innerModuleRequest.type);
-  }, [innerModuleRequest?.nonce]);
-  useEffect(() => {
-    const key = removeInnerModuleRequest?.slotKey;
-    if (!key) return;
-    setInnerModulePositions(prev => { const next = { ...prev }; delete next[String(key)]; return next; });
-    onRemoveInnerModule(String(key));
-  }, [removeInnerModuleRequest?.nonce]);
-  useEffect(() => {
+    if (!manageInnerModules) return;
     if (!innerModulesBlocked || Object.keys(innerModulePositions).length === 0) return;
-    Object.keys(innerModulePositions).forEach(slotKey => onRemoveInnerModule(slotKey));
+  
+    const keys = Object.keys(innerModulePositions);
+  
+    keys.forEach(slotKey => onRemoveInnerModule(slotKey));
+  
     setInnerModulePositions({});
-  }, [innerModulesBlocked]);
+    onInnerModulePositionsChange?.({});
+  }, [
+    manageInnerModules,
+    innerModulesBlocked,
+    innerModulePositions,
+    onRemoveInnerModule,
+    onInnerModulePositionsChange,
+  ]);
+
   useEffect(() => {
-    if (Object.keys(innerModulePositions).length === 0) return;
-    Object.keys(innerModulePositions).forEach(slotKey => onRemoveInnerModule(slotKey));
-    setInnerModulePositions({});
-  }, [effectiveCentreType]);
+  if (!manageInnerModules) return;
+  if (Object.keys(innerModulePositions).length === 0) return;
+
+  Object.keys(innerModulePositions).forEach(slotKey => {
+    onRemoveInnerModule(slotKey);
+  });
+
+  setInnerModulePositions({});
+  onInnerModulePositionsChange?.({});
+}, [effectiveCentreType]);
 
   return (
-    <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto', fontFamily: 'Futura PT, sans-serif' }}>
+    <div style={{ width: '100%', maxWidth: '730px', margin: '0 auto', fontFamily: 'Futura PT, sans-serif' }}>
 
-      <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 605.9 200" style={{ width: '100%', height: '250px', display: 'block', touchAction:'none' }}>
+      <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 605.9 200" style={{ width: '100%', height: '300px', display: 'block', touchAction:'none' }}>
         <defs>
         <style>{`
             .cls-label {fill: #969696; font-weight: 700;}
@@ -615,7 +691,7 @@ if (!fitsBounds) return false;
 
        
           {/* Inner modules are placed individually and dragged along their front/rear line. */}
-        {Object.entries(innerModulePositions).map(([slotKey, centre]) => {
+        {Object.entries(sharedInnerModulePositions).map(([slotKey, centre]) => {
           const shape = frontRearModuleShapes[Number(slotKey)];
           const bounds = getShapeBounds(slotKey);
           if (!shape || !bounds || innerModulesBlocked) return null;
@@ -660,6 +736,13 @@ if (!fitsBounds) return false;
                   ...prev,
                   [slotKey]: snapped,
                 }));
+              
+                if (manageInnerModules) {
+                  onInnerModulePositionsChange?.(prev => ({
+                    ...prev,
+                    [slotKey]: snapped,
+                  }));
+                }
               }
               return;
             }
@@ -669,6 +752,13 @@ if (!fitsBounds) return false;
                 ...prev,
                 [slotKey]: proposed,
               }));
+            
+              if (manageInnerModules) {
+                onInnerModulePositionsChange?.(prev => ({
+                  ...prev,
+                  [slotKey]: proposed,
+                }));
+              }
             }
           };
           return (
@@ -692,31 +782,131 @@ if (!fitsBounds) return false;
                 onPointerCancel={() => setDraggingInnerModule(null)}
                 onLostPointerCapture={() => setDraggingInnerModule(null)}
               />
-              <text x={shape.labelX} y={shape.labelY} textAnchor="middle" dominantBaseline="middle" fontSize="11" fontWeight="700" fill="#231f20" style={{ pointerEvents: 'none' }}>
-                I{slotKey}
-              </text>
-            </g>
-          );
-        })}
+                            {(() => {
+                              const code = getModuleOrderCode(
+                                Number(slotKey),
+                                {
+                                  ...slot,
+                                  optionType: slot.optionType || (
+                                    [19, 20, 50, 51, 21, 22, 54, 58, 59].includes(Number(slotKey))
+                                      ? frontInnerOption || rearInnerOption
+                                      : slot.optionType
+                                  ),
+                                },
+                                lightbarModel
+                              );
+
+                              const bgWidth = Math.max(26, code.length * 4.7 + 8);
+
+                              return (
+                                <>
+                                  <rect
+                                    x={shape.labelX - bgWidth / 2}
+                                    y={shape.labelY - 7.5}
+                                    width={bgWidth}
+                                    height={13}
+                                    rx={3}
+                                    fill="#ffffff"
+                                    style={{ pointerEvents: 'none' }}
+                                  />
+
+                                  <text
+                                    x={shape.labelX}
+                                    y={shape.labelY}
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    fontSize="9"
+                                    fontWeight="700"
+                                    fill="#231f20"
+                                    style={{ pointerEvents: 'none' }}
+                                  >
+                                    {code}
+                                  </text>
+                                </>
+                              );
+                            })()}
+                          </g>
+                        );
+                      })}
 
 
 
 
-           {/* --- OUTER MODULE NUMBERS: match the currently displayed paths --- */}
-        {moduleLayout === 'corner' && (<>
-          <text className="cls-num" onClick={() => onSelectSlot('C1')} transform="translate(60 134)"><tspan x="0" y="0">C1</tspan></text>
-          <text className="cls-num" onClick={() => onSelectSlot('C2')} transform="translate(540 134)"><tspan x="0" y="0">C2</tspan></text>
-          <text className="cls-num" onClick={() => onSelectSlot('C3')} transform="translate(60 50)"><tspan x="0" y="0">C3</tspan></text>
-          <text className="cls-num" onClick={() => onSelectSlot('C4')} transform="translate(540 50)"><tspan x="0" y="0">C4</tspan></text>
-        </>)}
-        {moduleLayout === 'beacon' && (<>
-          <text className="cls-num" onClick={() => onSelectSlot('B1')} transform="translate(46 91)"><tspan x="0" y="0">B1</tspan></text>
-          <text className="cls-num" onClick={() => onSelectSlot('B2')} transform="translate(544 91)"><tspan x="0" y="0">B2</tspan></text>
-        </>)}
-        {moduleLayout === 'vmirrors' && (<>
-          <text className="cls-num" onClick={() => onSelectSlot('B1')} transform="translate(46 91)"><tspan x="0" y="0">B1</tspan></text>
-          <text className="cls-num" onClick={() => onSelectSlot('B2')} transform="translate(544 91)"><tspan x="0" y="0">B2</tspan></text>
-        </>)}
+         {/* --- OUTER MODULE NUMBERS AND ORDER CODES --- */}
+
+                {(
+                  moduleLayout === 'corner'
+                    ? [
+                        { key: 'C1', x: 32, y: 122, anchor: 'start' },
+                        { key: 'C2', x: 578, y: 122, anchor: 'end' },
+                        { key: 'C3', x: 32, y: 50, anchor: 'start' },
+                        { key: 'C4', x: 578, y: 50, anchor: 'end' },
+                      ]
+                    : [
+                        { key: 'B1', x: 35, y: 90, anchor: 'start' },
+                        { key: 'B2', x: 578, y: 90, anchor: 'end' },
+                      ]
+                ).map(({ key, x, y, anchor }) => {
+                  const code = getSvgOrderCode(key);
+
+                  return code ? (
+                    <g key={key}>
+                      <rect
+                        x={anchor === 'start' ? x - 2 : x - code.length * 5 - 2}
+                        y={y - 10}
+                        width={code.length * 5 + 3}
+                        height="13"
+                        rx="3"
+                        fill="#fafafa"
+                      />
+                  
+                      <text
+                        x={x}
+                        y={y}
+                        fontSize="9"
+                        fontWeight="700"
+                        fill="#231f20"
+                        textAnchor={anchor}
+                        style={{ pointerEvents: 'none' }}
+                      >
+                        {code}
+                      </text>
+                    </g>
+                  ) : null;
+                })}
+
+                {moduleLayout === 'vmirrors' &&
+                  [
+                    { key: 'BV1', x: 64, y: 110, anchor: 'start' },
+                    { key: 'BV2', x: 526, y: 110, anchor: 'end' },
+                  ].map(({ key, x, y, anchor }) => {
+                    const code = getSvgOrderCode(key);
+
+                    return code ? (
+                      <g key={key}>
+                        <rect
+                          x={anchor === 'start' ? x - 3 : x - code.length * 5 - 3}
+                          y={y - 10}
+                          width={code.length * 5 + 6}
+                          height="13"
+                          rx="3"
+                          fill="#fafafa"
+                        />
+                    
+                        <text
+                          x={x}
+                          y={y}
+                          fontSize="0"
+                          fontWeight="700"
+                          fill="#231f20"
+                          textAnchor={anchor}
+                          style={{ pointerEvents: 'none' }}
+                        >
+                          {code}
+                        </text>
+                      </g>
+                    ) : null;
+                  })}
 
         {/* 300mm Centre Section & Dividers */}
         {effectiveCentreType === '300mm' && (
@@ -886,7 +1076,16 @@ if (!fitsBounds) return false;
       <text className="cls-label" x="50%" y="192" textAnchor="middle"><tspan x="300" y="195">FRONT</tspan></text>
       </svg>
       {/* View Toggle Bar */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '15px', gap: '8px' }}>
+      {!detailsComponentsView && (
+  <>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '15px',
+            gap: '8px',
+          }}
+        >
       <button
           onClick={() => setViewMode('exterior')}
           style={{
@@ -918,6 +1117,8 @@ if (!fitsBounds) return false;
           Components View
         </button>
       </div>
+      </>
+      )}
     </div>
   );
 }
