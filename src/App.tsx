@@ -7,7 +7,6 @@ import XL7574 from './assets/XL7574.jsx';
 import XL7568 from './assets/XL7568.jsx';
 import XL7561 from './assets/XL7561.jsx';
 import SL43 from './assets/SL43.jsx';
-import { getModuleOrderCode } from './OrderCodes';
 import InfoModal from './InfoModal';
 import { lightbarInfo } from './LightbarInfo';
 
@@ -33,6 +32,9 @@ export default function App() {
     company: '',
     email: '',
     phone: '',
+    country: '',
+    quantity: '',
+    message: '',
   });
 
   // Currently active slot being configured in the control panel
@@ -62,14 +64,14 @@ export default function App() {
   const [sl43RearInnerOption, setSl43RearInnerOption] = useState('');
   const [sl43ResetKey, setSl43ResetKey] = useState(0);
   const [sl43FrontInnerAddType, setSl43FrontInnerAddType] = useState<
-    'short' | 'long' | ''
+    'xtshort' | 'xtlong' | ''
   >('');
   const [sl43RearInnerAddType, setSl43RearInnerAddType] = useState<
-    'short' | 'long' | ''
+    'xtshort' | 'xtlong' | ''
   >('');
   const [sl43InnerModuleRequest, setSl43InnerModuleRequest] = useState<{
     side: 'frontInner' | 'frontOuter' | 'rearInner' | 'rearOuter';
-    type: 'short' | 'long';
+    type: 'xtshort' | 'xtlong';
     nonce: number;
   } | null>(null);
   const [sl43RemoveInnerRequest, setSl43RemoveInnerRequest] = useState<{
@@ -80,6 +82,9 @@ export default function App() {
   const [sl43CentreType, setSl43CentreType] = useState('300mm');
   const [rightLensColour, setRightLensColour] = useState('#ebebebD6');
   const [splitLensEnabled, setSplitLensEnabled] = useState(false);
+
+  const [sl43InnerModulePositions, setSl43InnerModulePositions] =
+  useState<Record<string, number>>({});
 
   // Master slot configuration state for sections 1 through 24
   const [slotData, setSlotData] = useState<
@@ -101,7 +106,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     2: {
       active: false,
@@ -109,7 +114,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     3: {
       active: false,
@@ -117,7 +122,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     4: {
       active: false,
@@ -125,7 +130,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     5: {
       active: false,
@@ -133,7 +138,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     6: {
       active: false,
@@ -141,7 +146,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     7: {
       active: false,
@@ -149,7 +154,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     8: {
       active: false,
@@ -157,7 +162,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     9: {
       active: false,
@@ -165,7 +170,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     10: {
       active: false,
@@ -173,7 +178,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     11: {
       active: false,
@@ -181,7 +186,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     12: {
       active: false,
@@ -189,7 +194,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     13: {
       active: false,
@@ -197,7 +202,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     14: {
       active: false,
@@ -205,7 +210,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     15: {
       active: false,
@@ -213,7 +218,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     16: {
       active: false,
@@ -221,7 +226,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     17: {
       active: false,
@@ -229,7 +234,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     18: {
       active: false,
@@ -237,7 +242,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     19: {
       active: false,
@@ -245,7 +250,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     20: {
       active: false,
@@ -253,7 +258,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     21: {
       active: false,
@@ -261,7 +266,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     22: {
       active: false,
@@ -269,7 +274,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     23: {
       active: false,
@@ -277,7 +282,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     24: {
       active: false,
@@ -285,7 +290,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     C1: {
       active: true,
@@ -293,7 +298,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     C2: {
       active: true,
@@ -301,7 +306,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     C3: {
       active: true,
@@ -309,7 +314,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     C4: {
       active: true,
@@ -317,7 +322,7 @@ export default function App() {
       primary: '#808285',
       secondary: '#3b82f6',
       tertiary: '',
-      optionType: 'longmodule',
+      optionType: 'xtlongmodule',
     },
     B1: {
       active: true,
@@ -620,7 +625,7 @@ export default function App() {
     const lower = optionType.toLowerCase();
 
     if (
-      lower === 'shortmodule' ||
+      lower === 'xtshortmodule' ||
       lower.includes('frontinnershort') ||
       lower.includes('rearinnershort') ||
       lower.includes('frontouterlongshort-short') ||
@@ -665,7 +670,7 @@ export default function App() {
         primary: '#808285',
         secondary: '#3b82f6',
         tertiary: '',
-        optionType: 'longmodule',
+        optionType: 'xtlongmodule',
       };
 
       const isFixedShort =
@@ -675,8 +680,8 @@ export default function App() {
       const isSelectedShort = isFixedShort;
 
       const optionType = isSelectedShort
-        ? 'shortmodule'
-        : existing.optionType || 'longmodule';
+        ? 'xtshortmodule'
+        : existing.optionType || 'xtlongmodule';
 
       return {
         ...prev,
@@ -696,26 +701,6 @@ export default function App() {
 
   const isFormValid =
     formData.name.trim() !== '' && formData.email.trim() !== '';
-
-  const getMaxSlots = (length: string | null): number => {
-    switch (length) {
-      case '25':
-        return 4;
-      case 'XL7528':
-        return 6;
-      case 'XL7544':
-        return 16;
-      case 'XL7561':
-        return 20;
-      case 'XL7568':
-      case 'XL7574':
-        return 24;
-      case 'SL43':
-        return 14;
-      default:
-        return 24;
-    }
-  };
 
   const getAllowedSecondaryColours = (primaryHex: string): string[] => {
     if (!primaryHex) return ledOptions.map((l) => l.hex);
@@ -766,7 +751,7 @@ export default function App() {
           if (updated[num]) {
             updated[num] = {
               ...updated[num],
-              optionType: 'shortmodule',
+              optionType: 'xtshortmodule',
               mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode,
             };
           }
@@ -776,7 +761,7 @@ export default function App() {
           if (updated[num]) {
             updated[num] = {
               ...updated[num],
-              optionType: 'shortmodule',
+              optionType: 'xtshortmodule',
               mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode,
             };
           }
@@ -786,7 +771,7 @@ export default function App() {
           if (updated[num]) {
             updated[num] = {
               ...updated[num],
-              optionType: 'shortmodule',
+              optionType: 'xtshortmodule',
               mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode,
             };
           }
@@ -796,7 +781,7 @@ export default function App() {
           if (updated[num]) {
             updated[num] = {
               ...updated[num],
-              optionType: 'shortmodule',
+              optionType: 'xtshortmodule',
               mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode,
             };
           }
@@ -806,7 +791,7 @@ export default function App() {
           if (updated[num]) {
             updated[num] = {
               ...updated[num],
-              optionType: 'shortmodule',
+              optionType: 'xtshortmodule',
               mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode,
             };
           }
@@ -816,7 +801,7 @@ export default function App() {
           if (updated[num]) {
             updated[num] = {
               ...updated[num],
-              optionType: 'shortmodule',
+              optionType: 'xtshortmodule',
               mode: updated[num].mode === 'tri' ? 'dual' : updated[num].mode,
             };
           }
@@ -827,7 +812,7 @@ export default function App() {
     });
   };
 
-  type SL43InnerModuleType = 'short' | 'long';
+  type SL43InnerModuleType = 'xtshort' | 'xtlong';
 
   const handleAddSL43InnerModule = (
     slotKey: string,
@@ -846,7 +831,7 @@ export default function App() {
         [slotKey]: {
           ...existing,
           active: true,
-          optionType: type === 'short' ? 'shortmodule' : 'longmodule',
+          optionType: type === 'xtshort' ? 'xtshortmodule' : 'xtlongmodule',
         },
       };
     });
@@ -882,7 +867,7 @@ export default function App() {
       };
 
       ['C1', 'C2', 'C3', 'C4'].forEach((key) => {
-        const existing = next[key] || { ...defaults, optionType: 'longmodule' };
+        const existing = next[key] || { ...defaults, optionType: 'xtlongmodule' };
         next[key] = { ...existing, active: layout === 'corner' };
       });
 
@@ -933,7 +918,7 @@ export default function App() {
           secondary: '#3b82f6',
           tertiary: '',
           // Preserve the module type so reset does not reveal unsupported colour modes.
-          optionType: existing?.optionType || 'longmodule',
+          optionType: existing?.optionType || 'xtlongmodule',
         };
       });
       return resetState;
@@ -974,7 +959,7 @@ export default function App() {
     primary: '#808285',
     secondary: '#3b82f6',
     tertiary: '',
-    optionType: 'longmodule',
+    optionType: 'xtlongmodule',
   };
 
   const updateCurrentSlot = (updates: Partial<typeof currentSlotState>) => {
@@ -987,7 +972,9 @@ export default function App() {
     }));
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -1259,12 +1246,16 @@ export default function App() {
                       rearInnerOption={sl43RearInnerOption}
                       resetKey={sl43ResetKey}
                       innerModuleRequest={sl43InnerModuleRequest}
+                      onInnerModuleRequestHandled={() => setSl43InnerModuleRequest(null)}
                       removeInnerModuleRequest={sl43RemoveInnerRequest}
                       onAddInnerModule={handleAddSL43InnerModule}
                       onRemoveInnerModule={handleRemoveSL43InnerModule}
                       slotData={slotData}
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={handleSelectSlot}
+                      selectedModel={selectedModel}
+                      innerModulePositions={sl43InnerModulePositions}
+                      onInnerModulePositionsChange={setSl43InnerModulePositions}
                     />
                   )}
                 </div>
@@ -2081,8 +2072,8 @@ export default function App() {
                                   value={section.value}
                                   onChange={(e) => {
                                     const type = e.target.value as
-                                      | 'short'
-                                      | 'long'
+                                      | 'xtshort'
+                                      | 'xtlong'
                                       | '';
                                     section.setValue('');
                                     if (type)
@@ -2421,7 +2412,7 @@ export default function App() {
                               textDecoration: 'underline',
                               cursor: 'pointer',
                               fontSize: '0.8rem',
-                              padding: '10px 0 0',
+                              padding: '5px 0 0',
                               fontWeight: '500',
                             }}
                           >
@@ -2445,7 +2436,7 @@ export default function App() {
                               color: '#fff',
                               cursor: 'pointer',
                               fontSize: '0.8rem',
-                              padding: '0px 0 0',
+                              padding: '5px 0 0',
                               fontWeight: '500',
                               textDecoration: 'underline',
                             }}
@@ -2529,14 +2520,14 @@ export default function App() {
                             </span>
                             <button
                               className={`mode-tab ${
-                                currentSlotState.optionType === 'longmodule' ||
+                                currentSlotState.optionType === 'xtlongmodule' ||
                                 currentSlotState.optionType === 'standard' ||
                                 !currentSlotState.optionType
                                   ? 'active-module'
                                   : ''
                               }`}
                               onClick={() =>
-                                updateCurrentSlot({ optionType: 'longmodule' })
+                                updateCurrentSlot({ optionType: 'xtlongmodule' })
                               }
                               style={{
                                 padding: '4px 10px',
@@ -2547,13 +2538,13 @@ export default function App() {
                             </button>
                             <button
                               className={`mode-tab ${
-                                currentSlotState.optionType === 'shortmodule' ||
+                                currentSlotState.optionType === 'xtshortmodule' ||
                                 currentSlotState.optionType === 'linear'
                                   ? 'active-module'
                                   : ''
                               }`}
                               onClick={() =>
-                                updateCurrentSlot({ optionType: 'shortmodule' })
+                                updateCurrentSlot({ optionType: 'xtshortmodule' })
                               }
                               style={{
                                 padding: '4px 10px',
@@ -2565,14 +2556,14 @@ export default function App() {
                             <button
                               className={`mode-tab ${
                                 currentSlotState.optionType ===
-                                  'twinnedshortmodule' ||
+                                  'twinnedxtshortmodule' ||
                                 currentSlotState.optionType === 'alley'
                                   ? 'active-module'
                                   : ''
                               }`}
                               onClick={() =>
                                 updateCurrentSlot({
-                                  optionType: 'twinnedshortmodule',
+                                  optionType: 'twinnedxtshortmodule',
                                 })
                               }
                               style={{
@@ -2609,14 +2600,14 @@ export default function App() {
                             </span>
                             <button
                               className={`mode-tab ${
-                                currentSlotState.optionType === 'longmodule' ||
+                                currentSlotState.optionType === 'xtlongmodule' ||
                                 currentSlotState.optionType === 'standard' ||
                                 !currentSlotState.optionType
                                   ? 'active-module'
                                   : ''
                               }`}
                               onClick={() =>
-                                updateCurrentSlot({ optionType: 'longmodule' })
+                                updateCurrentSlot({ optionType: 'xtlongmodule' })
                               }
                               style={{
                                 padding: '4px 10px',
@@ -2627,13 +2618,13 @@ export default function App() {
                             </button>
                             <button
                               className={`mode-tab ${
-                                currentSlotState.optionType === 'shortmodule' ||
+                                currentSlotState.optionType === 'xtshortmodule' ||
                                 currentSlotState.optionType === 'linear'
                                   ? 'active-module'
                                   : ''
                               }`}
                               onClick={() =>
-                                updateCurrentSlot({ optionType: 'shortmodule' })
+                                updateCurrentSlot({ optionType: 'xtshortmodule' })
                               }
                               style={{
                                 padding: '4px 10px',
@@ -2645,14 +2636,14 @@ export default function App() {
                             <button
                               className={`mode-tab ${
                                 currentSlotState.optionType ===
-                                  'twinnedshortmodule' ||
+                                  'twinnedxtshortmodule' ||
                                 currentSlotState.optionType === 'alley'
                                   ? 'active-module'
                                   : ''
                               }`}
                               onClick={() =>
                                 updateCurrentSlot({
-                                  optionType: 'twinnedshortmodule',
+                                  optionType: 'twinnedxtshortmodule',
                                 })
                               }
                               style={{
@@ -3281,9 +3272,9 @@ export default function App() {
                   <img
                     src="/Haztec-logo.svg"
                     alt="Haztec Logo"
-                    style={{ height: '35px', objectFit: 'contain' }}
+                    style={{ height: '28px', objectFit: 'contain' }}
                   />
-                  <h1 style={{ fontSize: '22px', margin: 0 }}>
+                  <h1 style={{ fontSize: '20px', margin: 0 }}>
                     Lightbar Configuration Summary
                   </h1>
                 </div>
@@ -3303,12 +3294,15 @@ export default function App() {
                 {(formData.name ||
                   formData.company ||
                   formData.email ||
-                  formData.phone) && (
+                  formData.phone ||
+                  formData.country ||  
+                  formData.quantity || 
+                  formData.message) && (
                   <>
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: '1fr 1fr',
+                        gridTemplateColumns: '1fr 1fr 1fr',
                         gap: '8px',
                       }}
                     >
@@ -3332,6 +3326,11 @@ export default function App() {
                           <strong>Phone:</strong> {formData.phone}
                         </div>
                       )}
+                      {formData.quantity && (
+                        <div style={{ margin: '4px 0', fontSize: '14px' }}>
+                          <strong>Order Quantity:</strong> {formData.quantity}
+                        </div>
+                      )}
                     </div>
                     <hr
                       style={{
@@ -3342,53 +3341,75 @@ export default function App() {
                     />
                   </>
                 )}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '16px',
+                    alignItems: 'start',
+                  }}
+                >
+                  {/* Left column: Configuration details */}
+                  <div>
+                    <div style={{ margin: '6px 0', fontSize: '14px' }}>
+                      <strong>Model:</strong>{' '}
+                      {lightbarModels.find((m) => m.id === selectedModel)?.name} (
+                      {
+                        currentLengthOptions.find((l) => l.id === selectedLength)?.dims
+                      }
+                      )
+                    </div>
 
-                <div style={{ margin: '6px 0', fontSize: '14px' }}>
-                  <strong>Model:</strong>{' '}
-                  {lightbarModels.find((m) => m.id === selectedModel)?.name} (
-                  {
-                    currentLengthOptions.find((l) => l.id === selectedLength)
-                      ?.dims
-                  }
-                  )
-                </div>
-                <div style={{ margin: '6px 0', fontSize: '14px' }}>
-                  <strong>Outer Lens Colour:</strong>
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      width: '12px',
-                      height: '12px',
-                      background: getLensColourHex(),
-                      verticalAlign: 'middle',
-                      borderRadius: '50%',
-                      margin: '0 6px',
-                      border: '1px solid #ccc',
-                    }}
-                  ></span>
-                  {lensOptions.find((l) => l.id === selectedLens)?.name}
-                </div>
-                {selectedModel === 'xl75' && (
-                  <div style={{ margin: '6px 0', fontSize: '14px' }}>
-                    <strong>Top Cover Colour:</strong>
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        width: '12px',
-                        height: '12px',
-                        background: getTopCoverColourHex(),
-                        verticalAlign: 'middle',
-                        borderRadius: '50%',
-                        margin: '0 6px',
-                        border: '1px solid #ccc',
-                      }}
-                    ></span>
-                    {
-                      topcoverOptions.find((c) => c.id === selectedTopCover)
-                        ?.name
-                    }
+                    <div style={{ margin: '6px 0', fontSize: '14px' }}>
+                      <strong>Outer Lens Colour:</strong>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          width: '12px',
+                          height: '12px',
+                          background: getLensColourHex(),
+                          verticalAlign: 'middle',
+                          borderRadius: '50%',
+                          margin: '0 6px',
+                          border: '1px solid #ccc',
+                        }}
+                      />
+                      {lensOptions.find((l) => l.id === selectedLens)?.name}
+                    </div>
+
+                    {selectedModel === 'xl75' && (
+                      <div style={{ margin: '6px 0', fontSize: '14px' }}>
+                        <strong>Top Cover Colour:</strong>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            width: '12px',
+                            height: '12px',
+                            background: getTopCoverColourHex(),
+                            verticalAlign: 'middle',
+                            borderRadius: '50%',
+                            margin: '0 6px',
+                            border: '1px solid #ccc',
+                          }}
+                        />
+                        {topcoverOptions.find((c) => c.id === selectedTopCover)?.name}
+                      </div>
+                    )}
                   </div>
-                )}
+
+  {/* Right column: More Information */}
+  <div style={{ margin: '6px 0', fontSize: '13px' }}>
+    {formData.message && (
+      <>
+        <strong>More Information:</strong>
+        <br />
+        <div style={{ marginTop: '4px', whiteSpace: 'pre-wrap' }}>
+          {formData.message}
+        </div>
+      </>
+    )}
+  </div>
+</div>
               </div>
 
               {/* Schematic Preview */}
@@ -3406,21 +3427,6 @@ export default function App() {
                   className="overhead-header"
                   style={{ marginBottom: '10px', textAlign: 'center' }}
                 >
-                  <span
-                    className="spec-badge"
-                    style={{
-                      color: '#fff',
-                      fontSize: '12px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '1px',
-                    }}
-                  >
-                    {
-                      currentLengthOptions.find((l) => l.id === selectedLength)
-                        ?.name
-                    }{' '}
-                    Schematic
-                  </span>
                 </div>
                 <div
                   className="lightbar-schematic-stage"
@@ -3480,149 +3486,39 @@ export default function App() {
                       onSelectSlot={() => {}}
                     />
                   )}
-                  {selectedLength === 'SL43' && (
-                    <SL43
-                      lensColour={getLensColourHex()}
-                      speakerSelected={sl43Speaker}
-                      signSelected={sl43Sign}
-                      signSize={sl43SignSize}
-                      signColour={sl43SignColour}
-                      signText={sl43SignText}
-                      sirenSelected={sl43Siren}
-                      sirenModel={sl43SirenModel}
-                      controlModuleSelected={sl43ControlModule}
-                      dividerColour={sl43DividerColour}
-                      centreSectionType={sl43CentreType}
-                      moduleLayout={sl43ModuleLayout}
-                      rightLensColour={rightLensColour}
-                      splitLensEnabled={splitLensEnabled}
-                      centreColour={sl43CentreColour}
-                      slotData={slotData}
-                      selectedSlotKey={0}
-                      onSelectSlot={() => {}}
-                      innerModuleRequest={sl43InnerModuleRequest}
-                      removeInnerModuleRequest={sl43RemoveInnerRequest}
-                      onAddInnerModule={handleAddSL43InnerModule}
-                      onRemoveInnerModule={handleRemoveSL43InnerModule}
-                    />
-                  )}
+                {selectedLength === 'SL43' && (
+                  <SL43
+                    lensColour={getLensColourHex()}
+                    speakerSelected={sl43Speaker}
+                    signSelected={sl43Sign}
+                    signSize={sl43SignSize}
+                    signColour={sl43SignColour}
+                    signText={sl43SignText}
+                    sirenSelected={sl43Siren}
+                    sirenModel={sl43SirenModel}
+                    controlModuleSelected={sl43ControlModule}
+                    dividerColour={sl43DividerColour}
+                    centreSectionType={sl43CentreType}
+                    moduleLayout={sl43ModuleLayout}
+                    selectedModel={selectedModel}
+                    rightLensColour={rightLensColour}
+                    splitLensEnabled={splitLensEnabled}
+                    centreColour={sl43CentreColour}
+                    slotData={slotData}
+                    selectedSlotKey={selectedSlotNumber}
+                    onSelectSlot={handleSelectSlot}
+                    innerModuleRequest={sl43InnerModuleRequest}
+                    removeInnerModuleRequest={sl43RemoveInnerRequest}
+                    onAddInnerModule={handleAddSL43InnerModule}
+                    onRemoveInnerModule={handleRemoveSL43InnerModule}
+                    innerModulePositions={sl43InnerModulePositions}
+                    onInnerModulePositionsChange={setSl43InnerModulePositions}
+                    manageInnerModules={false}
+                    detailsComponentsView
+                  />
+                )}
                 </div>
               </div>
-
-              {/* Full Slots & Modules Table (Only shown if slots exist) */}
-              <>
-                <h3
-                  style={{
-                    fontSize: '16px',
-                    margin: '20px 0 10px 0',
-                    textAlign: 'left',
-                  }}
-                >
-                  Configured Slots & Modules
-                </h3>
-                <table
-                  style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    marginBottom: '24px',
-                    fontSize: '13px',
-                    textAlign: 'left',
-                  }}
-                >
-                  <thead>
-                    <tr style={{ background: '#f1f1f1' }}>
-                      <th
-                        style={{
-                          border: '1px solid #ddd',
-                          padding: '8px 10px',
-                        }}
-                      >
-                        Module Position
-                      </th>
-                      <th
-                        style={{
-                          border: '1px solid #ddd',
-                          padding: '8px 10px',
-                        }}
-                      >
-                        Order Code / Details
-                      </th>
-                      <th
-                        style={{
-                          border: '1px solid #ddd',
-                          padding: '8px 10px',
-                        }}
-                      >
-                        Colour Type
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {[
-                      // Show only the currently selected corner or beacon layout
-                      ...(sl43ModuleLayout === 'beacon'
-                        ? ['B1', 'B2']
-                        : ['C1', 'C2', 'C3', 'C4']
-                      )
-                        .filter((key) => slotData[key]?.active)
-                        .map((key) => ({
-                          key,
-                          slot: slotData[key],
-                        })),
-
-                      // Then show the applicable numbered modules
-                      ...Object.entries(slotData)
-                        .filter(
-                          ([key, slot]) =>
-                            /^\d+$/.test(key) &&
-                            Number(key) <= getMaxSlots(selectedLength) &&
-                            slot.active
-                        )
-                        .map(([key, slot]) => ({
-                          key,
-                          slot,
-                        })),
-                    ].map(({ key, slot }) => {
-                      const isNumericSlot = /^\d+$/.test(key);
-
-                      const orderCode = isNumericSlot
-                        ? getModuleOrderCode(Number(key), slot, selectedModel)
-                        : getModuleOrderCode(key as any, slot, selectedModel);
-
-                      return (
-                        <tr key={key}>
-                          <td
-                            style={{
-                              border: '1px solid #ddd',
-                              padding: '8px 10px',
-                            }}
-                          >
-                            <strong>{key}</strong>
-                          </td>
-                          <td
-                            style={{
-                              border: '1px solid #ddd',
-                              padding: '8px 10px',
-                            }}
-                          >
-                            {orderCode || '—'}
-                          </td>
-
-                          <td
-                            style={{
-                              border: '1px solid #ddd',
-                              padding: '8px 10px',
-                            }}
-                          >
-                            {slot.mode ? slot.mode.toUpperCase() : 'SINGLE'}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </>
             </div>
 
             {/* Customer Form */}
@@ -3674,7 +3570,6 @@ export default function App() {
                         borderRadius: '4px',
                         border: '1px solid #cbd5e1',
                       }}
-                      placeholder="John Doe"
                     />
                   </div>
                   <div
@@ -3697,7 +3592,6 @@ export default function App() {
                         borderRadius: '4px',
                         border: '1px solid #cbd5e1',
                       }}
-                      placeholder="Acme Corp"
                     />
                   </div>
                 </div>
@@ -3728,7 +3622,6 @@ export default function App() {
                         borderRadius: '4px',
                         border: '1px solid #cbd5e1',
                       }}
-                      placeholder="john@example.com"
                     />
                   </div>
                   <div
@@ -3751,7 +3644,74 @@ export default function App() {
                         borderRadius: '4px',
                         border: '1px solid #cbd5e1',
                       }}
-                      placeholder="07123 456789"
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                    }}
+                  >
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+                      Country:
+                    </label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      style={{
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid #cbd5e1',
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                    }}
+                  >
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+                      Order Quantity
+                    </label>
+                    <input
+                      type="text"
+                      name="quantity"
+                      value={formData.quantity}
+                      onChange={handleInputChange}
+                      style={{
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid #cbd5e1',
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                      width: '100%',
+                    }}
+                  >
+                    <label style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+                      More information
+                    </label>
+                    <textarea
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      rows={5}
+                      style={{
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid #cbd5e1',
+                        fontFamily: 'inherit',
+                      }}
                     />
                   </div>
                 </div>
@@ -3836,7 +3796,7 @@ export default function App() {
                     width: '100%',
                     maxWidth: '640px',
                     borderRadius: '12px',
-                    padding: '28px',
+                    padding: '48px',
                     boxShadow:
                       '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
                     position: 'relative',
@@ -3882,9 +3842,9 @@ export default function App() {
                       background: '#f8fafc',
                       border: '1px solid #cbd5e1',
                       borderRadius: '8px',
-                      padding: '16px',
+                      padding: '20px 20px',
                       textAlign: 'left',
-                      marginBottom: '20px',
+                      margin: '30px 0px',
                     }}
                   >
                     <div
@@ -3895,19 +3855,16 @@ export default function App() {
                         marginBottom: '14px',
                       }}
                     >
-                      <span style={{ fontSize: '24px', lineHeight: 1 }}>
-                        📄
-                      </span>
                       <div>
                         <strong
                           style={{
-                            fontSize: '0.95rem',
+                            fontSize: '1.1rem',
                             color: '#0f172a',
                             display: 'block',
-                            marginBottom: '4px',
+                            marginBottom: '20px',
                           }}
                         >
-                          Save as PDF or Send via Email
+                          Save & Email Haztec Your Configuration
                         </strong>
                         <p
                           style={{
@@ -3917,9 +3874,7 @@ export default function App() {
                             lineHeight: 1.4,
                           }}
                         >
-                          Click below to open print preview and save as a PDF,
-                          then use the <strong>Email Config</strong> button to
-                          attach your downloaded file to an email draft.
+                          Save your lightbar configuration as a PDF and send over to our expert team to review.
                         </p>
                       </div>
                     </div>
@@ -3929,6 +3884,7 @@ export default function App() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '10px',
+                        marginTop: '12px',
                       }}
                     >
                       <button
@@ -3936,7 +3892,7 @@ export default function App() {
                         style={{
                           flex: 1,
                           padding: '10px 14px',
-                          background: '#10b981',
+                          background: '#353fad',
                           color: '#ffffff',
                           border: 'none',
                           borderRadius: '6px',
@@ -3949,7 +3905,7 @@ export default function App() {
                           gap: '6px',
                         }}
                       >
-                        🖨 Open Download / Print Dialog
+                        🖨 Save as PDF
                       </button>
 
                       <span
@@ -3967,7 +3923,7 @@ export default function App() {
                         style={{
                           flex: 1,
                           padding: '10px 14px',
-                          background: '#2563eb',
+                          background: '#353fad',
                           color: '#ffffff',
                           border: 'none',
                           borderRadius: '6px',
@@ -3980,42 +3936,12 @@ export default function App() {
                           gap: '6px',
                         }}
                       >
-                        ✉️ Email Config
+                        ✉️ Email Us
                       </button>
                     </div>
                   </div>
 
-                  <hr
-                    style={{
-                      border: '0',
-                      borderTop: '1px solid #e2e8f0',
-                      margin: '20px 0',
-                    }}
-                  />
-
                   <div style={{ textAlign: 'left' }}>
-                    <strong
-                      style={{
-                        fontSize: '0.95rem',
-                        color: '#0f172a',
-                        display: 'block',
-                        marginBottom: '4px',
-                      }}
-                    >
-                      Bespoke or Custom Lightbar Requirements?
-                    </strong>
-                    <p
-                      style={{
-                        margin: '0 0 12px 0',
-                        fontSize: '0.825rem',
-                        color: '#64748b',
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      For special mounting brackets, custom wiring, or unique
-                      configurations, please contact our team:
-                    </p>
-
                     <div
                       style={{
                         display: 'flex',
@@ -4043,7 +3969,7 @@ export default function App() {
                         href="tel:+441132029115"
                         style={{
                           textDecoration: 'none',
-                          color: '#0f172a',
+                          color: '#2563eb',
                           fontWeight: 600,
                           display: 'flex',
                           alignItems: 'center',
@@ -4076,7 +4002,7 @@ export default function App() {
                 setCurrentStage('model');
                 setSelectedModel('xl75');
                 setSelectedLength(null);
-                setFormData({ name: '', company: '', email: '', phone: '' });
+                setFormData({ name: '', company: '', email: '', phone: '', message: '', quantity: '', country: '', });
               }}
               style={{ marginTop: '24px' }}
             >
