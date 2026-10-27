@@ -3270,9 +3270,14 @@ export default function App() {
                   }}
                 >
                   <img
-                    src="/public/Haztec-logo.svg"
+                    src="/Haztec-logo.svg"
                     alt="Haztec Logo"
-                    style={{ height: '28px', objectFit: 'contain' }}
+                    onLoad={() => console.log('Haztec logo loaded')}
+                    onError={() => console.error('Haztec logo failed to load')}
+                    style={{
+                      height: '28px',
+                      objectFit: 'contain',
+                    }}
                   />
                   <h1 style={{ fontSize: '20px', margin: 0 }}>
                     Lightbar Configuration Summary
