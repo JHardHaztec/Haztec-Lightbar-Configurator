@@ -3513,6 +3513,7 @@ export default function App() {
                     onRemoveInnerModule={handleRemoveSL43InnerModule}
                     innerModulePositions={sl43InnerModulePositions}
                     onInnerModulePositionsChange={setSl43InnerModulePositions}
+                    onInnerModuleRequestHandled={() => setSl43InnerModuleRequest(null)}
                     manageInnerModules={false}
                     detailsComponentsView
                   />
