@@ -1253,7 +1253,7 @@ export default function App() {
                       slotData={slotData}
                       selectedSlotKey={selectedSlotNumber}
                       onSelectSlot={handleSelectSlot}
-                      selectedModel={selectedModel}
+                      selectedModel={selectedModel ?? undefined}
                       innerModulePositions={sl43InnerModulePositions}
                       onInnerModulePositionsChange={setSl43InnerModulePositions}
                     />
@@ -3500,7 +3500,7 @@ export default function App() {
                     dividerColour={sl43DividerColour}
                     centreSectionType={sl43CentreType}
                     moduleLayout={sl43ModuleLayout}
-                    selectedModel={selectedModel}
+                    selectedModel={selectedModel ?? undefined}
                     rightLensColour={rightLensColour}
                     splitLensEnabled={splitLensEnabled}
                     centreColour={sl43CentreColour}
