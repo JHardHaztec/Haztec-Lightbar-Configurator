@@ -1011,7 +1011,24 @@ export default function App() {
       }
     } catch (e) {}
 
-    window.print();
+    const printImages = Array.from(
+      document.querySelectorAll<HTMLImageElement>('.print-spec-sheet img')
+    );
+    
+    Promise.all(
+      printImages.map((img) => {
+        if (img.complete && img.naturalWidth > 0) {
+          return Promise.resolve();
+        }
+    
+        return new Promise<void>((resolve) => {
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+        });
+      })
+    ).then(() => {
+      window.print();
+    });
 
     document.title = originalTitle;
     try {
@@ -3270,13 +3287,9 @@ export default function App() {
                   }}
                 >
                   <img
-                    src={`${window.location.origin}/Haztec-logo.svg`}
+                    src="/Haztec-logo.svg"
                     alt="Haztec Logo"
-                    style={{
-                      height: '28px',
-                      width: 'auto',
-                      objectFit: 'contain',
-                    }}
+                    style={{ height: '28px', objectFit: 'contain' }}
                   />
                   <h1 style={{ fontSize: '20px', margin: 0 }}>
                     Lightbar Configuration Summary
