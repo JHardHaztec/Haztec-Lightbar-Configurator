@@ -3270,12 +3270,11 @@ export default function App() {
                   }}
                 >
                   <img
-                    src="/Haztec-logo.svg"
+                    src={`${window.location.origin}/Haztec-logo.svg`}
                     alt="Haztec Logo"
-                    onLoad={() => console.log('Haztec logo loaded')}
-                    onError={() => console.error('Haztec logo failed to load')}
                     style={{
                       height: '28px',
+                      width: 'auto',
                       objectFit: 'contain',
                     }}
                   />
