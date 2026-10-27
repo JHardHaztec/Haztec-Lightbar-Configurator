@@ -3270,7 +3270,7 @@ export default function App() {
                   }}
                 >
                   <img
-                    src="/Haztec-logo.svg"
+                    src="/public/Haztec-logo.svg"
                     alt="Haztec Logo"
                     style={{ height: '28px', objectFit: 'contain' }}
                   />
