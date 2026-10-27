@@ -3270,10 +3270,14 @@ export default function App() {
                   }}
                 >
                   <img
-                    src="/Haztec-logo.svg"
-                    alt="Haztec Logo"
-                    style={{ height: '28px', objectFit: 'contain' }}
-                  />
+                      src={`${import.meta.env.BASE_URL}Haztec-logo.svg`}
+                      alt="Haztec Logo"
+                      style={{
+                        height: '28px',
+                        width: 'auto',
+                        objectFit: 'contain',
+                      }}
+                    />
                   <h1 style={{ fontSize: '20px', margin: 0 }}>
                     Lightbar Configuration Summary
                   </h1>
