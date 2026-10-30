@@ -627,6 +627,7 @@ export default function App() {
     if (
       lower === 'xtshortmodule' ||
       lower.includes('frontinnershort') ||
+      lower.includes('') ||
       lower.includes('rearinnershort') ||
       lower.includes('frontouterlongshort-short') ||
       lower.includes('frontoutershortlong-short') ||
@@ -1904,7 +1905,6 @@ export default function App() {
                         >
                           <div
                             style={{
-                              display: 'flex',
                               alignItems: 'center',
                               marginBottom: '10px',
                             }}
@@ -2099,6 +2099,23 @@ export default function App() {
                                 </select>
                               </label>
                             ))}
+                          </div>
+                          <div style={{ background: '#E1F0FF', padding: '10px', 
+                                margin: '10px 0px', borderRadius: '6px' }}>
+                            <label
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                fontSize: '0.85rem',
+                                fontWeight: '600',
+                                color: '#282828',
+                                padding: '10px',
+                              }}
+                            >
+                              <span style={{ fontSize: '18px', color: '#245DB5' }}>↔</span>
+                              Move / Drag inner modules into position
+                            </label>
                           </div>
                           <button
                             type="button"
@@ -3270,14 +3287,10 @@ export default function App() {
                   }}
                 >
                   <img
-                      src={`${import.meta.env.BASE_URL}Haztec-logo.svg`}
-                      alt="Haztec Logo"
-                      style={{
-                        height: '28px',
-                        width: 'auto',
-                        objectFit: 'contain',
-                      }}
-                    />
+                    src="/Haztec-logo.svg"
+                    alt="Haztec Logo"
+                    style={{ height: '28px', objectFit: 'contain' }}
+                  />
                   <h1 style={{ fontSize: '20px', margin: 0 }}>
                     Lightbar Configuration Summary
                   </h1>
